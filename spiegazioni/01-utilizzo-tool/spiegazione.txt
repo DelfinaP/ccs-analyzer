@@ -1,0 +1,30 @@
+- Antivirus
+Impostare l'eccezione dell'antivirus non soltanto nella cartella dove metteremo gli apk, ma anche nella cartella contenente il tool Carnival. Questo perché l'apk, durante l'elaborazione, passerà attraverso la cartella del tool.
+- Carnival
+Avviare Carnival tramite Eclipse.
+-- Nell'elenco delle opzioni del tool selezionare "Code Reordering" (il Code Reordering è appunto la tecnica d'offuscamento che cambia l'ordine delle istruzioni ma non il comportamento);
+-- Selezionare "add apk" e selezionare una cartella contenente almeno un'apk;
+-- Cliccare "Start".
+Carnival creerà una cartella "evaluated", che contiene l'apk originale, e una cartella "signed", contenente l'apk offuscato.
+- Leila
+Aprire Leila con Eclipse nella macchina virtuale.
+Leila si trova in C:\Users\sicurezza\workspace\CCS
+-- Vai su File/Open/<seleziona cartella "CCS" sul Desktop della macchina virtuale>/CCS/<seleziona un apk>
+-- Vai su Analysis/Run/FamilyIdentification/Plankton (in questo modo avvio la procedura per verificare se l'apk contiene un malware della famiglia Plankton. A me non serve l'informazione della presenza o meno del malware, però l'invocazione di questa procedura genera gli automi .css, che mi servono per CWB).
+-- Vai nella cartella dove si trova Leila (ossia "C:\Users\sicurezza\workspace\CCS"), vai in "workResult" e qui troverai i .ccs risultanti dall'elaborazione di Leila. Confronta la data dei file per verificare che siano effettivamente i file creati in quel momento.
+- CWB
+Apri il Prompt dei Comandi.
+Il tool CWB si trova nella cartella "C:\CWB-NC\bin". Spostati in questa cartella con il comando "cd C:\CWB-NC\bin"
+-- Avvia CWB con il comando:
+cwb-nc.bat ccs
+-- Carica il primo file .ccs con il comando:
+load <percorso_primo_file_ccs>
+(probabilmente sarà necessario usare un percorso senza spazi).
+-- Caricare il secondo file .ccs con il medesimo comando;
+-- Aprire il primo file .ccs e cercare la stringa "proc ALL". Si troverà qualcosa del genere:
+proc ALL= COREEFILETESTCLASSOR[...]voidinit0+[...]. Come si può vedere il primo metodo parte da "COREEFILE" e finisce con "voidinit0", ossia finisce prima del "+". I vari metodi sono separati dal "+";
+-- Prendi il nome del primo metodo del primo file CCS, e prendi il nome del primo metodo del secondo file CCS;
+-- Esegui:
+eq -S bisim <primo_metodo_del_primo_file_ccs> <primo_metodo_del_secondo_file_ccs>
+Ti darà come risultato la percentuale di somiglianza tra i metodi. Da questo potrai capire se i due metodi sono correlati. Ad esempio, due metodi che sono uno il metodo originale e l'altro il metodo offuscato avranno una somiglianza di, ad esempio, il 5%.
+-- Questo confronto dev'essere fatto per tutte le coppie di metodi: ossia, bisogna confrontare il primo metodo del primo file con tutti i metodi del secondo file, il secondo metodo del primo file con tutti i metodi del secondo file, e così via. Dobbiamo realizzare un tool che faccia questi confronti in automatico.
