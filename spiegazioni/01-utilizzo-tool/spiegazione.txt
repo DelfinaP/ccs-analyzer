@@ -29,4 +29,6 @@ proc ALL= COREEFILETESTCLASSOR[...]voidinit0+[...]. Come si può vedere il primo
 -- Esegui:
 eq -S bisim <primo_metodo_del_primo_file_ccs> <primo_metodo_del_secondo_file_ccs>
 Ti darà come risultato la percentuale di somiglianza tra i metodi. Da questo potrai capire se i due metodi sono correlati. Ad esempio, due metodi che sono uno il metodo originale e l'altro il metodo offuscato avranno una somiglianza di, ad esempio, il 5%.
+-- Altro comando che permette di confrontare due metodi, ma che restituisce delle percentuali:
+eq -S obseq <metodo_1> <metodo_2>
 -- Questo confronto dev'essere fatto per tutte le coppie di metodi: ossia, bisogna confrontare il primo metodo del primo file con tutti i metodi del secondo file, il secondo metodo del primo file con tutti i metodi del secondo file, e così via. Dobbiamo realizzare un tool che faccia questi confronti in automatico.
