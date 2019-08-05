@@ -1,11 +1,11 @@
-- Antivirus
+﻿- Antivirus
 Impostare l'eccezione dell'antivirus non soltanto nella cartella dove metteremo gli apk, ma anche nella cartella contenente il tool Carnival. Questo perché l'apk, durante l'elaborazione, passerà attraverso la cartella del tool.
 - DroidChameleon
 DroidChameleon richiede Linux. Questo perché il tool invoca alcuni comandi (ad esempio "rm") che sono specifici di Linux.
 - Carnival
 Avviare Carnival tramite Eclipse.
 -- Nell'elenco delle opzioni del tool selezionare "Code Reordering" (il Code Reordering è appunto la tecnica d'offuscamento che cambia l'ordine delle istruzioni ma non il comportamento);
--- Selezionare "add apk" e selezionare una cartella contenente almeno un'apk;
+-- Selezionare "add apk" e selezionare una cartella contenente almeno un'apk; (le cartelle devono avere un percorso senza spazi)
 -- Cliccare "Start".
 Carnival creerà una cartella "evaluated", che contiene l'apk originale, e una cartella "signed", contenente l'apk offuscato.
 - Leila
