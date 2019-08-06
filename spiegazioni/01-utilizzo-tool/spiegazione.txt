@@ -11,6 +11,7 @@ Carnival creerà una cartella "evaluated", che contiene l'apk originale, e una c
 - Leila
 Aprire Leila con Eclipse nella macchina virtuale.
 Leila si trova in C:\Users\sicurezza\workspace\CCS
+-- Se stai usando Leila su Windows normale (non sulla macchina virtuale), bisogna prima configurare Leila: su Eclipse in Windows normale apri la cartella di progetto di Leila, poi nel riquadro "Package Explorer" fai clic destro su "CCS" e seleziona "Properties/Run-Debug Settings", seleziona la voce nel riquadro appena sotto la scritta "Launch configurations for 'CCS'", seleziona "Delete", seleziona "New/Java Application", in corrispondenza della casella di testo "Main class" seleziona "Search" e seleziona la voce "Gui - coree", premi "OK". Nella finestra "Properties" premi "Apply and close", e ora il tool dovrebbe funzionare. 
 -- Vai su File/Open/<seleziona cartella "CCS" sul Desktop della macchina virtuale>/CCS/<seleziona un apk>
 -- Vai su Analysis/Run/FamilyIdentification/Plankton (in questo modo avvio la procedura per verificare se l'apk contiene un malware della famiglia Plankton. A me non serve l'informazione della presenza o meno del malware, però l'invocazione di questa procedura genera gli automi .css, che mi servono per CWB).
 -- Vai nella cartella dove si trova Leila (ossia "C:\Users\sicurezza\workspace\CCS"), vai in "workResult" e qui troverai i .ccs risultanti dall'elaborazione di Leila. Confronta la data dei file per verificare che siano effettivamente i file creati in quel momento.
