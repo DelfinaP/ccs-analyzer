@@ -1,0 +1,3 @@
+- Rimuovere tutti i file in una directory tranne i file aventi una certa estensione
+https://unix.stackexchange.com/questions/153862/remove-all-files-directories-except-for-one-file
+find . ! -name '*.ccs' -type f -exec rm -f {} +

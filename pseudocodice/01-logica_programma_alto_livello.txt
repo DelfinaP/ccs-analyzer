@@ -1,0 +1,19 @@
+- Logica ad alto livello
+
+Il nostro tool prende in input i ccs di due apk. I due apk sono uno originale e uno offuscato. Il tool confronta tutte le coppie di ccs analoghi (ossia i ccs tali che uno è la versione offuscata dell'altro), prende i metodi di questi due ccs e confronta tutti i metodi del primo ccs con tutti i metodi del secondo ccs (quindi valuta tutte le possibili coppie). Valutiamo la somiglianza tra ciascuna coppia di ccs.
+
+------------
+
+- Logica a medio livello
+
+Il tool Leila restituisce i ccs di un apk. Il nostro tool riceve in input due insiemi di ccs, uno del primo apk e uno del secondo apk (i due insiemi di ccs devono essere in due cartelle diverse). Come spiegato sopra, confrontiamo i ccs analoghi, dei quali confrontiamo tutte le coppie di metodi, e per ciascun metodo del primo apk scartiamo tutti i confronti col metodo del secondo apk tranne quello con valore di somiglianza più alto.
+
+------------
+
+- Funzionalità a medio livello
+
+- Si avvia un'interfaccia grafica che ci permette di selezionare le due cartelle contenenti i ccs dell'apk originale e dell'apk offuscato. Gestire il caso in cui il path delle directory abbia degli spazi.
+- Verificare che nelle due cartelle vi sia lo stesso numero di ccs e che abbiano lo stesso nome.
+- Prendere tutte le coppie di ccs correlati (ossia che siano l'uno la versione offuscata dell'altro).
+- Confrontare tutte le possibili coppie di metodi del primo apk e del secondo apk. Per ciascun metodo del primo apk scartare tutti i confronti tranne il più rilevante.
+- Restituire in output all'utente l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei confronti dei metodi correlati di tutti i ccs.
