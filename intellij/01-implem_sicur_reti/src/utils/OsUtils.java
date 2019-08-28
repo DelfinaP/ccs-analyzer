@@ -1,6 +1,5 @@
 package utils;
 
-import utils.except.OsType;
 import utils.except.osNotRecognizedException;
 
 public class OsUtils

@@ -1,4 +1,4 @@
-package utils.except;
+package utils;
 
 public enum OsType {
     WINDOWS,
