@@ -12,8 +12,8 @@ Il tool Leila restituisce i ccs di un apk. Il nostro tool riceve in input due in
 
 - Funzionalità a medio livello
 
-- Si avvia un'interfaccia grafica che ci permette di selezionare le due cartelle contenenti i ccs dell'apk originale e dell'apk offuscato. Gestire il caso in cui il path delle directory abbia degli spazi.
+- Si avvia un'interfaccia che ci permette di selezionare le due cartelle contenenti i ccs dell'apk originale e dell'apk offuscato. Gestire il caso in cui il path delle directory abbia degli spazi.
 - Verificare che nelle due cartelle vi sia lo stesso numero di ccs e che abbiano lo stesso nome.
 - Prendere tutte le coppie di ccs correlati (ossia che siano l'uno la versione offuscata dell'altro).
-- Confrontare tutte le possibili coppie di metodi del primo apk e del secondo apk. Per ciascun metodo del primo apk scartare tutti i confronti tranne il più rilevante.
-- Restituire in output all'utente l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei confronti dei metodi correlati di tutti i ccs.
+- Confrontare ogni metodo del primo css con ciascun metodo del secondo css. Per ciascun metodo del primo css scartare tutti i confronti tranne quello con la percentuale di somiglianza maggiore (che si presume essere quello relativo alla versione offuscata del corrispondente metodo del primo ccs).
+- Restituire in output all'utente le statistiche sulle percentuali di somiglianza, vale a dire l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei valori delle percentuali di somiglianza dei metodi correlati di tutti i ccs.
