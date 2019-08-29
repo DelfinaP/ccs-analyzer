@@ -1,0 +1,16 @@
+Call indirection
+
+- Se offusco l'app, se prima avevo "A chiama C", dopo la call indirection ho "A chiama B" e "B chiama C".
+- Per capire se la B è stata inserita per effettuare call indirection, possiamo vedere se ci sono funzioni che vengono invocate, chiamano e non fanno nulla se non chiamare C: in tal caso è possibile che l'app sia stata offuscata.
+- Vediamo la percentuale di chiamate di questo tipo nell'app. Nella fase di training del tool valutiamo la percentuale media per le app originale e le app offuscate. Sulla base di questi dati, stabiliamo delle soglie di percentuale per le app originali e le app offuscate, e sulla base di ciò il tool stabilirà se l'app analizzata è offuscata oppure no.
+
+- Comando per minimizzare levando i tau
+min -S obseq All All_min
+"All" è il processo CCS da minimizzare, che nel file ccs inizia con "COREE", mentre "All_min" è il processo minimizzato ("All_min" va sostituito con il nome che vogliamo assegnargli).
+- Comando per calcolare la dimensione del metodo (ossia gli stati reali, diversi da tau):
+size All_min
+
+Tool che visualizza il Bytecode: Bytecode Viewer
+
+- Il tool Alan inserisce dei metodi della forma "methodX" (X è un numero), all'interno dei quali c'è un "invokevirtual". Leila trasforma le invocazioni in "invokemethodX", che si possono trovare nei ccs.
+- Sostituire nei ccs le chiamate di tipo "invokemethodX" (X è un numero) con la lettera "t", che significa "tau".
