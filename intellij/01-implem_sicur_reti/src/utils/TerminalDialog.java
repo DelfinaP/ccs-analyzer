@@ -38,6 +38,8 @@ public abstract class TerminalDialog {
         executeTerminalCommand("cd ~");
         executeTerminalCommand("ls -l");
 
+        busyWaiting(200);
+
         stringheEstratte = consumaLista();
 
         stampaStringList(stringheEstratte);
@@ -124,6 +126,21 @@ public abstract class TerminalDialog {
     private void stampaStringList(LinkedList<String> stringList) {
         while (stringList.size() > 0) {
             System.out.println(stringList.remove());
+        }
+    }
+
+    private void busyWaiting(int durata) {
+        Timestamp time1 = new Timestamp(System.currentTimeMillis());
+        Timestamp time2 = new Timestamp(System.currentTimeMillis());
+
+        long time1millis = time1.getTime();
+        long time2millis = time2.getTime();
+        long diffTimeMillis = time2millis - time1millis;
+
+        while (diffTimeMillis < durata) {
+            time2 = new Timestamp(System.currentTimeMillis());
+            time2millis = time2.getTime();
+            diffTimeMillis = time2millis - time1millis;
         }
     }
 }
