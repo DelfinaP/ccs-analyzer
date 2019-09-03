@@ -1,0 +1,10 @@
+Pseudocodice
+
+if (esecuzioneDiDebug) {
+	String stringPath = <assegno un path di default>
+}
+else {
+	Leggo una stringa inserita dall'utente alla console e la memorizzo in stringPath;
+}
+eseguire il cd sulla cartella specificata
+Prendiamo la lista di tutti i file nella cartella e memorizziamoli nella lista "fileList".

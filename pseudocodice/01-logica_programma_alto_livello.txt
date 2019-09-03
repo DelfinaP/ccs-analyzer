@@ -10,10 +10,16 @@ Il tool Leila restituisce i ccs di un apk. Il nostro tool riceve in input due in
 
 ------------
 
-- Funzionalità a medio livello
+- Funzionalità a medio livelloput = new utils.ReadInput();
+//
+//        if (isEsecuzioneDebug){
+//            ;
+//        }
+//        else {
+//            System.out.println("Risultato: " + readInput.read());
+//            System.out.println("Risultato: " + readInput.read());
+//        }
 
 - Si avvia un'interfaccia che ci permette di selezionare le due cartelle contenenti i ccs dell'apk originale e dell'apk offuscato. Gestire il caso in cui il path delle directory abbia degli spazi.
-- Verificare che nelle due cartelle vi sia lo stesso numero di ccs e che abbiano lo stesso nome.
-- Prendere tutte le coppie di ccs correlati (ossia che siano l'uno la versione offuscata dell'altro).
-- Confrontare ogni metodo del primo css con ciascun metodo del secondo css. Per ciascun metodo del primo css scartare tutti i confronti tranne quello con la percentuale di somiglianza maggiore (che si presume essere quello relativo alla versione offuscata del corrispondente metodo del primo ccs).
-- Restituire in output all'utente le statistiche sulle percentuali di somiglianza, vale a dire l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei valori delle percentuali di somiglianza dei metodi correlati di tutti i ccs.
+- Calcolare la versione ridotta di ciascun metodo in "proc ALL" (tramite comando "min -S obseq All All_min"). Calcolare la size per il metodo originale e per il metodo ridotto. Calcoliamo la percentuale di somiglianza tra metodo originale e metodo ridotto, che ha come valore (s_o - s_r) / s_r (s_o è la size del metodo originale e s_r è la size del metodo ridotto).
+- Restituire in output all'utente le statistiche sulle percentuali di somiglianza, vale a dire l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei valori delle percentuali di somiglianza dei metodi di tutti i ccs.

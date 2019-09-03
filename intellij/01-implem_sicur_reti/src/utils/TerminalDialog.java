@@ -19,11 +19,12 @@ public abstract class TerminalDialog {
     LinkedList<String> stringList;
     LinkedList<String> stringheEstratte;
     Thread readBufferThread;
+    String dirPath;
 
     /**
      * Questo metodo implementa il design pattern TEMPLATE METHOD
      */
-    public void run() throws IOException, osNotRecognizedException {
+    public void run(boolean isEsecuzioneDebug) throws IOException, osNotRecognizedException {
         stringList = new LinkedList<String>();
 
         avviaTerminale();
@@ -36,6 +37,8 @@ public abstract class TerminalDialog {
         writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
         startReadThread();
+
+        getDirPath(isEsecuzioneDebug);
 
         if (OsUtils.getOsType() == OsType.LINUX) {
             executeTerminalCommand("cd ~");
@@ -52,6 +55,8 @@ public abstract class TerminalDialog {
 
         stampaStringList(stringheEstratte);
     }
+
+    protected abstract void getDirPath(boolean isEsecuzioneDebug);
 
     private void startReadThread() {
         readBufferThread = new Thread() {

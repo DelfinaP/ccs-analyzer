@@ -8,4 +8,9 @@ public class TerminalDialogWindows extends TerminalDialog {
     protected void avviaTerminale() throws IOException {
         process = Runtime.getRuntime().exec("cmd");
     }
+
+    @Override
+    protected void getDirPath(boolean isEsecuzioneDebug) {
+
+    }
 }
