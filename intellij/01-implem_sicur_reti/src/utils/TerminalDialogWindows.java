@@ -6,6 +6,6 @@ public class TerminalDialogWindows extends TerminalDialog {
 
     @Override
     protected void avviaTerminale() throws IOException {
-        process = Runtime.getRuntime().exec("cmd /C dir");
+        process = Runtime.getRuntime().exec("cmd");
     }
 }

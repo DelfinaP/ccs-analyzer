@@ -1,5 +1,7 @@
 package utils;
 
+import utils.except.osNotRecognizedException;
+
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -21,7 +23,7 @@ public abstract class TerminalDialog {
     /**
      * Questo metodo implementa il design pattern TEMPLATE METHOD
      */
-    public void run() throws IOException {
+    public void run() throws IOException, osNotRecognizedException {
         stringList = new LinkedList<String>();
 
         avviaTerminale();
@@ -35,8 +37,14 @@ public abstract class TerminalDialog {
 
         startReadThread();
 
-        executeTerminalCommand("cd ~");
-        executeTerminalCommand("ls -l");
+        if (OsUtils.getOsType() == OsType.LINUX) {
+            executeTerminalCommand("cd ~");
+            executeTerminalCommand("ls -l");
+        }
+        else if (OsUtils.getOsType() == OsType.WINDOWS){
+            executeTerminalCommand("cd %HOMEPATH%");
+            executeTerminalCommand("dir");
+        }
 
         busyWaiting(200);
 
@@ -53,7 +61,6 @@ public abstract class TerminalDialog {
                     // Leggiamo con readLine() e aggiungiamo alla lista
                     while ((line = reader.readLine()) != null) {
                         stringList.add(line);
-                        System.out.println("Stdout: " + line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

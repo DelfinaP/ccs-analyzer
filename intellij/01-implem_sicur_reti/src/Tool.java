@@ -5,11 +5,16 @@ import java.io.IOException;
 
 public class Tool {
 
-    public void run() throws IOException, osNotRecognizedException {
+    public void run(boolean isEsecuzioneDebug) throws IOException, osNotRecognizedException {
         ReadInput readInput = new ReadInput();
 
-        System.out.println("Risultato: " + readInput.read());
-        System.out.println("Risultato: " + readInput.read());
+        if (isEsecuzioneDebug){
+            ;
+        }
+        else {
+            System.out.println("Risultato: " + readInput.read());
+            System.out.println("Risultato: " + readInput.read());
+        }
 
         TerminalDialog terminalDialog;
 
@@ -21,6 +26,5 @@ public class Tool {
             terminalDialog = new TerminalDialogWindows();
             terminalDialog.run();
         }
-
     }
 }
