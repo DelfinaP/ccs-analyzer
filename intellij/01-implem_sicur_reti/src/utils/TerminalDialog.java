@@ -22,20 +22,7 @@ public abstract class TerminalDialog {
 
         getDirPath(isEsecuzioneDebug);
 
-        if (OsUtils.getOsType() == OsType.LINUX) {
-            terminale1.executeTerminalCommand("cd ~");
-            terminale1.executeTerminalCommand("ls -l");
-        }
-        else if (OsUtils.getOsType() == OsType.WINDOWS){
-            terminale1.executeTerminalCommand("cd %HOMEPATH%");
-            terminale1.executeTerminalCommand("dir");
-        }
-
-        busyWaiting(200);
-
-        stringheEstratte = consumaLista();
-
-        stampaStringList(stringheEstratte);
+        terminale1.rimuoviFileNonCcs(dirPath);
     }
 
     protected abstract void getDirPath(boolean isEsecuzioneDebug);
@@ -121,4 +108,17 @@ public abstract class TerminalDialog {
             diffTimeMillis = time2millis - time1millis;
         }
     }
+
+    private void debugTerminal() throws osNotRecognizedException, IOException {
+        if (OsUtils.getOsType() == OsType.LINUX) {
+            terminale1.executeTerminalCommand("cd ~");
+            terminale1.executeTerminalCommand("ls -l");
+        }
+        else if (OsUtils.getOsType() == OsType.WINDOWS){
+            terminale1.executeTerminalCommand("cd %HOMEPATH%");
+            terminale1.executeTerminalCommand("dir");
+        }
+    }
+
+
 }

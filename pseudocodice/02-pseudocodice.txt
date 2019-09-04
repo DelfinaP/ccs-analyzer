@@ -7,4 +7,5 @@ else {
 	Leggo una stringa inserita dall'utente alla console e la memorizzo in stringPath;
 }
 eseguire il cd sulla cartella specificata
+eliminare tutti quei file con formato diverso da .ccs
 Prendiamo la lista di tutti i file nella cartella e memorizziamoli nella lista "fileList".

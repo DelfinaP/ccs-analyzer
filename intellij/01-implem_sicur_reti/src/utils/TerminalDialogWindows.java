@@ -10,8 +10,10 @@ public class TerminalDialogWindows extends TerminalDialog {
             dirPath = "C:\\Users\\Piera\\Documents\\Prog_sicurezza_elaborazione_CCS";
         }
         else {
+            System.out.println("Inserisci directory ccs");
             ReadInput readInput = new ReadInput();
             dirPath = readInput.read();
+            System.out.println("Directory: " + dirPath);
         }
     }
 }

@@ -59,4 +59,8 @@ public abstract class Terminal{
     public LinkedList<String> getStringList() {
         return stringList;
     }
+
+    protected abstract void changeDirectory (String dirPath) throws IOException;
+
+    protected abstract void rimuoviFileNonCcs(String dirPath)throws IOException;
 }
