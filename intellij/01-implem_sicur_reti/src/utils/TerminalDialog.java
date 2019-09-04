@@ -8,45 +8,27 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class TerminalDialog {
-    Process process;
-    OutputStream stdin;
-    InputStream stderr;
-    InputStream stdout;
-
-    BufferedReader reader;
-    BufferedWriter writer;
-
-    LinkedList<String> stringList;
     LinkedList<String> stringheEstratte;
-    Thread readBufferThread;
+    Terminal terminale1;
     String dirPath;
 
     /**
      * Questo metodo implementa il design pattern TEMPLATE METHOD
      */
     public void run(boolean isEsecuzioneDebug) throws IOException, osNotRecognizedException {
-        stringList = new LinkedList<String>();
+        terminale1 = inizializzaTerminale();
 
-        avviaTerminale();
-
-        stdin = process.getOutputStream();
-        stderr = process.getErrorStream();
-        stdout = process.getInputStream();
-
-        reader = new BufferedReader(new InputStreamReader(stdout));
-        writer = new BufferedWriter(new OutputStreamWriter(stdin));
-
-        startReadThread();
+        terminale1.startReadThread();
 
         getDirPath(isEsecuzioneDebug);
 
         if (OsUtils.getOsType() == OsType.LINUX) {
-            executeTerminalCommand("cd ~");
-            executeTerminalCommand("ls -l");
+            terminale1.executeTerminalCommand("cd ~");
+            terminale1.executeTerminalCommand("ls -l");
         }
         else if (OsUtils.getOsType() == OsType.WINDOWS){
-            executeTerminalCommand("cd %HOMEPATH%");
-            executeTerminalCommand("dir");
+            terminale1.executeTerminalCommand("cd %HOMEPATH%");
+            terminale1.executeTerminalCommand("dir");
         }
 
         busyWaiting(200);
@@ -58,31 +40,15 @@ public abstract class TerminalDialog {
 
     protected abstract void getDirPath(boolean isEsecuzioneDebug);
 
-    private void startReadThread() {
-        readBufferThread = new Thread() {
-            public void run() {
-                try {
-                    String line;
-                    // Leggiamo con readLine() e aggiungiamo alla lista
-                    while ((line = reader.readLine()) != null) {
-                        stringList.add(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        readBufferThread.start();
+    private Terminal inizializzaTerminale() throws osNotRecognizedException, IOException {
+        if (OsUtils.getOsType() == OsType.LINUX){
+            return new TerminalLinux();
+        }
+        else if(OsUtils.getOsType() == OsType.WINDOWS){
+            return new TerminalWindows();
+        }
+        return new TerminalLinux();
     }
-
-    private void executeTerminalCommand(String command) throws IOException {
-        command += "\n";
-        writer.write(command);
-        writer.flush();
-    }
-
-    protected abstract void avviaTerminale() throws IOException;
 
     private LinkedList<String> consumaLista() {
         LinkedList<String> stringheEstratte = new LinkedList<String>();
@@ -100,18 +66,18 @@ public abstract class TerminalDialog {
                 boolean isVuota = false;
 
                 while (continuaConsumo) {
-                    if (stringList.size() > 0) {
-                        stringheEstratte.add(stringList.remove());
+                    if (terminale1.getStringList().size() > 0) {
+                        stringheEstratte.add(terminale1.getStringList().remove());
                         isVuota = false;
                     }
 
-                    if (stringList.size() == 0 && !isVuota) {
+                    if (terminale1.getStringList().size() == 0 && !isVuota) {
                         time1 = new Timestamp(System.currentTimeMillis());
                         time1millis = time1.getTime();
                         isVuota = true;
                     }
 
-                    if (stringList.size() == 0 && isVuota) {
+                    if (terminale1.getStringList().size() == 0 && isVuota) {
                         time2 = new Timestamp(System.currentTimeMillis());
                         time2millis = time2.getTime();
                         diffTimeMillis = time2millis - time1millis;

@@ -20,6 +20,8 @@ Il tool Leila restituisce i ccs di un apk. Il nostro tool riceve in input due in
 //            System.out.println("Risultato: " + readInput.read());
 //        }
 
-- Si avvia un'interfaccia che ci permette di selezionare le due cartelle contenenti i ccs dell'apk originale e dell'apk offuscato. Gestire il caso in cui il path delle directory abbia degli spazi.
-- Calcolare la versione ridotta di ciascun metodo in "proc ALL" (tramite comando "min -S obseq All All_min"). Calcolare la size per il metodo originale e per il metodo ridotto. Calcoliamo la percentuale di somiglianza tra metodo originale e metodo ridotto, che ha come valore (s_o - s_r) / s_r (s_o è la size del metodo originale e s_r è la size del metodo ridotto).
+- Si avvia un'interfaccia che ci permette di selezionare la cartella contenente i ccs dell'apk. Gestire il caso in cui il path delle directory abbia degli spazi.
+- Consideriamo per ciascun metodo del CCS il metodo originale e il metodo ridotto (il metodo ridotto si ha Sostituendo nei CCS gli "invokemethodX" (dove X è un numero) con "t" (tau)).
+- Calcolare la versione ridotta di ciascun metodo in "proc ALL" (tramite comando "min -S obseq All All_min"). 
+- Calcolare la size per il metodo originale e per il metodo ridotto. Calcoliamo la percentuale di somiglianza tra metodo originale e metodo ridotto, che ha come valore (s_o - s_r) / s_r (s_o è la size del metodo originale e s_r è la size del metodo ridotto).
 - Restituire in output all'utente le statistiche sulle percentuali di somiglianza, vale a dire l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei valori delle percentuali di somiglianza dei metodi di tutti i ccs.

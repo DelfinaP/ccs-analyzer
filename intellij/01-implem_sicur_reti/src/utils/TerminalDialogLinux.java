@@ -3,21 +3,17 @@ package utils;
 import java.io.IOException;
 
 public class TerminalDialogLinux extends TerminalDialog {
-    @Override
-    protected void avviaTerminale() throws IOException {
-        process = Runtime.getRuntime().exec("/bin/bash");
-    }
+
 
     @Override
     protected void getDirPath(boolean isEsecuzioneDebug) {
-        ReadInput readInput = new ReadInput();
 
         if (isEsecuzioneDebug){
-            
+            dirPath = "/home/alessandro/Documenti/Alessandro/07-Progetto_Sicur_Reti/01-Cartella_default_elaborazione_CCS";
         }
         else {
-            System.out.println("Risultato: " + readInput.read());
-            System.out.println("Risultato: " + readInput.read());
+            ReadInput readInput = new ReadInput();
+            dirPath = readInput.read();
         }
     }
 }
