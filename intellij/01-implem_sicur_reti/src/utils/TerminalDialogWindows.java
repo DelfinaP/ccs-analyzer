@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class TerminalDialogWindows extends TerminalDialog {
 
@@ -15,5 +16,16 @@ public class TerminalDialogWindows extends TerminalDialog {
             dirPath = readInput.read();
             System.out.println("Directory: " + dirPath);
         }
+    }
+
+    @Override
+    protected LinkedList<String> getListaFile(Terminal terminale) throws IOException {
+        LinkedList<String> outputList = new LinkedList<String>();
+
+        terminale.executeTerminalCommand("dir");
+
+        outputList = terminale.consumaLista(5000);
+
+        return ;
     }
 }

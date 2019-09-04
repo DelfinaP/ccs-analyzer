@@ -37,56 +37,7 @@ public abstract class TerminalDialog {
         return new TerminalLinux();
     }
 
-    private LinkedList<String> consumaLista() {
-        LinkedList<String> stringheEstratte = new LinkedList<String>();
 
-        Thread readBufferThread = new Thread() {
-            public void run() {
-                Timestamp time1 = new Timestamp(System.currentTimeMillis());
-                Timestamp time2 = new Timestamp(System.currentTimeMillis());
-
-                long time1millis = time1.getTime();
-                long time2millis = time2.getTime();
-                long diffTimeMillis = time2millis - time1millis;
-
-                boolean continuaConsumo = true;
-                boolean isVuota = false;
-
-                while (continuaConsumo) {
-                    if (terminale1.getStringList().size() > 0) {
-                        stringheEstratte.add(terminale1.getStringList().remove());
-                        isVuota = false;
-                    }
-
-                    if (terminale1.getStringList().size() == 0 && !isVuota) {
-                        time1 = new Timestamp(System.currentTimeMillis());
-                        time1millis = time1.getTime();
-                        isVuota = true;
-                    }
-
-                    if (terminale1.getStringList().size() == 0 && isVuota) {
-                        time2 = new Timestamp(System.currentTimeMillis());
-                        time2millis = time2.getTime();
-                        diffTimeMillis = time2millis - time1millis;
-                    }
-
-                    if (diffTimeMillis > 200) {
-                        continuaConsumo = false;
-                    }
-                }
-
-                this.interrupt();
-            }
-        };
-
-        readBufferThread.start();
-        while (!readBufferThread.isInterrupted()) {
-            // Busy waiting
-            ;
-        }
-
-        return stringheEstratte;
-    }
 
     private void stampaStringList(LinkedList<String> stringList) {
         while (stringList.size() > 0) {
@@ -94,7 +45,7 @@ public abstract class TerminalDialog {
         }
     }
 
-    private void busyWaiting(int durata) {
+    public static void busyWaiting(int durata) {
         Timestamp time1 = new Timestamp(System.currentTimeMillis());
         Timestamp time2 = new Timestamp(System.currentTimeMillis());
 
@@ -120,5 +71,5 @@ public abstract class TerminalDialog {
         }
     }
 
-
+    protected abstract LinkedList<String> getListaFile(Terminal terminale) throws IOException;
 }
