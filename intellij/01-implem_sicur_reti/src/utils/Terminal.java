@@ -133,8 +133,7 @@ public abstract class Terminal{
 
     protected LinkedList<String> getListaFile(Terminal terminale1) throws IOException {
         LinkedList<String> terminalOutputList;
-        LinkedList<String> returnList = new LinkedList<String>();
-        String directoryString;
+        LinkedList<String> returnList;
 
         terminale1.startReadThread();
 
@@ -144,21 +143,12 @@ public abstract class Terminal{
 
         System.out.println("Num file: " + terminalOutputList.size());
 
-        boolean isPrimaStringa = true;
-
-        while (terminalOutputList.size() > 0) {
-            if (isPrimaStringa) {
-                popStringFromList(terminalOutputList);
-                isPrimaStringa = false;
-            }
-            else {
-                directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
-                returnList.add(directoryString);
-            }
-        }
+        returnList = buildReturnList(terminalOutputList);
 
         return returnList;
     }
+
+    protected abstract LinkedList<String> buildReturnList(LinkedList<String> terminalOutputList);
 
     protected void debugParseString() {
         String string = "123456    abcdef   123456   abcdef";

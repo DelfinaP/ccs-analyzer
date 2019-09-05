@@ -45,7 +45,7 @@ public abstract class TerminalDialog {
 
 
 
-    private static void stampaStringList(LinkedList<String> stringList) {
+    public static void stampaStringList(LinkedList<String> stringList) {
         while (stringList.size() > 0) {
             System.out.println(stringList.remove());
         }

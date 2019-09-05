@@ -32,7 +32,6 @@ public class TerminalLinux extends Terminal {
     protected String parseDirectoryString(String stringToBeParsed) {
         String parsedString;
         int indexStartName = 0;
-        int indexEndName = 0;
         int numeroBlocchi = 8;
 
         for (int i = 0; i < numeroBlocchi; i++) {
@@ -45,6 +44,25 @@ public class TerminalLinux extends Terminal {
         parsedString = stringToBeParsed.substring(indexStartName, stringToBeParsed.length());
 
         return parsedString;
+    }
+
+    @Override
+    protected LinkedList<String> buildReturnList(LinkedList<String> terminalOutputList) {
+        boolean isPrimaStringa = true;
+        String directoryString;
+        LinkedList<String> returnList = new LinkedList<String>();
+
+        while (terminalOutputList.size() > 0) {
+            if (isPrimaStringa) {
+                popStringFromList(terminalOutputList);
+                isPrimaStringa = false;
+            }
+            else {
+                directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
+                returnList.add(directoryString);
+            }
+        }
+        return returnList;
     }
 
     @Override
