@@ -3,6 +3,7 @@ package utils;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 public abstract class Terminal{
     protected Process process;
@@ -13,7 +14,7 @@ public abstract class Terminal{
     protected BufferedReader reader;
     protected BufferedWriter writer;
 
-    Thread readBufferThread;
+    protected Thread readBufferThread;
 
     LinkedList<String> stringList;
 
@@ -79,20 +80,28 @@ public abstract class Terminal{
 
                 boolean continuaConsumo = true;
                 boolean isVuota = false;
+                // diventa 'true' quando la lista ha ricevuto in passato almeno un elemento
+                boolean almeno1ElementoElaborato = false;
+
+                TerminalDialog.busyWaiting(2000);
 
                 while (continuaConsumo) {
                     if (getStringList().size() > 0) {
-                        stringheEstratte.add(getStringList().remove());
+                        almeno1ElementoElaborato = true;
+                        try {
+                            stringheEstratte.add(getStringList().remove());
+                        }
+                        catch (NoSuchElementException e) {
+                            continuaConsumo = false;
+                        }
                         isVuota = false;
                     }
-
-                    if (getStringList().size() == 0 && !isVuota) {
+                    else if (getStringList().size() == 0 && !isVuota && almeno1ElementoElaborato) {
                         time1 = new Timestamp(System.currentTimeMillis());
                         time1millis = time1.getTime();
                         isVuota = true;
                     }
-
-                    if (getStringList().size() == 0 && isVuota) {
+                    else if (getStringList().size() == 0 && isVuota && almeno1ElementoElaborato) {
                         time2 = new Timestamp(System.currentTimeMillis());
                         time2millis = time2.getTime();
                         diffTimeMillis = time2millis - time1millis;
@@ -114,5 +123,56 @@ public abstract class Terminal{
         }
 
         return stringheEstratte;
+    }
+
+    protected abstract String parseDirectoryString(String stringToBeParsed);
+
+    protected String popStringFromList(LinkedList<String> linkedList) {
+        return linkedList.remove();
+    }
+
+    protected LinkedList<String> getListaFile(Terminal terminale1) throws IOException {
+        LinkedList<String> terminalOutputList;
+        LinkedList<String> returnList = new LinkedList<String>();
+        String directoryString;
+
+        terminale1.startReadThread();
+
+        eseguiStampaContenutoDirectory();
+
+        terminalOutputList = consumaLista(1000);
+
+        System.out.println(terminalOutputList.size());
+
+        while (terminalOutputList.size() > 0) {
+//            directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
+//            returnList.add(directoryString);
+
+            System.out.println(popStringFromList(terminalOutputList));
+        }
+
+        return returnList;
+    }
+
+    protected abstract void eseguiStampaContenutoDirectory() throws IOException;
+
+    protected int vaiASpazioSuccessivo(String stringa, int indiceDiPartenza) {
+        int i = indiceDiPartenza + 1;
+
+        while (stringa.charAt(i) != ' ') {
+            i++;
+        }
+
+        return i;
+    }
+
+    protected int vaiACarattereSuccessivo(String stringa, int indiceDiPartenza) {
+        int i = indiceDiPartenza + 1;
+
+        while (stringa.charAt(i) == ' ') {
+            i++;
+        }
+
+        return i;
     }
 }

@@ -13,4 +13,10 @@ Prendiamo la lista di tutti i file nella cartella e memorizziamo i loro nomi nel
 	memorizziamo l'output in una lista 
 	scorriamo la lista e su ciascun elemento chiamiamo un metodo che ci parsa l'elemento e ci restituisce il nome del file
 	aggiungiamo il nome del file ad un'altra lista contentente i nomi dei file.
-} 
+}
+Parsing di "ls -l" -> {
+	Contiamo la presenza di 8 gruppi di spazi consecutivi. Al termine dell'ottavo inizia il nome del file.
+	Casi particolari:
+	- Se c'è un link, questo è seguito dal simbolo "->" e dal percorso di destinazione.
+	- Se ci sono spazi, il nome file si trova all'interno di apici singoli (').
+}

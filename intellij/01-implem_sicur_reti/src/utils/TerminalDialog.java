@@ -23,6 +23,10 @@ public abstract class TerminalDialog {
         getDirPath(isEsecuzioneDebug);
 
         terminale1.rimuoviFileNonCcs(dirPath);
+
+        terminale1.getListaFile(terminale1);
+
+        System.exit(0);
     }
 
     protected abstract void getDirPath(boolean isEsecuzioneDebug);
@@ -70,6 +74,4 @@ public abstract class TerminalDialog {
             terminale1.executeTerminalCommand("dir");
         }
     }
-
-    protected abstract LinkedList<String> getListaFile(Terminal terminale) throws IOException;
 }

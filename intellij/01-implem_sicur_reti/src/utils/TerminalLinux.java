@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class TerminalLinux extends Terminal {
     public TerminalLinux() throws IOException {
@@ -25,5 +26,30 @@ public class TerminalLinux extends Terminal {
         executeTerminalCommand("find . ! -name '*.ccs' -type f -exec rm -f {} +");
 
         System.out.println("File rimossi");
+    }
+
+    @Override
+    protected String parseDirectoryString(String stringToBeParsed) {
+        String parsedString;
+        int indexStartName = 0;
+        int indexEndName = 0;
+        int numeroBlocchi = 8;
+
+        for (int i = 0; i < numeroBlocchi; i++) {
+            indexStartName = vaiASpazioSuccessivo(stringToBeParsed, indexStartName);
+            indexStartName = vaiACarattereSuccessivo(stringToBeParsed, indexStartName);
+        }
+
+        // A questo punto la variabile indexStartName avra' l'indice del carattere in cui inizia il nome
+
+        // La seguente riga è uno stub provvisorio
+        parsedString = "";
+
+        return parsedString;
+    }
+
+    @Override
+    protected void eseguiStampaContenutoDirectory() throws IOException {
+        executeTerminalCommand("ls -l");
     }
 }

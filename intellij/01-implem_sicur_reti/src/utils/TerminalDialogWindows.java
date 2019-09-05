@@ -17,15 +17,4 @@ public class TerminalDialogWindows extends TerminalDialog {
             System.out.println("Directory: " + dirPath);
         }
     }
-
-    @Override
-    protected LinkedList<String> getListaFile(Terminal terminale) throws IOException {
-        LinkedList<String> outputList = new LinkedList<String>();
-
-        terminale.executeTerminalCommand("dir");
-
-        outputList = terminale.consumaLista(5000);
-
-        return ;
-    }
 }

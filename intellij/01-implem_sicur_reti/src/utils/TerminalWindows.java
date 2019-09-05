@@ -34,5 +34,13 @@ public class TerminalWindows extends Terminal{
         System.out.println("File rimossi");
     }
 
+    @Override
+    protected String parseDirectoryString(String stringToBeParsed) {
+        return null;
+    }
 
+    @Override
+    protected void eseguiStampaContenutoDirectory() throws IOException {
+        executeTerminalCommand("dir");
+    }
 }
