@@ -42,8 +42,7 @@ public class TerminalLinux extends Terminal {
 
         // A questo punto la variabile indexStartName avra' l'indice del carattere in cui inizia il nome
 
-        // La seguente riga è uno stub provvisorio
-        parsedString = "";
+        parsedString = stringToBeParsed.substring(indexStartName, stringToBeParsed.length());
 
         return parsedString;
     }

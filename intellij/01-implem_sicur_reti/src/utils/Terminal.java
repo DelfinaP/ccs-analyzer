@@ -142,16 +142,44 @@ public abstract class Terminal{
 
         terminalOutputList = consumaLista(1000);
 
-        System.out.println(terminalOutputList.size());
+        System.out.println("Num file: " + terminalOutputList.size());
+
+        boolean isPrimaStringa = true;
 
         while (terminalOutputList.size() > 0) {
-//            directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
-//            returnList.add(directoryString);
-
-            System.out.println(popStringFromList(terminalOutputList));
+            if (isPrimaStringa) {
+                popStringFromList(terminalOutputList);
+                isPrimaStringa = false;
+            }
+            else {
+                directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
+                returnList.add(directoryString);
+            }
         }
 
         return returnList;
+    }
+
+    protected void debugParseString() {
+        String string = "123456    abcdef   123456   abcdef";
+
+        int index = vaiASpazioSuccessivo(string, 0);
+        System.out.println(string.substring(index, string.length()));
+
+        index = vaiACarattereSuccessivo(string, index);
+        System.out.println(string.substring(index, string.length()));
+
+        index = vaiASpazioSuccessivo(string, index);
+        System.out.println(string.substring(index, string.length()));
+
+        index = vaiACarattereSuccessivo(string, index);
+        System.out.println(string.substring(index, string.length()));
+
+        index = vaiASpazioSuccessivo(string, index);
+        System.out.println(string.substring(index, string.length()));
+
+        index = vaiACarattereSuccessivo(string, index);
+        System.out.println(string.substring(index, string.length()));
     }
 
     protected abstract void eseguiStampaContenutoDirectory() throws IOException;

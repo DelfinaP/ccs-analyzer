@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class TerminalDialog {
-    LinkedList<String> stringheEstratte;
+    LinkedList<String> fileList;
     Terminal terminale1;
     String dirPath;
 
@@ -24,7 +24,9 @@ public abstract class TerminalDialog {
 
         terminale1.rimuoviFileNonCcs(dirPath);
 
-        terminale1.getListaFile(terminale1);
+        fileList = terminale1.getListaFile(terminale1);
+
+        TerminalDialog.stampaStringList(fileList);
 
         System.exit(0);
     }
@@ -43,7 +45,7 @@ public abstract class TerminalDialog {
 
 
 
-    private void stampaStringList(LinkedList<String> stringList) {
+    private static void stampaStringList(LinkedList<String> stringList) {
         while (stringList.size() > 0) {
             System.out.println(stringList.remove());
         }
