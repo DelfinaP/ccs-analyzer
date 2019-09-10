@@ -36,14 +36,12 @@ public class TerminalWindows extends Terminal{
     }
 
     @Override
-    protected String parseDirectoryString(String stringToBeParsed) {
+    protected String parseDirectoryString(String stringToBeParsed) throws StringIndexOutOfBoundsException{
         String parsedString;
         int indexStartName = 0;
         int numeroBlocchi = 3;
 
         for (int i = 0; i < numeroBlocchi; i++) {
-            System.out.println("string To Be Parsed:" + stringToBeParsed);
-            System.out.println("i:" + i);
             indexStartName = vaiASpazioSuccessivo(stringToBeParsed, indexStartName);
             indexStartName = vaiACarattereSuccessivo(stringToBeParsed, indexStartName);
         }
@@ -67,8 +65,12 @@ public class TerminalWindows extends Terminal{
                 count++;
             }
             else {
-                directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
-                returnList.add(directoryString);
+                try{
+                    directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
+                    returnList.add(directoryString);
+                } catch (StringIndexOutOfBoundsException e){
+                    ;
+                }
             }
         }
         return returnList;

@@ -26,7 +26,7 @@ public abstract class TerminalDialog {
 
         fileList = terminale1.getListaFile(terminale1);
 
-        TerminalDialog.stampaStringList(fileList);
+        elaboraFileList(fileList);
 
         System.exit(0);
     }
@@ -76,4 +76,26 @@ public abstract class TerminalDialog {
             terminale1.executeTerminalCommand("dir");
         }
     }
+
+    private void elaboraFileList(LinkedList<String> fileList){
+        copiaFileOriginali();
+        elaboraFileOriginali(fileList);
+
+        //elaboraMetodiRidotti();
+
+    }
+
+    protected abstract void copiaFileOriginali();
+
+    private void elaboraFileOriginali(LinkedList<String> fileList){
+        while(fileList.size() > 0){
+            elaboraSingoloFileOriginale(fileList.remove());
+        }
+    }
+
+    private void elaboraSingoloFileOriginale(String file){
+
+    }
+
+
 }

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-public abstract class Terminal{
+public abstract class Terminal {
     protected Process process;
     protected OutputStream stdin;
     protected InputStream stderr;
@@ -62,9 +62,9 @@ public abstract class Terminal{
         return stringList;
     }
 
-    protected abstract void changeDirectory (String dirPath) throws IOException;
+    protected abstract void changeDirectory(String dirPath) throws IOException;
 
-    protected abstract void rimuoviFileNonCcs(String dirPath)throws IOException;
+    protected abstract void rimuoviFileNonCcs(String dirPath) throws IOException;
 
     public LinkedList<String> consumaLista(int durata) {
         LinkedList<String> stringheEstratte = new LinkedList<String>();
@@ -90,18 +90,15 @@ public abstract class Terminal{
                         almeno1ElementoElaborato = true;
                         try {
                             stringheEstratte.add(getStringList().remove());
-                        }
-                        catch (NoSuchElementException e) {
+                        } catch (NoSuchElementException e) {
                             continuaConsumo = false;
                         }
                         isVuota = false;
-                    }
-                    else if (getStringList().size() == 0 && !isVuota && almeno1ElementoElaborato) {
+                    } else if (getStringList().size() == 0 && !isVuota && almeno1ElementoElaborato) {
                         time1 = new Timestamp(System.currentTimeMillis());
                         time1millis = time1.getTime();
                         isVuota = true;
-                    }
-                    else if (getStringList().size() == 0 && isVuota && almeno1ElementoElaborato) {
+                    } else if (getStringList().size() == 0 && isVuota && almeno1ElementoElaborato) {
                         time2 = new Timestamp(System.currentTimeMillis());
                         time2millis = time2.getTime();
                         diffTimeMillis = time2millis - time1millis;
@@ -174,7 +171,7 @@ public abstract class Terminal{
 
     protected abstract void eseguiStampaContenutoDirectory() throws IOException;
 
-    protected int vaiASpazioSuccessivo(String stringa, int indiceDiPartenza) {
+    protected int vaiASpazioSuccessivo(String stringa, int indiceDiPartenza) throws StringIndexOutOfBoundsException{
         int i = indiceDiPartenza + 1;
 
         while (stringa.charAt(i) != ' ') {

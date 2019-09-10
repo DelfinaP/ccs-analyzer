@@ -17,4 +17,9 @@ public class TerminalDialogWindows extends TerminalDialog {
             System.out.println("Directory: " + dirPath);
         }
     }
+
+    @Override
+    protected void copiaFileOriginali() {
+
+    }
 }
