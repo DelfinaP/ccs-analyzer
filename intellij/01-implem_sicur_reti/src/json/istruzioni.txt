@@ -1,0 +1,1 @@
+Per creare la versione di "parametri-template.json" specifica per la macchina attuale, creare una copia di "parametri-template.json" e chiamarla "parametri.json", dopodiché modificare il percorso al suo interno, impostandolo sulla cartella che contiene i .ccs.

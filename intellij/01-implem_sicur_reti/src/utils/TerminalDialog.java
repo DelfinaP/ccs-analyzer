@@ -1,11 +1,15 @@
 package utils;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONObject;
 import utils.except.osNotRecognizedException;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 
 public abstract class TerminalDialog {
     LinkedList<String> fileList;
@@ -15,23 +19,44 @@ public abstract class TerminalDialog {
     /**
      * Questo metodo implementa il design pattern TEMPLATE METHOD
      */
-    public void run(boolean isEsecuzioneDebug) throws IOException, osNotRecognizedException {
+    public void run() throws IOException, osNotRecognizedException, ParseException {
         terminale1 = inizializzaTerminale();
 
         terminale1.startReadThread();
 
-        getDirPath(isEsecuzioneDebug);
+        getDirPath();
 
         terminale1.rimuoviFileNonCcs(dirPath);
 
         fileList = terminale1.getListaFile(terminale1);
 
-        elaboraFileList(fileList);
+        stampaStringList(fileList);
+
+        //elaboraFileList(fileList);
 
         System.exit(0);
     }
 
-    protected abstract void getDirPath(boolean isEsecuzioneDebug);
+    private void getDirPath() throws ParseException, IOException {
+
+        Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+
+        // typecasting obj to JSONObject
+        JSONObject joIstanza = (JSONObject) objIstanza;
+
+        Map parametri = ((Map) joIstanza.get("parametri"));
+
+        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+        while (itrParametri.hasNext()) {
+            Map.Entry pairParametri = itrParametri.next();
+
+            switch (pairParametri.getKey().toString()) {
+                case "percorso_ccs_da_analizzare":
+                    dirPath = (String) pairParametri.getValue();
+                    break;
+            }
+        }
+    }
 
     private Terminal inizializzaTerminale() throws osNotRecognizedException, IOException {
         if (OsUtils.getOsType() == OsType.LINUX){
