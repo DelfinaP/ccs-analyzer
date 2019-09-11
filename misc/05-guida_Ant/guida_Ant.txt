@@ -1,0 +1,11 @@
+-- 1. Come configurare Ant
+https://stackoverflow.com/questions/32288578/installing-ant-unable-to-locate-tools-jar?rq=1
+Questa guida mostra come configurare Ant. Bisogna impostare la variabile d'ambiente JAVA_HOME. In questo link, la risposta pertinente è quella che inizia per "You are most likely missing the JAVA_HOME environment".
+Passi per configurare Ant:
+- Aggiungere alla variabile d'ambiente "Path" il percorso in cui abbiamo messo Ant (ad esempio "C:\Users\sicurezza\Documents\Alessandro\Ant\apache-ant-1.10.7\bin");
+- Creare una nuova variabile d'ambiente "JAVA_HOME" e settarla al path della JDK (ad esempio "C:\Program Files\Java\jdk1.8.0_201");
+- Chiudere e riavviare il prompt.
+
+-- 2. Tutorial Ant
+https://ant.apache.org/manual/tutorial-HelloWorldWithAnt.html#ext-libs
+Questo tutorial spiega da zero come creare ed eseguire uno script Ant, e spiega anche come includere le librerie esterne (.jar).

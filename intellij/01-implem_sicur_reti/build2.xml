@@ -1,0 +1,28 @@
+<project name="tool_ccs" default="compress">
+
+<target name="init">
+    <mkdir dir="build/classes" />
+    <mkdir dir="dist" />
+</target>
+
+<target name="compile" depends="init">
+    <javac srcdir="src" destdir="build/classes">
+        <classpath>
+            <pathelement path="lib/*.jar"/>
+        </classpath>
+    </javac>
+</target>
+
+<target name="compress" depends="compile">
+        <jar destfile="dist/clientadvisor.jar" basedir="build/classes">
+            <zipgroupfileset dir="lib/" includes="**/*.jar" />
+        </jar>
+</target>
+
+
+<target name="clean">
+    <delete dir="build" />
+    <delete dir="dist" />
+</target>
+
+</project>
