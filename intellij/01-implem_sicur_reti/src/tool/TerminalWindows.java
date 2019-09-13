@@ -19,23 +19,6 @@ public class TerminalWindows extends Terminal{
     }
 
     @Override
-    protected void rimuoviFileNonCcs(String dirPath) throws IOException {
-        System.out.println("Inizio rimozione file");
-
-        changeDirectory(dirPath);
-
-        executeTerminalCommand("mkdir cartella");
-        executeTerminalCommand("move *.ccs cartella");
-        executeTerminalCommand("del * /Q");
-        executeTerminalCommand("cd cartella");
-        executeTerminalCommand("move * ../");
-        executeTerminalCommand("cd ../");
-        executeTerminalCommand("rmdir cartella");
-
-        System.out.println("File rimossi");
-    }
-
-    @Override
     protected String parseDirectoryString(String stringToBeParsed) throws StringIndexOutOfBoundsException{
         String parsedString;
         int indexStartName = 0;

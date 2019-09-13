@@ -28,9 +28,9 @@ public abstract class TerminalDialog {
 
         terminale1.rimuoviFileNonCcs(dirPath);
 
-        fileList = terminale1.getListaFile(terminale1);
+        fileList = TerminalDialog.getListaFile(dirPath);
 
-        stampaStringList(fileList);
+        stampaFileList(fileList);
 
         //elaboraFileList(fileList);
 
@@ -68,8 +68,6 @@ public abstract class TerminalDialog {
         return new TerminalLinux();
     }
 
-
-
     public static void stampaStringList(LinkedList<String> stringList) {
         while (stringList.size() > 0) {
             System.out.println(stringList.remove());
@@ -89,6 +87,23 @@ public abstract class TerminalDialog {
             time2millis = time2.getTime();
             diffTimeMillis = time2millis - time1millis;
         }
+    }
+
+    static public LinkedList<String> getListaFile(String dirPath) {
+        LinkedList<String> fileList = new LinkedList<String>();
+
+        File folder = new File(dirPath);
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                fileList.add(listOfFiles[i].getName());
+            } else if (listOfFiles[i].isDirectory()) {
+                // Non fare nulla
+            }
+        }
+
+        return fileList;
     }
 
     private void debugTerminal() throws osNotRecognizedException, IOException {
@@ -122,5 +137,26 @@ public abstract class TerminalDialog {
 
     }
 
+    private void stampaFileList(LinkedList<String> fileList) {
+        System.out.println("Num file: " + fileList.size());
 
+        while (fileList.size() > 0) {
+            System.out.println(fileList.remove());
+        }
+    }
+
+    static public LinkedList<String> getFileNonCcs(LinkedList<String> fileList) {
+        LinkedList<String> fileNonCcsList = new LinkedList<String>();
+        String fileString;
+
+        while (fileList.size() > 0) {
+            fileString = fileList.remove();
+
+            if (!fileString.endsWith(".ccs")) {
+                fileNonCcsList.add(fileString);
+            }
+        }
+
+        return fileNonCcsList;
+    }
 }

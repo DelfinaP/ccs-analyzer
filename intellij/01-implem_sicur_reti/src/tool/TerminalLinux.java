@@ -18,17 +18,6 @@ public class TerminalLinux extends Terminal {
     }
 
     @Override
-    protected void rimuoviFileNonCcs(String dirPath) throws IOException {
-        System.out.println("Inizio rimozione file");
-
-        changeDirectory(dirPath);
-
-        executeTerminalCommand("find . ! -name '*.ccs' -type f -exec rm -f {} +");
-
-        System.out.println("File rimossi");
-    }
-
-    @Override
     protected String parseDirectoryString(String stringToBeParsed) {
         String parsedString;
         int indexStartName = 0;

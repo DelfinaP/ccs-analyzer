@@ -64,7 +64,17 @@ public abstract class Terminal {
 
     protected abstract void changeDirectory(String dirPath) throws IOException;
 
-    protected abstract void rimuoviFileNonCcs(String dirPath) throws IOException;
+    protected void rimuoviFileNonCcs(String dirPath) {
+        LinkedList<String> fileNonCcs = new LinkedList<String>();
+
+        System.out.println("Inizio rimozione file");
+
+        LinkedList<String> fileList = TerminalDialog.getListaFile(dirPath);
+
+        // Segnalibro
+
+        System.out.println("File rimossi");
+    }
 
     public LinkedList<String> consumaLista(int durata) {
         LinkedList<String> stringheEstratte = new LinkedList<String>();
@@ -126,23 +136,6 @@ public abstract class Terminal {
 
     protected String popStringFromList(LinkedList<String> linkedList) {
         return linkedList.remove();
-    }
-
-    protected LinkedList<String> getListaFile(Terminal terminale1) throws IOException {
-        LinkedList<String> terminalOutputList;
-        LinkedList<String> returnList;
-
-        terminale1.startReadThread();
-
-        eseguiStampaContenutoDirectory();
-
-        terminalOutputList = consumaLista(1000);
-
-        System.out.println("Num file: " + terminalOutputList.size());
-
-        returnList = buildReturnList(terminalOutputList);
-
-        return returnList;
     }
 
     protected abstract LinkedList<String> buildReturnList(LinkedList<String> terminalOutputList);
