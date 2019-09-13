@@ -1,4 +1,4 @@
-import utils.except.osNotRecognizedException;
+import tool.except.osNotRecognizedException;
 
 import java.io.*;
 import org.json.simple.parser.ParseException;

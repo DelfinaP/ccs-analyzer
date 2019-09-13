@@ -1,5 +1,6 @@
-import utils.*;
-import utils.except.osNotRecognizedException;
+import tool.OsUtils;
+import tool.*;
+import tool.except.osNotRecognizedException;
 
 import java.io.IOException;
 import org.json.simple.parser.ParseException;

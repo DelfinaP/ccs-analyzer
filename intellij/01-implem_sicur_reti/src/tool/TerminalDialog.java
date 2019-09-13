@@ -1,8 +1,8 @@
-package utils;
+package tool;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
-import utils.except.osNotRecognizedException;
+import tool.except.osNotRecognizedException;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;

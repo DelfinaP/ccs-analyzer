@@ -1,6 +1,6 @@
-package utils.except;
+package tool.except;
 
-import utils.OsUtils;
+import tool.OsUtils;
 
 public class osNotRecognizedException extends Throwable {
     public osNotRecognizedException() {

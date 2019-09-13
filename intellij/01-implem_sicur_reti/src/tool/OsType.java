@@ -1,4 +1,4 @@
-package utils;
+package tool;
 
 public enum OsType {
     WINDOWS,
