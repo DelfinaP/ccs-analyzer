@@ -9,3 +9,7 @@ Passi per configurare Ant:
 -- 2. Tutorial Ant
 https://ant.apache.org/manual/tutorial-HelloWorldWithAnt.html#ext-libs
 Questo tutorial spiega da zero come creare ed eseguire uno script Ant, e spiega anche come includere le librerie esterne (.jar).
+
+-- 3. Specificare file di script per Ant
+Per specificare qual è il file di script di Ant da eseguire, usare l'opzione "-f":
+    ant -f build2.xml
