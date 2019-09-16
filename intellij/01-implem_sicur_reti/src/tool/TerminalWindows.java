@@ -1,5 +1,6 @@
 package tool;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -62,5 +63,10 @@ public class TerminalWindows extends Terminal{
     @Override
     protected void eseguiStampaContenutoDirectory() throws IOException {
         executeTerminalCommand("dir");
+    }
+
+    @Override
+    protected File createFile(String dirPath, String fileString) {
+        return new File(dirPath + "\\" + fileString);
     }
 }

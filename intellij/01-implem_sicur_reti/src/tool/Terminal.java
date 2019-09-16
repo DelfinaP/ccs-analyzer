@@ -1,5 +1,7 @@
 package tool;
 
+import tool.except.erroreCancellazioneFile;
+
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -66,12 +68,34 @@ public abstract class Terminal {
 
     protected void rimuoviFileNonCcs(String dirPath) {
         LinkedList<String> fileNonCcs = new LinkedList<String>();
+        String fileString;
 
         System.out.println("Inizio rimozione file");
 
         LinkedList<String> fileList = TerminalDialog.getListaFile(dirPath);
 
-        // Segnalibro
+        while (fileList.size() > 0){
+            fileString = fileList.remove();
+
+            if (!fileString.endsWith(".ccs")){
+                fileNonCcs.add(fileString);
+            }
+        }
+
+        while (fileNonCcs.size() > 0) {
+            fileString = fileNonCcs.remove();
+
+            File fileDaCancellare = createFile(dirPath, fileString);
+
+            if (fileDaCancellare.delete()) {
+            } else {
+                try {
+                    throw new erroreCancellazioneFile(fileString);
+                } catch (tool.except.erroreCancellazioneFile erroreCancellazioneFile) {
+                    erroreCancellazioneFile.printStackTrace();
+                }
+            }
+        }
 
         System.out.println("File rimossi");
     }
@@ -163,6 +187,8 @@ public abstract class Terminal {
     }
 
     protected abstract void eseguiStampaContenutoDirectory() throws IOException;
+
+    protected abstract File createFile(String dirPath, String fileString);
 
     protected int vaiASpazioSuccessivo(String stringa, int indiceDiPartenza) throws StringIndexOutOfBoundsException{
         int i = indiceDiPartenza + 1;

@@ -1,5 +1,6 @@
 package tool;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -57,5 +58,10 @@ public class TerminalLinux extends Terminal {
     @Override
     protected void eseguiStampaContenutoDirectory() throws IOException {
         executeTerminalCommand("ls -l");
+    }
+
+    @Override
+    protected File createFile(String dirPath, String fileString) {
+        return new File(dirPath + "/" + fileString);
     }
 }
