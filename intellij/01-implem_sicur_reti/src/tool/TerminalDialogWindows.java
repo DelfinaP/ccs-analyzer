@@ -1,9 +1,15 @@
 package tool;
 
+import java.io.File;
+
 public class TerminalDialogWindows extends TerminalDialog {
+    @Override
+    protected String costruisciPath(String pathParte1, String parthParte2) {
+        return pathParte1 + "\\" + parthParte2;
+    }
 
     @Override
-    protected void copiaFileOriginali() {
-
+    protected File createFile(String dirPath, String fileString) {
+        return new File(dirPath + "\\" + fileString);
     }
 }

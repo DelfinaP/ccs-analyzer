@@ -70,7 +70,7 @@ public abstract class Terminal {
         LinkedList<String> fileNonCcs = new LinkedList<String>();
         String fileString;
 
-        System.out.println("Inizio rimozione file");
+        System.out.println("Inizio rimozione file non .ccs");
 
         LinkedList<String> fileList = TerminalDialog.getListaFile(dirPath);
 
@@ -98,7 +98,7 @@ public abstract class Terminal {
             }
         }
 
-        System.out.println("File rimossi");
+        System.out.println("File rimozione file non .ccs");
     }
 
     public LinkedList<String> consumaLista(int durata) {

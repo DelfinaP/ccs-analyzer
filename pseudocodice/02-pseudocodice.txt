@@ -8,32 +8,52 @@ else {
 }
 eseguire il cd sulla cartella specificata
 eliminare tutti quei file con formato diverso da .ccs
-Prendiamo la lista di tutti i file nella cartella e memorizziamo i loro nomi nella lista "fileList" -> {
-	eseguiamo ls -l (windows: dir)
-	memorizziamo l'output in una lista 
-	scorriamo la lista e su ciascun elemento chiamiamo un metodo che ci parsa l'elemento e ci restituisce il nome del file
-	aggiungiamo il nome del file ad un'altra lista contentente i nomi dei file.
+Prendiamo la lista di tutti i file nella cartella e memorizziamo i loro nomi nella lista "fileList";
+
+elaboraFile() {
+	copiaFileInCartelle();
+	elaboraFileOriginali(String dirPath);
+	elaboraFileConInvokemethodSostituito(String dirPath);
 }
 
-Parsing di "ls -l" -> {
-	Contiamo la presenza di 8 gruppi di spazi consecutivi. Al termine dell'ottavo inizia il nome del file.
-	Casi particolari:
-	- Se c'è un link, questo è seguito dal simbolo "->" e dal percorso di destinazione.
-	- Se ci sono spazi, il nome file si trova all'interno di apici singoli (').
+copiaFileInCartelle() {
+	crea due cartelle "file_originali" e "file_invokemethod_sostituito" e in esse copiamo i .ccs;
 }
 
-elaboraSingoloFileOriginale(String file) {
-	cerca la riga che inizia per "proc ALL";
-	in quella riga prendi i nomi dei metodi e aggiungili alla LinkedList "metodiList";
-	sul terminale "terminaleMetodiOriginali" fai la load in cwb di quel file;
-	avvia il comando per calcolare la size dei metodi che hai estratto da "proc ALL";
-	parsa l'output del comando estraendo la size;
-	memorizza le size in un oggetto singleton "sizeMetodiOriginali" che estende la classe "sizeMetodi".
-}
+/**
+  * Per ciascun .ccs calcola la size dei metodi
+  */
+elaboraFileOriginali(String dirPath) {
+	// Nel metodo "getJsonParameter" la stringa "parametri" è il nome dell'array, e "chiave" è la chiave
+	String nomeSottocartella = getJsonParameter("parametri", "chiave");
 
-elaboraFileOriginali(LinkedList<String> fileList) {
-	//per ciascun .ccs calcola la size dei metodi
-	cicla sulla filelist {
-		elaboraSingoloMetodoOriginale(fileList.remove());
+	String filePath;
+
+	cicla sulla fileList {
+		filePath = dirPath + nomeSottocartella + fileList.remove();
+		elaboraSingoloFileOriginale(filePath);
 	}
+}
+
+elaboraSingoloFileOriginale(String filePath) {
+	terminaleFile = new Terminale();
+	Su "terminaleFile" fai la load in cwb di quel file;
+	Con Java prendi la riga che inizia per "proc ALL" e in quella riga prendi i nomi dei metodi e aggiungili alla LinkedList "metodiList";
+	terminaleFile.getSizeMetodi(metodiList);
+}
+
+terminaleFile.getSizeMetodi(metodiList) {
+	String nomeMetodo;
+
+	cicla su metodiList {
+		nomeMetodo = metodiList.remove();
+
+		this.getSizeSingoloMetodo(nomeMetodo);
+	}
+}
+
+getSizeSingoloMetodo(String nomeMetodo) {
+	esegui il comando CWB per ottenere la size di "nomeMetodo"
+	int size = metodo che parsa l'output del comando estraendo la size;
+	memorizza le size in un oggetto singleton "sizeMetodi".
 }

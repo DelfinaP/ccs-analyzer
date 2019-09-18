@@ -2,6 +2,7 @@ package tool;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
+import tool.except.erroreCancellazioneFileException;
 import tool.except.osNotRecognizedException;
 import org.json.simple.parser.ParseException;
 
@@ -14,7 +15,9 @@ import java.util.Map;
 public abstract class TerminalDialog {
     LinkedList<String> fileList;
     Terminal terminale1;
-    String dirPath;
+    static String analysisDirPath;
+    static String nomeDirFileOriginali;
+    static String nomeDirFileInvokemethodSostituito;
 
     /**
      * Questo metodo implementa il design pattern TEMPLATE METHOD
@@ -26,13 +29,9 @@ public abstract class TerminalDialog {
 
         getDirPath();
 
-        terminale1.rimuoviFileNonCcs(dirPath);
+        terminale1.rimuoviFileNonCcs(analysisDirPath);
 
-        fileList = TerminalDialog.getListaFile(dirPath);
-
-        stampaFileList(fileList);
-
-        //elaboraFileList(fileList);
+        elaboraFile(fileList);
 
         System.exit(0);
     }
@@ -52,7 +51,7 @@ public abstract class TerminalDialog {
 
             switch (pairParametri.getKey().toString()) {
                 case "percorso_ccs_da_analizzare":
-                    dirPath = (String) pairParametri.getValue();
+                    analysisDirPath = (String) pairParametri.getValue();
                     break;
             }
         }
@@ -96,9 +95,12 @@ public abstract class TerminalDialog {
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
+            // Se è un file
             if (listOfFiles[i].isFile()) {
                 fileList.add(listOfFiles[i].getName());
-            } else if (listOfFiles[i].isDirectory()) {
+            }
+            // Altrimenti, se è una directory
+            else if (listOfFiles[i].isDirectory()) {
                 // Non fare nulla
             }
         }
@@ -117,20 +119,86 @@ public abstract class TerminalDialog {
         }
     }
 
-    private void elaboraFileList(LinkedList<String> fileList){
-        copiaFileOriginali();
-        elaboraFileOriginali(fileList);
+    private void elaboraFile(LinkedList<String> fileList) throws IOException, ParseException {
+        copiaFileInCartelle();
 
-        //elaboraMetodiRidotti();
-
+//        elaboraFileOriginali();
+//        elaboraFileConInvokemethodSostituito();
     }
 
-    protected abstract void copiaFileOriginali();
+    private void copiaFileInCartelle() throws IOException, ParseException {
+        Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
 
-    private void elaboraFileOriginali(LinkedList<String> fileList){
-        while(fileList.size() > 0){
-            elaboraSingoloFileOriginale(fileList.remove());
+        // typecasting obj to JSONObject
+        JSONObject joIstanza = (JSONObject) objIstanza;
+
+        Map parametri = ((Map) joIstanza.get("parametri"));
+
+        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+        while (itrParametri.hasNext()) {
+            Map.Entry pairParametri = itrParametri.next();
+
+            switch (pairParametri.getKey().toString()) {
+                case "nome_dir_file_originali":
+                    nomeDirFileOriginali = (String) pairParametri.getValue();
+                    break;
+                case "nome_dir_file_invokemethod_sostituito":
+                    nomeDirFileInvokemethodSostituito = (String) pairParametri.getValue();
+                    break;
+            }
         }
+
+        // Crea cartella per i file originali
+        String nomeCartella = costruisciPath(analysisDirPath, nomeDirFileOriginali);
+        File dir = new File(nomeCartella);
+        dir.mkdir();
+
+        // Crea cartella per i file originali
+        nomeCartella = costruisciPath(analysisDirPath, nomeDirFileInvokemethodSostituito);
+        dir = new File(nomeCartella);
+        dir.mkdir();
+
+        copiaFileInDirectory(nomeDirFileOriginali);
+        copiaFileInDirectory(nomeDirFileInvokemethodSostituito);
+        rimuoviFileInDirectory(analysisDirPath);
+    }
+
+    private void copiaFileInDirectory(String nomeDirectory) {
+        LinkedList<String> fileList = TerminalDialog.getListaFile(analysisDirPath);
+        String nomeFile;
+
+        while (fileList.size() > 0) {
+            nomeFile = fileList.remove();
+
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = new FileInputStream(costruisciPath(analysisDirPath, nomeFile));
+                os = new FileOutputStream(costruisciPath(analysisDirPath, nomeDirectory, nomeFile));
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    is.close();
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    protected abstract String costruisciPath(String pathParte1, String parthParte2);
+
+    private String costruisciPath(String pathParte1, String pathParte2, String pathParte3) {
+        return costruisciPath(costruisciPath(pathParte1, pathParte2), pathParte3);
     }
 
     private void elaboraSingoloFileOriginale(String file){
@@ -159,4 +227,43 @@ public abstract class TerminalDialog {
 
         return fileNonCcsList;
     }
+
+    private void rimuoviFileInDirectory(String directoryPath) {
+        LinkedList<String> fileList = new LinkedList<String>();
+        File fileDaCancellare;
+        String fileName;
+
+        File folder = new File(analysisDirPath);
+        File[] listOfFiles = folder.listFiles();
+
+        // Seleziona i file scartando le directory
+        for (int i = 0; i < listOfFiles.length; i++) {
+            // Se è un file
+            if (listOfFiles[i].isFile()) {
+                fileList.add(listOfFiles[i].getName());
+            }
+            // Altrimenti, se è una directory
+            else if (listOfFiles[i].isDirectory()) {
+                // Non fare nulla
+            }
+        }
+
+        // Elimina i file
+        while (fileList.size() > 0) {
+            fileName = fileList.remove();
+            fileDaCancellare = createFile(analysisDirPath, fileName);
+
+            if (fileDaCancellare.delete()) {
+                // La cancellazione ha avuto successo. Non fare niente
+            } else {
+                try {
+                    throw new erroreCancellazioneFileException(fileName);
+                } catch (erroreCancellazioneFileException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    protected abstract File createFile(String dirPath, String fileString);
 }
