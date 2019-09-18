@@ -1,6 +1,6 @@
 package tool;
 
-import tool.except.erroreCancellazioneFile;
+import tool.except.erroreCancellazioneFileException;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -88,11 +88,12 @@ public abstract class Terminal {
             File fileDaCancellare = createFile(dirPath, fileString);
 
             if (fileDaCancellare.delete()) {
+                // La cancellazione ha avuto successo. Non fare niente
             } else {
                 try {
-                    throw new erroreCancellazioneFile(fileString);
-                } catch (tool.except.erroreCancellazioneFile erroreCancellazioneFile) {
-                    erroreCancellazioneFile.printStackTrace();
+                    throw new erroreCancellazioneFileException(fileString);
+                } catch (erroreCancellazioneFileException e) {
+                    e.printStackTrace();
                 }
             }
         }
