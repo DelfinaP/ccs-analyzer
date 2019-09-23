@@ -1,5 +1,6 @@
 package tool;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import tool.except.erroreCancellazioneFileException;
@@ -10,6 +11,7 @@ import java.io.*;
 import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class TerminalDialog {
@@ -23,21 +25,43 @@ public abstract class TerminalDialog {
      * Questo metodo implementa il design pattern TEMPLATE METHOD
      */
     public void run() throws IOException, osNotRecognizedException, ParseException {
+        controlloEsistenzaJson();
+        
         terminale1 = inizializzaTerminale();
 
         terminale1.startReadThread();
 
         getDirPath();
 
-        terminale1.rimuoviFileNonCcs(analysisDirPath);
+        rimuoviFileNonCcs(analysisDirPath);
 
         elaboraFile(fileList);
 
         System.exit(0);
     }
 
-    private void getDirPath() throws ParseException, IOException {
+    private void controlloEsistenzaJson() {
+        String jsonPath = costruisciPath(System.getProperty("user.dir"), "src", "json");
+        LinkedList<String> fileList = getListaFile(jsonPath);
+        boolean fileEsiste = false;
+        String nomeFile;
 
+        while (fileList.size() > 0) {
+            nomeFile = fileList.remove();
+
+            if (nomeFile.equals("parametri.json")) {
+                fileEsiste = true;
+            }
+        }
+
+        if (!fileEsiste) {
+            System.out.println("Il file 'parametri.json' non esiste. E' necessario crearlo, " +
+                    "seguendo le istruzioni riportate nel file 'src/json/istruzioni.txt'.");
+            System.exit(0);
+        }
+    }
+
+    private void getDirPath() throws ParseException, IOException {
         Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
 
         // typecasting obj to JSONObject
@@ -57,6 +81,37 @@ public abstract class TerminalDialog {
         }
     }
 
+    protected void rimuoviFileNonCcs(String dirPath) {
+        LinkedList<String> fileNonCcs = new LinkedList<String>();
+        String fileString;
+
+        LinkedList<String> fileList = TerminalDialog.getListaFile(dirPath);
+
+        while (fileList.size() > 0){
+            fileString = fileList.remove();
+
+            if (!fileString.endsWith(".ccs")){
+                fileNonCcs.add(fileString);
+            }
+        }
+
+        while (fileNonCcs.size() > 0) {
+            fileString = fileNonCcs.remove();
+
+            File fileDaCancellare = createFile(dirPath, fileString);
+
+            if (fileDaCancellare.delete()) {
+                // La cancellazione ha avuto successo. Non fare niente
+            } else {
+                try {
+                    throw new erroreCancellazioneFileException(fileString);
+                } catch (erroreCancellazioneFileException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
     private Terminal inizializzaTerminale() throws osNotRecognizedException, IOException {
         if (OsUtils.getOsType() == OsType.LINUX){
             return new TerminalLinux();
@@ -121,8 +176,7 @@ public abstract class TerminalDialog {
 
     private void elaboraFile(LinkedList<String> fileList) throws IOException, ParseException {
         copiaFileInCartelle();
-
-//        elaboraFileOriginali();
+        elaboraFileOriginali();
 //        elaboraFileConInvokemethodSostituito();
     }
 
@@ -153,7 +207,7 @@ public abstract class TerminalDialog {
         File dir = new File(nomeCartella);
         dir.mkdir();
 
-        // Crea cartella per i file originali
+        // Crea cartella per i file invokeMethodSostituito
         nomeCartella = costruisciPath(analysisDirPath, nomeDirFileInvokemethodSostituito);
         dir = new File(nomeCartella);
         dir.mkdir();
@@ -195,14 +249,122 @@ public abstract class TerminalDialog {
         }
     }
 
+    private String getJsonParameter(String jsonObject, String chiave) throws IOException, ParseException {
+        String valore = "";
+        Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+
+        // typecasting obj to JSONObject
+        JSONObject joIstanza = (JSONObject) objIstanza;
+
+        Map parametri = ((Map) joIstanza.get(jsonObject));
+
+        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+        while (itrParametri.hasNext()) {
+            Map.Entry pairParametri = itrParametri.next();
+
+            if (pairParametri.getKey().toString().equals(chiave)) {
+                valore = (String) pairParametri.getValue();
+            }
+        }
+
+        return valore;
+    }
+
+    /**
+     * Per ciascun .ccs calcola la size dei metodi
+     */
+    private void elaboraFileOriginali() throws IOException, ParseException {
+        LinkedList<String> fileList = new LinkedList<String>();
+        String nomeSottocartella = getJsonParameter("parametri", "nome_dir_file_originali");
+
+        fileList = getListaFile(costruisciPath(analysisDirPath, nomeSottocartella));
+        String filePath;
+
+        while (fileList.size() > 0) {
+            filePath = costruisciPath(analysisDirPath, nomeSottocartella, fileList.remove());
+            elaboraSingoloFileOriginale(filePath);
+        }
+    }
+
+    LinkedList<String> getMetodiList(String filePath) throws IOException {
+        LinkedList<String> metodiList = new LinkedList<String>();
+        String stringaEstratta;
+        String methodString;
+        String procAllString = "";
+        int plusIndex = 0;
+
+        List<String> lines = FileUtils.readLines(new File(filePath));
+
+        while (lines.size() > 0) {
+            stringaEstratta = lines.remove(0);
+            if (stringaEstratta.startsWith("proc ALL")) {
+                procAllString = stringaEstratta;
+            }
+        }
+
+        //tagliamo i primi 10 caratteri
+        procAllString = procAllString.substring(10, procAllString.length());
+
+        while (esistePlus(procAllString)){
+            plusIndex = getIndexNextPlus(procAllString);
+            methodString = procAllString.substring(0, plusIndex - 1);
+            metodiList.add(methodString);
+            procAllString = procAllString.substring(plusIndex + 1, procAllString.length());
+        }
+
+        return metodiList;
+    }
+
+    private boolean esistePlus(String procAllString) {
+        boolean plusEsiste = false;
+
+        for (int i = 0; i < procAllString.length(); i++) {
+            if (procAllString.charAt(i) == '+') {
+                plusEsiste = true;
+            }
+        }
+
+        return plusEsiste;
+    }
+
+    private int getIndexNextPlus(String procAllString) {
+        int i;
+
+        for (i = 0; i < procAllString.length(); i++) {
+            if (procAllString.charAt(i) == '+') {
+                break;
+            }
+        }
+
+        return i;
+    }
+
+    private void elaboraSingoloFileOriginale(String filePath) throws IOException, osNotRecognizedException {
+        LinkedList<String> metodiList = getMetodiList(filePath);
+        String nomeMetodo;
+        Terminal terminal;
+
+        while (metodiList.size() > 0) {
+            if (OsUtils.getOsType() == OsType.LINUX) {
+                terminal = new TerminalLinux();
+            }
+            else if (OsUtils.getOsType() == OsType.WINDOWS){
+                terminal = new TerminalWindows();
+            }
+
+            nomeMetodo = metodiList.remove();
+
+            //TO DO --> Su "terminaleFile" fai la load in cwb di quel file;
+            terminal.executeTerminalCommand("change dir:");
+
+            int sizeMetodo = terminaleFile.getSizeSingoloMetodo(nomeMetodo);
+        }
+    }
+
     protected abstract String costruisciPath(String pathParte1, String parthParte2);
 
     private String costruisciPath(String pathParte1, String pathParte2, String pathParte3) {
         return costruisciPath(costruisciPath(pathParte1, pathParte2), pathParte3);
-    }
-
-    private void elaboraSingoloFileOriginale(String file){
-
     }
 
     private void stampaFileList(LinkedList<String> fileList) {

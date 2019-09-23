@@ -66,41 +66,6 @@ public abstract class Terminal {
 
     protected abstract void changeDirectory(String dirPath) throws IOException;
 
-    protected void rimuoviFileNonCcs(String dirPath) {
-        LinkedList<String> fileNonCcs = new LinkedList<String>();
-        String fileString;
-
-        System.out.println("Inizio rimozione file non .ccs");
-
-        LinkedList<String> fileList = TerminalDialog.getListaFile(dirPath);
-
-        while (fileList.size() > 0){
-            fileString = fileList.remove();
-
-            if (!fileString.endsWith(".ccs")){
-                fileNonCcs.add(fileString);
-            }
-        }
-
-        while (fileNonCcs.size() > 0) {
-            fileString = fileNonCcs.remove();
-
-            File fileDaCancellare = createFile(dirPath, fileString);
-
-            if (fileDaCancellare.delete()) {
-                // La cancellazione ha avuto successo. Non fare niente
-            } else {
-                try {
-                    throw new erroreCancellazioneFileException(fileString);
-                } catch (erroreCancellazioneFileException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        System.out.println("File rimozione file non .ccs");
-    }
-
     public LinkedList<String> consumaLista(int durata) {
         LinkedList<String> stringheEstratte = new LinkedList<String>();
 

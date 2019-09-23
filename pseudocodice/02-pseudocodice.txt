@@ -1,59 +1,58 @@
 Pseudocodice
 
-if (esecuzioneDiDebug) {
-	String stringPath = <assegno un path di default>
-}
-else {
-	Leggo una stringa inserita dall'utente alla console e la memorizzo in stringPath;
-}
-eseguire il cd sulla cartella specificata
 eliminare tutti quei file con formato diverso da .ccs
 Prendiamo la lista di tutti i file nella cartella e memorizziamo i loro nomi nella lista "fileList";
 
 elaboraFile() {
 	copiaFileInCartelle();
-	elaboraFileOriginali(String dirPath);
-	elaboraFileConInvokemethodSostituito(String dirPath);
+	elaboraFileOriginali();
+	elaboraFileConInvokemethodSostituito();
 }
 
 copiaFileInCartelle() {
 	crea due cartelle "file_originali" e "file_invokemethod_sostituito" e in esse copiamo i .ccs;
 }
 
+getJsonParameter(String jsonObject, String chiave) {
+	return <valore nel json corrispondente alla chiave 'chiave'>
+}
+
 /**
-  * Per ciascun .ccs calcola la size dei metodi
-  */
-elaboraFileOriginali(String dirPath) {
-	// Nel metodo "getJsonParameter" la stringa "parametri" è il nome dell'array, e "chiave" è la chiave
-	String nomeSottocartella = getJsonParameter("parametri", "chiave");
+ * Per ciascun .ccs calcola la size dei metodi
+ */
+elaboraFileOriginali() {
+	String nomeSottocartella = getJsonParameter("parametri", "nome_dir_file_originali");
 
 	String filePath;
 
 	cicla sulla fileList {
-		filePath = dirPath + nomeSottocartella + fileList.remove();
+		filePath = costruisciPath(analysisDirPath, nomeSottocartella, fileList.remove());
 		elaboraSingoloFileOriginale(filePath);
 	}
 }
 
-elaboraSingoloFileOriginale(String filePath) {
-	terminaleFile = new Terminale();
-	Su "terminaleFile" fai la load in cwb di quel file;
-	Con Java prendi la riga che inizia per "proc ALL" e in quella riga prendi i nomi dei metodi e aggiungili alla LinkedList "metodiList";
-	terminaleFile.getSizeMetodi(metodiList);
+LinkedList<String> getMetodiList(String filePath) {
+	Con Java apri il file presente in "filePath" e prendi la riga che inizia per "proc ALL" e in quella riga prendi i nomi dei metodi e aggiungili alla LinkedList "metodiList";
+	return metodiList;
 }
 
-terminaleFile.getSizeMetodi(metodiList) {
-	String nomeMetodo;
+elaboraSingoloFileOriginale(String filePath) {
+	LinkedList<String> metodiList = getMetodiList(filePath);
 
-	cicla su metodiList {
+	cicla su "metodiList" {
 		nomeMetodo = metodiList.remove();
-
-		this.getSizeSingoloMetodo(nomeMetodo);
+		terminaleFile = new Terminale();
+		Su "terminaleFile" fai la load in cwb di quel file;
+		int sizeMetodo = terminaleFile.getSizeSingoloMetodo(nomeMetodo);
 	}
 }
 
-getSizeSingoloMetodo(String nomeMetodo) {
+int getSizeSingoloMetodo(String nomeMetodo) {
 	esegui il comando CWB per ottenere la size di "nomeMetodo"
-	int size = metodo che parsa l'output del comando estraendo la size;
+	int size = parseOutputGetSize();
 	memorizza le size in un oggetto singleton "sizeMetodi".
+}
+
+int parseOutputGetSize() {
+	leggi l'output, fino a trovare la size del metodo. Quando trovi la size, restituiscila.
 }

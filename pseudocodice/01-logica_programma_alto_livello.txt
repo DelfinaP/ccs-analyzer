@@ -1,27 +1,5 @@
-- Logica ad alto livello
-
-Il nostro tool prende in input i ccs di due apk. I due apk sono uno originale e uno offuscato. Il tool confronta tutte le coppie di ccs analoghi (ossia i ccs tali che uno è la versione offuscata dell'altro), prende i metodi di questi due ccs e confronta tutti i metodi del primo ccs con tutti i metodi del secondo ccs (quindi valuta tutte le possibili coppie). Valutiamo la somiglianza tra ciascuna coppia di ccs.
-
-------------
-
-- Logica a medio livello
-
-Il tool Leila restituisce i ccs di un apk. Il nostro tool riceve in input due insiemi di ccs, uno del primo apk e uno del secondo apk (i due insiemi di ccs devono essere in due cartelle diverse). Come spiegato sopra, confrontiamo i ccs analoghi, dei quali confrontiamo tutte le coppie di metodi, e per ciascun metodo del primo apk scartiamo tutti i confronti col metodo del secondo apk tranne quello con valore di somiglianza più alto.
-
-------------
-
-- Funzionalità a medio livelloput = new utils.ReadInput();
-//
-//        if (isEsecuzioneDebug){
-//            ;
-//        }
-//        else {
-//            System.out.println("Risultato: " + readInput.read());
-//            System.out.println("Risultato: " + readInput.read());
-//        }
-
-- Si avvia un'interfaccia che ci permette di selezionare la cartella contenente i ccs dell'apk. Gestire il caso in cui il path delle directory abbia degli spazi.
+- All'interno di un json abbiamo memorizzato il path dela cartella contenente i .ccs da analizzare.
 - Nei CCS vi sono il metodo originale e il metodo ridotto (il metodo ridotto si ha Sostituendo nei CCS gli "invokemethodX" (dove X è un numero) con "t" (tau)).
 - Calcoliamo la size del metodo originale, poi sostituiamo gli "invokemethodX" con "t", facciamo la riduzione di ciascun metodo in "proc ALL" (tramite comando "min -S obseq All All_min") e ci calcoliamo la size del metodo ridotto.
-- Calcoliamo la percentuale di somiglianza tra metodo originale e metodo ridotto, che ha come valore (s_o - s_r) / s_r (s_o è la size del metodo originale e s_r è la size del metodo ridotto).
-- Restituire in output all'utente le statistiche sulle percentuali di somiglianza, vale a dire l'upper bound, lower bound, primo quartile (first quartile), terzo quartile (third quartile), media (mean) e mediana (median) dei valori delle percentuali di somiglianza dei metodi di tutti i ccs.
+- Memorizziamo il un singleton le size dei metodi originali e ridotti; 
+- Restituire in output all'utente le statistiche sulle size dei metodi originali e dei metodi ridotti, in particolare calcoliamo le statistiche prima escludendo il 50% dei metodi più piccoli e poi escludendo il 75% dei metodi più piccoli. Questo perchè per i metodi più piccoli la differenza tra la size dei metodi originali e dei metodi ridotti potrebbe essere poco significativa. Le statistiche da restituire riguardano il valore (s_o - s_r) / s_o * 100 (dove s_o è la size originale e s_r è la size ridotta). Di questo valore calcoliamo mediana, primo quartile e terzo quartile.
