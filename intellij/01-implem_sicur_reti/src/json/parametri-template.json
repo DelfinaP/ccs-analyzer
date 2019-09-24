@@ -1,6 +1,6 @@
 {
-  "parametri":{
-    "percorso_ccs_da_analizzare":"C:\\Users\\Piera\\Documents\\Prog_sicurezza_elaborazione_CCS\\cartella_da_analizzare",
+  "parametri" : {
+    "percorso_ccs_da_analizzare" : "",
     "nome_dir_file_originali" : "file_originali",
     "nome_dir_file_invokemethod_sostituito" : "file_invokemethod_sostituito"
   }
