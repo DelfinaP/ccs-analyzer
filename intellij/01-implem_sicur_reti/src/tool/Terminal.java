@@ -175,4 +175,9 @@ public abstract class Terminal {
 
         return i;
     }
+
+    public int getSizeSingoloMetodo(String nomeMetodo) throws IOException {
+        executeTerminalCommand("size " + nomeMetodo);
+        return 0;
+    }
 }

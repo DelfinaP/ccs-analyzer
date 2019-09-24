@@ -174,7 +174,7 @@ public abstract class TerminalDialog {
         }
     }
 
-    private void elaboraFile(LinkedList<String> fileList) throws IOException, ParseException {
+    private void elaboraFile(LinkedList<String> fileList) throws IOException, ParseException, osNotRecognizedException {
         copiaFileInCartelle();
         elaboraFileOriginali();
 //        elaboraFileConInvokemethodSostituito();
@@ -273,7 +273,7 @@ public abstract class TerminalDialog {
     /**
      * Per ciascun .ccs calcola la size dei metodi
      */
-    private void elaboraFileOriginali() throws IOException, ParseException {
+    private void elaboraFileOriginali() throws IOException, ParseException, osNotRecognizedException {
         LinkedList<String> fileList = new LinkedList<String>();
         String nomeSottocartella = getJsonParameter("parametri", "nome_dir_file_originali");
 
@@ -342,7 +342,8 @@ public abstract class TerminalDialog {
     private void elaboraSingoloFileOriginale(String filePath) throws IOException, osNotRecognizedException {
         LinkedList<String> metodiList = getMetodiList(filePath);
         String nomeMetodo;
-        Terminal terminal;
+        String nomeCartella;
+        Terminal terminal = new TerminalLinux();
 
         while (metodiList.size() > 0) {
             if (OsUtils.getOsType() == OsType.LINUX) {
@@ -354,10 +355,12 @@ public abstract class TerminalDialog {
 
             nomeMetodo = metodiList.remove();
 
-            //TO DO --> Su "terminaleFile" fai la load in cwb di quel file;
-            terminal.executeTerminalCommand("change dir:");
-
-            int sizeMetodo = terminaleFile.getSizeSingoloMetodo(nomeMetodo);
+            nomeCartella = costruisciPath(analysisDirPath, nomeDirFileOriginali);
+            terminal.executeTerminalCommand("cd " + nomeCartella);
+            terminal.executeTerminalCommand("C:\\CWB-NC\\bin\\cwb-nc.bat ccs");
+            terminal.executeTerminalCommand("load " + filePath);
+            
+            int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }
     }
 
