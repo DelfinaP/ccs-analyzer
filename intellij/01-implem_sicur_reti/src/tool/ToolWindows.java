@@ -2,7 +2,7 @@ package tool;
 
 import java.io.File;
 
-public class TerminalDialogWindows extends TerminalDialog {
+public class ToolWindows extends Tool {
     @Override
     protected String costruisciPath(String pathParte1, String parthParte2) {
         return pathParte1 + "\\" + parthParte2;

@@ -1,7 +1,5 @@
 package tool;
 
-import tool.except.erroreCancellazioneFileException;
-
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -83,7 +81,7 @@ public abstract class Terminal {
                 // diventa 'true' quando la lista ha ricevuto in passato almeno un elemento
                 boolean almeno1ElementoElaborato = false;
 
-                TerminalDialog.busyWaiting(2000);
+                Tool.busyWaiting(2000);
 
                 while (continuaConsumo) {
                     if (getStringList().size() > 0) {

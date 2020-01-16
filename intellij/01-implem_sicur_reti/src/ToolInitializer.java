@@ -5,18 +5,18 @@ import tool.except.osNotRecognizedException;
 import java.io.IOException;
 import org.json.simple.parser.ParseException;
 
-public class Tool {
+public class ToolInitializer {
 
     public void run() throws IOException, osNotRecognizedException, ParseException {
-        TerminalDialog terminalDialog;
+        Tool tool;
 
         if (OsUtils.getOsType() == OsType.LINUX) {
-            terminalDialog = new TerminalDialogLinux();
-            terminalDialog.run();
+            tool = new ToolLinux();
+            tool.run();
         }
         else if (OsUtils.getOsType() == OsType.WINDOWS){
-            terminalDialog = new TerminalDialogWindows();
-            terminalDialog.run();
+            tool = new ToolWindows();
+            tool.run();
         }
     }
 }

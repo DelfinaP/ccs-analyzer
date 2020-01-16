@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class TerminalDialog {
+public abstract class Tool {
     LinkedList<String> fileList;
     Terminal terminale1;
     static String analysisDirPath;
@@ -85,7 +85,7 @@ public abstract class TerminalDialog {
         LinkedList<String> fileNonCcs = new LinkedList<String>();
         String fileString;
 
-        LinkedList<String> fileList = TerminalDialog.getListaFile(dirPath);
+        LinkedList<String> fileList = Tool.getListaFile(dirPath);
 
         while (fileList.size() > 0){
             fileString = fileList.remove();
@@ -225,7 +225,7 @@ public abstract class TerminalDialog {
     }
 
     private void copiaFileInDirectory(String nomeDirectory) {
-        LinkedList<String> fileList = TerminalDialog.getListaFile(analysisDirPath);
+        LinkedList<String> fileList = Tool.getListaFile(analysisDirPath);
         String nomeFile;
 
         while (fileList.size() > 0) {

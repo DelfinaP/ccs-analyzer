@@ -2,7 +2,7 @@ package tool;
 
 import java.io.File;
 
-public class TerminalDialogLinux extends TerminalDialog {
+public class ToolLinux extends Tool {
     @Override
     protected String costruisciPath(String pathParte1, String parthParte2) {
         return pathParte1 + "/" + parthParte2;
