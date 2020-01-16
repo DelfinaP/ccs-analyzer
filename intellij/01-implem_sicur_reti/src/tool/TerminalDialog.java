@@ -119,6 +119,13 @@ public abstract class TerminalDialog {
         else if(OsUtils.getOsType() == OsType.WINDOWS){
             return new TerminalWindows();
         }
+        else {
+            try {
+                throw new osNotRecognizedException();
+            } catch (osNotRecognizedException e) {
+                e.printStackTrace();
+            }
+        }
         return new TerminalLinux();
     }
 
