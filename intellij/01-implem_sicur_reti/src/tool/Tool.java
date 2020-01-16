@@ -18,14 +18,14 @@ public abstract class Tool {
     LinkedList<String> fileList;
     Terminal terminale1;
     static String analysisDirPath;
-    static String nomeDirFileOriginali;
-    static String nomeDirFileInvokemethodSostituito;
+    static String nomeDirFileOriginali; // Nome directory contenente i file originali
+    static String nomeDirFileInvokemethodSostituito; // Nome directory contenent i file con invokemethod sostituito
 
     /**
-     * Questo metodo implementa il design pattern TEMPLATE METHOD
+     * Questo metodo implementa il design pattern 'Template method'
      */
     public void run() throws IOException, osNotRecognizedException, ParseException {
-        controlloEsistenzaJson();
+        controllaEsistenzaJson();
         
         terminale1 = inizializzaTerminale();
 
@@ -40,7 +40,7 @@ public abstract class Tool {
         System.exit(0);
     }
 
-    private void controlloEsistenzaJson() {
+    private void controllaEsistenzaJson() {
         String jsonPath = costruisciPath(System.getProperty("user.dir"), "src", "json");
         LinkedList<String> fileList = getListaFile(jsonPath);
         boolean fileEsiste = false;

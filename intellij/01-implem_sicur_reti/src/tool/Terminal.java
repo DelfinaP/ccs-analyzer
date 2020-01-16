@@ -19,7 +19,6 @@ public abstract class Terminal {
     LinkedList<String> stringList;
 
     public Terminal() throws IOException {
-
         avviaTerminale();
 
         stdin = process.getOutputStream();
