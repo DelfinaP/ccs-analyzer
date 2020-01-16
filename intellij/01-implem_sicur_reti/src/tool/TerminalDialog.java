@@ -350,7 +350,7 @@ public abstract class TerminalDialog {
         LinkedList<String> metodiList = getMetodiList(filePath);
         String nomeMetodo;
         String nomeCartella;
-        Terminal terminal = new TerminalLinux();
+        Terminal terminal = inizializzaTerminale();
 
         while (metodiList.size() > 0) {
             if (OsUtils.getOsType() == OsType.LINUX) {
