@@ -16,10 +16,10 @@ public abstract class Terminal {
 
     protected Thread readBufferThread;
 
-    LinkedList<String> stringList;
+    LinkedList<String> stringList; // Strings output by terminal
 
     public Terminal() throws IOException {
-        avviaTerminale();
+        setUpTerminal();
 
         stdin = process.getOutputStream();
         stderr = process.getErrorStream();
@@ -31,7 +31,7 @@ public abstract class Terminal {
         stringList = new LinkedList<String>();
     }
 
-    protected abstract void avviaTerminale() throws IOException;
+    protected abstract void setUpTerminal() throws IOException;
 
     public void startReadThread() {
         readBufferThread = new Thread() {
@@ -51,7 +51,7 @@ public abstract class Terminal {
         readBufferThread.start();
     }
 
-    public void executeTerminalCommand(String command) throws IOException {
+    public void execute(String command) throws IOException {
         command += "\n";
         writer.write(command);
         writer.flush();
@@ -61,7 +61,8 @@ public abstract class Terminal {
         return stringList;
     }
 
-    protected abstract void changeDirectory(String dirPath) throws IOException;
+    // Send command for changing directory
+    protected abstract void cd(String dirPath) throws IOException;
 
     public LinkedList<String> consumaLista(int durata) {
         LinkedList<String> stringheEstratte = new LinkedList<String>();
@@ -121,7 +122,7 @@ public abstract class Terminal {
 
     protected abstract String parseDirectoryString(String stringToBeParsed);
 
-    protected String popStringFromList(LinkedList<String> linkedList) {
+    protected String popString(LinkedList<String> linkedList) {
         return linkedList.remove();
     }
 
@@ -174,7 +175,7 @@ public abstract class Terminal {
     }
 
     public int getSizeSingoloMetodo(String nomeMetodo) throws IOException {
-        executeTerminalCommand("size " + nomeMetodo);
+        execute("size " + nomeMetodo);
         return 0;
     }
 }

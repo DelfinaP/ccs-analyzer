@@ -27,7 +27,7 @@ public abstract class Tool {
     public void run() throws IOException, osNotRecognizedException, ParseException {
         controllaEsistenzaJson();
         
-        terminale1 = inizializzaTerminale();
+        terminale1 = createTerminal();
 
         terminale1.startReadThread();
 
@@ -112,7 +112,7 @@ public abstract class Tool {
         }
     }
     
-    private Terminal inizializzaTerminale() throws osNotRecognizedException, IOException {
+    private Terminal createTerminal() throws osNotRecognizedException, IOException {
         if (OsUtils.getOsType() == OsType.LINUX){
             return new TerminalLinux();
         }
@@ -172,12 +172,12 @@ public abstract class Tool {
 
     private void debugTerminal() throws osNotRecognizedException, IOException {
         if (OsUtils.getOsType() == OsType.LINUX) {
-            terminale1.executeTerminalCommand("cd ~");
-            terminale1.executeTerminalCommand("ls -l");
+            terminale1.execute("cd ~");
+            terminale1.execute("ls -l");
         }
         else if (OsUtils.getOsType() == OsType.WINDOWS){
-            terminale1.executeTerminalCommand("cd %HOMEPATH%");
-            terminale1.executeTerminalCommand("dir");
+            terminale1.execute("cd %HOMEPATH%");
+            terminale1.execute("dir");
         }
     }
 
@@ -350,7 +350,7 @@ public abstract class Tool {
         LinkedList<String> metodiList = getMetodiList(filePath);
         String nomeMetodo;
         String nomeCartella;
-        Terminal terminal = inizializzaTerminale();
+        Terminal terminal = createTerminal();
 
         while (metodiList.size() > 0) {
             if (OsUtils.getOsType() == OsType.LINUX) {
@@ -363,9 +363,9 @@ public abstract class Tool {
             nomeMetodo = metodiList.remove();
 
             nomeCartella = costruisciPath(analysisDirPath, nomeDirFileOriginali);
-            terminal.executeTerminalCommand("cd " + nomeCartella);
-            terminal.executeTerminalCommand("C:\\CWB-NC\\bin\\cwb-nc.bat ccs");
-            terminal.executeTerminalCommand("load " + filePath);
+            terminal.execute("cd " + nomeCartella);
+            terminal.execute("C:\\CWB-NC\\bin\\cwb-nc.bat ccs");
+            terminal.execute("load " + filePath);
             
             int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }

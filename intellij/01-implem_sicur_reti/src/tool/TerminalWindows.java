@@ -10,13 +10,13 @@ public class TerminalWindows extends Terminal{
     }
 
     @Override
-    protected void avviaTerminale() throws IOException {
+    protected void setUpTerminal() throws IOException {
         process = Runtime.getRuntime().exec("cmd");
     }
 
     @Override
-    protected void changeDirectory(String dirPath) throws IOException {
-        executeTerminalCommand("cd " + dirPath);
+    protected void cd(String dirPath) throws IOException {
+        execute("cd " + dirPath);
     }
 
     @Override
@@ -45,12 +45,12 @@ public class TerminalWindows extends Terminal{
 
         while (terminalOutputList.size() > 0) {
             if (count < 3) {
-                popStringFromList(terminalOutputList);
+                popString(terminalOutputList);
                 count++;
             }
             else {
                 try{
-                    directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
+                    directoryString = parseDirectoryString(popString(terminalOutputList));
                     returnList.add(directoryString);
                 } catch (StringIndexOutOfBoundsException e){
                     ;
@@ -62,7 +62,7 @@ public class TerminalWindows extends Terminal{
 
     @Override
     protected void eseguiStampaContenutoDirectory() throws IOException {
-        executeTerminalCommand("dir");
+        execute("dir");
     }
 
     @Override

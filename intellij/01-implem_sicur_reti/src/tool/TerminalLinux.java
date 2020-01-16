@@ -9,13 +9,13 @@ public class TerminalLinux extends Terminal {
     }
 
     @Override
-    protected void avviaTerminale() throws IOException {
+    protected void setUpTerminal() throws IOException {
         process = Runtime.getRuntime().exec("/bin/bash");
     }
 
     @Override
-    protected void changeDirectory(String dirPath) throws IOException {
-        executeTerminalCommand("cd " + "\"" + dirPath + "\"");
+    protected void cd(String dirPath) throws IOException {
+        execute("cd " + "\"" + dirPath + "\"");
     }
 
     @Override
@@ -44,11 +44,11 @@ public class TerminalLinux extends Terminal {
 
         while (terminalOutputList.size() > 0) {
             if (isPrimaStringa) {
-                popStringFromList(terminalOutputList);
+                popString(terminalOutputList);
                 isPrimaStringa = false;
             }
             else {
-                directoryString = parseDirectoryString(popStringFromList(terminalOutputList));
+                directoryString = parseDirectoryString(popString(terminalOutputList));
                 returnList.add(directoryString);
             }
         }
@@ -57,7 +57,7 @@ public class TerminalLinux extends Terminal {
 
     @Override
     protected void eseguiStampaContenutoDirectory() throws IOException {
-        executeTerminalCommand("ls -l");
+        execute("ls -l");
     }
 
     @Override
