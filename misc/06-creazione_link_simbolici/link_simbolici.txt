@@ -1,0 +1,5 @@
+Per creare link simbolici in Windows usare il comando:
+mklink /D <percorso_di_destinazione> <percorso_file_originali>
+
+Per fare il change directory in Windows in un drive diverso da quello attuale (ad esempio per passare a Z:\), usare l'opzione /D ed omettere il "\" al nome dell'unità (quindi Z: e non Z:\):
+cd /D Z:
