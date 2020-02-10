@@ -1,1 +1,4 @@
+- 01. guida1, che utilizza librerie
 https://alvinalexander.com/java/java-exec-processbuilder-process-1
+- 02. guida2, che non utilizza librerie
+https://mkyong.com/java/how-to-execute-shell-command-from-java/

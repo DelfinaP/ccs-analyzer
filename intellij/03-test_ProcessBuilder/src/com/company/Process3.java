@@ -8,9 +8,10 @@ public class Process3 {
     void run() {
         // build my command as a list of strings
         List<String> command = new ArrayList<String>();
-        command.add("ls");
-        command.add("-l");
-        command.add("/var/tmp");
+        command.add("dir");
+//        command.add("ls");
+//        command.add("-l");
+//        command.add("/var/tmp");
 //        command.add("/usr/bin/ffmpeg");
 
         // execute my command
@@ -23,6 +24,9 @@ public class Process3 {
             e.printStackTrace();
         }
 
+//        if(commandExecutor == null){
+//            System.out.println("commandExecutor e' null");
+//        }
         // get the output from the command
         StringBuilder stdout = commandExecutor.getStandardOutputFromCommand();
         StringBuilder stderr = commandExecutor.getStandardErrorFromCommand();

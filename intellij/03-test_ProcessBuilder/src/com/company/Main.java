@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public class Main {
 
     public static void main(String[] args) {
-        Process3 process = new Process3();
+        Process4 process = new Process4();
         process.run();
     }
 }
