@@ -1,1 +1,1 @@
-La modifica alle classi terminale, per sostituire l'implementazione con busy waiting con un'implementazione senza di esso, è iniziata il 10 febbraio 2020 alle 9.28
+La modifica alle classi terminale, per sostituire l'implementazione con busy waiting con un'implementazione senza di esso, è iniziata il 12 febbraio 2020 alle 9:32.

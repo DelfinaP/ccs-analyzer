@@ -1,123 +1,169 @@
 package tool;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.*;
-import java.sql.Timestamp;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 public abstract class Terminal {
     protected Process process;
-    protected OutputStream stdin;
-    protected InputStream stderr;
-    protected InputStream stdout;
-
-    protected BufferedReader reader;
-    protected BufferedWriter writer;
+    protected LinkedList<String> commandsList;
+    protected String batchExtension;
+    protected String nomeDirFileBatch;
+    protected boolean isExecuted;
 
     protected Thread readBufferThread;
 
-    LinkedList<String> stringList; // Strings output by terminal
-
     public Terminal() throws IOException {
-        setUpTerminal();
-
-        stdin = process.getOutputStream();
-        stderr = process.getErrorStream();
-        stdout = process.getInputStream();
-
-        reader = new BufferedReader(new InputStreamReader(stdout));
-        writer = new BufferedWriter(new OutputStreamWriter(stdin));
-
-        stringList = new LinkedList<String>();
+        commandsList = new LinkedList<String>();
+        isExecuted = false;
     }
 
-    protected abstract void setUpTerminal() throws IOException;
+    /**
+     * Add command to be executed. The command is not executed immediately,
+     * instead it is inserted in a queue, and at a certain point the commands
+     * are executed one after the other.
+     */
+    protected void addCommand(String command) {
+        commandsList.add(command);
+    }
 
-    public void startReadThread() {
-        readBufferThread = new Thread() {
-            public void run() {
-                try {
-                    String line;
-                    // Leggiamo con readLine() e aggiungiamo alla lista
-                    while ((line = reader.readLine()) != null) {
-                        stringList.add(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+    /**
+     * Execute commands contained in the queue.
+     */
+    protected void executeCommands() {
+        if (!isExecuted) {
+            Object objIstanza = null;
+            try {
+                objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // typecasting obj to JSONObject
+            JSONObject joIstanza = (JSONObject) objIstanza;
+
+            Map parametri = ((Map) joIstanza.get("parametri"));
+
+            Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+            while (itrParametri.hasNext()) {
+                Map.Entry pairParametri = itrParametri.next();
+
+                switch (pairParametri.getKey().toString()) {
+                    case "nome_dir_file_batch":
+                        nomeDirFileBatch = (String) pairParametri.getValue();
+                        break;
                 }
             }
-        };
 
-        readBufferThread.start();
+            String nameBatchFile = createFile();
+
+            executeBatchFile(nameBatchFile);
+
+            deleteBatchFile(nameBatchFile);
+        }
     }
 
-    public void execute(String command) throws IOException {
-        command += "\n";
-        writer.write(command);
-        writer.flush();
+    protected void deleteBatchFile(String nameBatchFile) {
+        File f = new File(costruisciPath(nomeDirFileBatch, nameBatchFile));
+
+        f.delete();
     }
 
-    public LinkedList<String> getStringList() {
-        return stringList;
+    protected abstract void executeBatchFile(String nameBatchFile);
+
+    protected String createFile() {
+        String nameBatchFile = defineBatchFileName();
+
+        String batchFileName = tryToCreateBatchFile(nameBatchFile);
+
+        return nameBatchFile;
     }
 
-    // Send command for changing directory
-    protected abstract void cd(String dirPath) throws IOException;
+    protected String tryToCreateBatchFile(String nameBatchFile) {
+        List<String> commands = commandsList;
+        Path file = Paths.get(costruisciPath(nomeDirFileBatch, nameBatchFile));
+        try {
+            Files.write(file, commands, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            createFile();
+        }
+        return nameBatchFile;
+    }
 
-    public LinkedList<String> consumaLista(int durata) {
-        LinkedList<String> stringheEstratte = new LinkedList<String>();
+    protected String defineBatchFileName() {
+        LinkedList<String> fileList = new LinkedList<String>();
 
-        Thread readBufferThread = new Thread() {
-            public void run() {
-                Timestamp time1 = new Timestamp(System.currentTimeMillis());
-                Timestamp time2 = new Timestamp(System.currentTimeMillis());
+        File folder = new File(nomeDirFileBatch);
+        File[] listOfFiles = folder.listFiles();
 
-                long time1millis = time1.getTime();
-                long time2millis = time2.getTime();
-                long diffTimeMillis = time2millis - time1millis;
-
-                boolean continuaConsumo = true;
-                boolean isVuota = false;
-                // diventa 'true' quando la lista ha ricevuto in passato almeno un elemento
-                boolean almeno1ElementoElaborato = false;
-
-                Tool.busyWaiting(2000);
-
-                while (continuaConsumo) {
-                    if (getStringList().size() > 0) {
-                        almeno1ElementoElaborato = true;
-                        try {
-                            stringheEstratte.add(getStringList().remove());
-                        } catch (NoSuchElementException e) {
-                            continuaConsumo = false;
-                        }
-                        isVuota = false;
-                    } else if (getStringList().size() == 0 && !isVuota && almeno1ElementoElaborato) {
-                        time1 = new Timestamp(System.currentTimeMillis());
-                        time1millis = time1.getTime();
-                        isVuota = true;
-                    } else if (getStringList().size() == 0 && isVuota && almeno1ElementoElaborato) {
-                        time2 = new Timestamp(System.currentTimeMillis());
-                        time2millis = time2.getTime();
-                        diffTimeMillis = time2millis - time1millis;
-                    }
-
-                    if (diffTimeMillis > durata) {
-                        continuaConsumo = false;
-                    }
-                }
-
-                this.interrupt();
+        for (int i = 0; i < listOfFiles.length; i++) {
+            // Se è un file
+            if (listOfFiles[i].isFile()) {
+                fileList.add(listOfFiles[i].getName());
             }
-        };
-
-        readBufferThread.start();
-        while (!readBufferThread.isInterrupted()) {
-            // Busy waiting
-            ;
+            // Altrimenti, se è una directory
+            else if (listOfFiles[i].isDirectory()) {
+                // Non fare nulla
+            }
         }
 
-        return stringheEstratte;
+        boolean nameFound = false;
+        int candidateName = 1;
+
+        while (!nameFound) {
+            for (int i = 0; i < fileList.size(); i++) {
+                String completeName = Integer.toString(candidateName) + "." + batchExtension;
+                if (fileList.get(i) == completeName) {
+                    // nameFound resta false
+                }
+                else {
+                    nameFound = true;
+                    break;
+                }
+            }
+            nameFound = true;
+        }
+
+        String batchFileName = Integer.toString(candidateName) + "." + batchExtension;
+
+        return batchFileName;
+    }
+
+    protected LinkedList<String> getTerminalOutput() {
+        LinkedList<String> commandList = new LinkedList<String>();
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
+
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                commandList.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int exitVal = 0;
+        try {
+            exitVal = process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (exitVal == 0) {
+            return commandList;
+        } else {
+            return null;
+        }
     }
 
     protected abstract String parseDirectoryString(String stringToBeParsed);
@@ -150,8 +196,6 @@ public abstract class Terminal {
         System.out.println(string.substring(index, string.length()));
     }
 
-    protected abstract void eseguiStampaContenutoDirectory() throws IOException;
-
     protected abstract File createFile(String dirPath, String fileString);
 
     protected int vaiASpazioSuccessivo(String stringa, int indiceDiPartenza) throws StringIndexOutOfBoundsException{
@@ -174,8 +218,5 @@ public abstract class Terminal {
         return i;
     }
 
-    public int getSizeSingoloMetodo(String nomeMetodo) throws IOException {
-        execute("size " + nomeMetodo);
-        return 0;
-    }
+    protected abstract String costruisciPath(String pathParte1, String parthParte2);
 }

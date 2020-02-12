@@ -6,16 +6,7 @@ import java.util.LinkedList;
 
 public class TerminalLinux extends Terminal {
     public TerminalLinux() throws IOException {
-    }
-
-    @Override
-    protected void setUpTerminal() throws IOException {
-        process = Runtime.getRuntime().exec("/bin/bash");
-    }
-
-    @Override
-    protected void cd(String dirPath) throws IOException {
-        execute("cd " + "\"" + dirPath + "\"");
+        batchExtension = "sh";
     }
 
     @Override
@@ -56,12 +47,22 @@ public class TerminalLinux extends Terminal {
     }
 
     @Override
-    protected void eseguiStampaContenutoDirectory() throws IOException {
-        execute("ls -l");
+    protected File createFile(String dirPath, String fileString) {
+        return new File(dirPath + "/" + fileString);
     }
 
     @Override
-    protected File createFile(String dirPath, String fileString) {
-        return new File(dirPath + "/" + fileString);
+    protected String costruisciPath(String pathParte1, String parthParte2) {
+        return pathParte1 + "/" + parthParte2;
+    }
+
+    protected void executeBatchFile(String nameBatchFile) {
+        try {
+            process = Runtime.getRuntime().exec(costruisciPath(nomeDirFileBatch, nameBatchFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        isExecuted = true;
     }
 }

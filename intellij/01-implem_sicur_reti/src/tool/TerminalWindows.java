@@ -7,16 +7,7 @@ import java.util.LinkedList;
 public class TerminalWindows extends Terminal{
 
     public TerminalWindows() throws IOException {
-    }
-
-    @Override
-    protected void setUpTerminal() throws IOException {
-        process = Runtime.getRuntime().exec("cmd");
-    }
-
-    @Override
-    protected void cd(String dirPath) throws IOException {
-        execute("cd " + dirPath);
+        batchExtension = "bat";
     }
 
     @Override
@@ -61,12 +52,22 @@ public class TerminalWindows extends Terminal{
     }
 
     @Override
-    protected void eseguiStampaContenutoDirectory() throws IOException {
-        execute("dir");
+    protected File createFile(String dirPath, String fileString) {
+        return new File(dirPath + "\\" + fileString);
     }
 
     @Override
-    protected File createFile(String dirPath, String fileString) {
-        return new File(dirPath + "\\" + fileString);
+    protected String costruisciPath(String pathParte1, String parthParte2) {
+        return pathParte1 + "\\" + parthParte2;
+    }
+
+    protected void executeBatchFile(String nameBatchFile) {
+        try {
+            process = Runtime.getRuntime().exec("cmd /c \"\" " + costruisciPath(nomeDirFileBatch, nameBatchFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        isExecuted = true;
     }
 }

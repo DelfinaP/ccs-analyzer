@@ -1,0 +1,23 @@
+/**
+ * Add command to be executed. The command is not executed immediately,
+ * instead it is inserted in a queue, and at a certain point the commands
+ * are executed one after the other.
+ */
+addCommand(String command) {
+	// Aggiungi "command" nella LinkedList.
+}
+
+/**
+ * Execute commands contained in the queue.
+ */
+executeCommands() {
+	// Crea file batch. Il nome del file batch sarà "1", oppure sarà "2" se "1" è già occupato, oppure "3", e così via.
+	// Inserisci i comandi contenuti nella LinkedList nel file
+	// Esegui il file batch
+	// Cancella il file batch
+}
+
+/**
+ * Get the strings returned as output by the terminal.
+ */
+getTerminalOutput()

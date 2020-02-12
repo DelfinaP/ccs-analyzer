@@ -20,6 +20,7 @@ public abstract class Tool {
     static String analysisDirPath;
     static String nomeDirFileOriginali; // Nome directory contenente i file originali
     static String nomeDirFileInvokemethodSostituito; // Nome directory contenent i file con invokemethod sostituito
+    static String percorsoCwb;
 
     /**
      * Questo metodo implementa il design pattern 'Template method'
@@ -28,8 +29,6 @@ public abstract class Tool {
         controllaEsistenzaJson();
         
         terminale1 = createTerminal();
-
-        terminale1.startReadThread();
 
         getDirPath();
 
@@ -187,15 +186,22 @@ public abstract class Tool {
 //        elaboraFileConInvokemethodSostituito();
     }
 
-    private void copiaFileInCartelle() throws IOException, ParseException {
-        Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+    private void copiaFileInCartelle() {
+        Object objIstanza = null;
+        try {
+            objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         // typecasting obj to JSONObject
         JSONObject joIstanza = (JSONObject) objIstanza;
 
-        Map parametri = ((Map) joIstanza.get("parametri"));
+        Map jsonObject = ((Map) joIstanza.get("parametri"));
 
-        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+        Iterator<Map.Entry> itrParametri = jsonObject.entrySet().iterator();
         while (itrParametri.hasNext()) {
             Map.Entry pairParametri = itrParametri.next();
 
@@ -363,13 +369,18 @@ public abstract class Tool {
             nomeMetodo = metodiList.remove();
 
             nomeCartella = costruisciPath(analysisDirPath, nomeDirFileOriginali);
-            terminal.execute("cd " + nomeCartella);
-            terminal.execute("C:\\CWB-NC\\bin\\cwb-nc.bat ccs");
+
+            terminal.addCommand("cd " + nomeCartella);
+
+            startCwb(terminal);
+
             terminal.execute("load " + filePath);
-            
+
             int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }
     }
+
+    protected abstract void startCwb(Terminal terminal);
 
     protected abstract String costruisciPath(String pathParte1, String parthParte2);
 

@@ -1,34 +1,25 @@
-package tool;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ToolWindows extends Tool {
-    @Override
-    protected String costruisciPath(String pathParte1, String parthParte2) {
-        return pathParte1 + "\\" + parthParte2;
-    }
+public class Main {
 
-    @Override
-    protected File createFile(String dirPath, String fileString) {
-        return new File(dirPath + "\\" + fileString);
-    }
+    static String percorsoCwb;
 
-    @Override
-    protected void startCwb(Terminal terminal) {
+    public static void main(String[] args) {
         Object objIstanza = null;
         try {
-            objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+            try {
+                objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -48,6 +39,6 @@ public class ToolWindows extends Tool {
             }
         }
 
-        terminal.addCommand(percorsoCwb + " ccs");
+        System.out.println(percorsoCwb);
     }
 }
