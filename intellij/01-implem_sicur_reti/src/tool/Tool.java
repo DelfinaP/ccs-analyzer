@@ -374,7 +374,7 @@ public abstract class Tool {
 
             startCwb(terminal);
 
-            terminal.execute("load " + filePath);
+            terminal.addCommand("load " + filePath);
 
             int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }

@@ -2,6 +2,8 @@
   "parametri" : {
     "percorso_ccs_da_analizzare" : "",
     "nome_dir_file_originali" : "file_originali",
-    "nome_dir_file_invokemethod_sostituito" : "file_invokemethod_sostituito"
+    "nome_dir_file_invokemethod_sostituito" : "file_invokemethod_sostituito",
+    "nome_dir_file_batch" : "",
+    "percorso_cwb" : ""
   }
 } 
