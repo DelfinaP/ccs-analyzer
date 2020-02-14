@@ -47,11 +47,6 @@ public class TerminalLinux extends Terminal {
     }
 
     @Override
-    protected File createFile(String dirPath, String fileString) {
-        return new File(dirPath + "/" + fileString);
-    }
-
-    @Override
     protected String costruisciPath(String pathParte1, String parthParte2) {
         return pathParte1 + "/" + parthParte2;
     }

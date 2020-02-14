@@ -23,6 +23,31 @@ public abstract class Terminal {
     public Terminal() throws IOException {
         commandsList = new LinkedList<String>();
         isExecuted = false;
+
+        Object objIstanza = null;
+        try {
+            objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // typecasting obj to JSONObject
+        JSONObject joIstanza = (JSONObject) objIstanza;
+
+        Map parametri = ((Map) joIstanza.get("parametri"));
+
+        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+        while (itrParametri.hasNext()) {
+            Map.Entry pairParametri = itrParametri.next();
+
+            switch (pairParametri.getKey().toString()) {
+                case "nome_dir_file_batch":
+                    nomeDirFileBatch = (String) pairParametri.getValue();
+                    break;
+            }
+        }
     }
 
     /**
@@ -30,57 +55,24 @@ public abstract class Terminal {
      * instead it is inserted in a queue, and at a certain point the commands
      * are executed one after the other.
      */
-    protected void addCommand(String command) {
+    public void addCommand(String command) {
         commandsList.add(command);
     }
 
     /**
      * Execute commands contained in the queue.
      */
-    protected void executeCommands() {
+    public void executeCommands() {
         if (!isExecuted) {
-            Object objIstanza = null;
-            try {
-                objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            // typecasting obj to JSONObject
-            JSONObject joIstanza = (JSONObject) objIstanza;
-
-            Map parametri = ((Map) joIstanza.get("parametri"));
-
-            Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
-            while (itrParametri.hasNext()) {
-                Map.Entry pairParametri = itrParametri.next();
-
-                switch (pairParametri.getKey().toString()) {
-                    case "nome_dir_file_batch":
-                        nomeDirFileBatch = (String) pairParametri.getValue();
-                        break;
-                }
-            }
-
             String nameBatchFile = createFile();
 
             executeBatchFile(nameBatchFile);
-
-            deleteBatchFile(nameBatchFile);
         }
-    }
-
-    protected void deleteBatchFile(String nameBatchFile) {
-        File f = new File(costruisciPath(nomeDirFileBatch, nameBatchFile));
-
-        f.delete();
     }
 
     protected abstract void executeBatchFile(String nameBatchFile);
 
-    protected String createFile() {
+    public String createFile() {
         String nameBatchFile = defineBatchFileName();
 
         String batchFileName = tryToCreateBatchFile(nameBatchFile);
@@ -116,29 +108,30 @@ public abstract class Terminal {
             }
         }
 
-        boolean nameFound = false;
         int candidateName = 1;
+        String completeName = "";
 
-        while (!nameFound) {
+        while (true) {
+            completeName = Integer.toString(candidateName) + "." + batchExtension;
+            boolean nameOccupied = false;
+
             for (int i = 0; i < fileList.size(); i++) {
-                String completeName = Integer.toString(candidateName) + "." + batchExtension;
-                if (fileList.get(i) == completeName) {
-                    // nameFound resta false
-                }
-                else {
-                    nameFound = true;
-                    break;
+                if (fileList.get(i).equals(completeName)) {
+                    nameOccupied = true;
                 }
             }
-            nameFound = true;
+            if (!nameOccupied) {
+                break;
+            }
+            candidateName++;
         }
 
-        String batchFileName = Integer.toString(candidateName) + "." + batchExtension;
+        completeName = Integer.toString(candidateName) + "." + batchExtension;
 
-        return batchFileName;
+        return completeName;
     }
 
-    protected LinkedList<String> getTerminalOutput() {
+    public LinkedList<String> getTerminalOutput() {
         LinkedList<String> commandList = new LinkedList<String>();
 
         BufferedReader reader = new BufferedReader(
@@ -196,8 +189,6 @@ public abstract class Terminal {
         System.out.println(string.substring(index, string.length()));
     }
 
-    protected abstract File createFile(String dirPath, String fileString);
-
     protected int vaiASpazioSuccessivo(String stringa, int indiceDiPartenza) throws StringIndexOutOfBoundsException{
         int i = indiceDiPartenza + 1;
 
@@ -219,4 +210,9 @@ public abstract class Terminal {
     }
 
     protected abstract String costruisciPath(String pathParte1, String parthParte2);
+
+    public int getSizeSingoloMetodo(String nomeMetodo) {
+        addCommand("size " + nomeMetodo);
+        return 0;
+    }
 }

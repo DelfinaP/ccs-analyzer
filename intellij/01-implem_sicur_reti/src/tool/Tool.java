@@ -21,6 +21,36 @@ public abstract class Tool {
     static String nomeDirFileOriginali; // Nome directory contenente i file originali
     static String nomeDirFileInvokemethodSostituito; // Nome directory contenent i file con invokemethod sostituito
     static String percorsoCwb;
+    static String nomeDirFileBatch;
+
+    public Tool() {
+        Object objIstanza = null;
+        try {
+            objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // typecasting obj to JSONObject
+        JSONObject joIstanza = (JSONObject) objIstanza;
+
+        Map parametri = ((Map) joIstanza.get("parametri"));
+
+        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
+        while (itrParametri.hasNext()) {
+            Map.Entry pairParametri = itrParametri.next();
+
+            switch (pairParametri.getKey().toString()) {
+                case "nome_dir_file_batch":
+                    nomeDirFileBatch = (String) pairParametri.getValue();
+                    break;
+            }
+        }
+
+        deleteBatchFile();
+    }
 
     /**
      * Questo metodo implementa il design pattern 'Template method'
@@ -37,6 +67,23 @@ public abstract class Tool {
         elaboraFile(fileList);
 
         System.exit(0);
+    }
+
+    protected void deleteBatchFile() {
+        File folder = new File(nomeDirFileBatch);
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            // Se è un file
+            if (listOfFiles[i].isFile()) {
+                File f = new File(costruisciPath(nomeDirFileBatch, listOfFiles[i].getName()));
+                f.delete();
+            }
+            // Altrimenti, se è una directory
+            else if (listOfFiles[i].isDirectory()) {
+                // Non fare nulla
+            }
+        }
     }
 
     private void controllaEsistenzaJson() {
@@ -171,12 +218,12 @@ public abstract class Tool {
 
     private void debugTerminal() throws osNotRecognizedException, IOException {
         if (OsUtils.getOsType() == OsType.LINUX) {
-            terminale1.execute("cd ~");
-            terminale1.execute("ls -l");
+            terminale1.addCommand("cd ~");
+            terminale1.addCommand("ls -l");
         }
         else if (OsUtils.getOsType() == OsType.WINDOWS){
-            terminale1.execute("cd %HOMEPATH%");
-            terminale1.execute("dir");
+            terminale1.addCommand("cd %HOMEPATH%");
+            terminale1.addCommand("dir");
         }
     }
 
@@ -375,6 +422,10 @@ public abstract class Tool {
             startCwb(terminal);
 
             terminal.addCommand("load " + filePath);
+
+            terminal.executeCommands();
+
+            stampaStringList(terminal.getTerminalOutput());
 
             int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }
