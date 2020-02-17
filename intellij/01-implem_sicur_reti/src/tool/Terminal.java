@@ -66,9 +66,13 @@ public abstract class Terminal {
         if (!isExecuted) {
             String nameBatchFile = createFile();
 
+            makeBatchFileExecutable(nomeDirFileBatch, nameBatchFile);
+
             executeBatchFile(nameBatchFile);
         }
     }
+
+    protected abstract void makeBatchFileExecutable(String dirPath, String fileName);
 
     protected abstract void executeBatchFile(String nameBatchFile);
 

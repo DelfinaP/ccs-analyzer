@@ -11,6 +11,11 @@ public class TerminalWindows extends Terminal{
     }
 
     @Override
+    protected void makeBatchFileExecutable(String dirPath, String fileName) {
+        // In Windows it is not necessary doing anything.
+    }
+
+    @Override
     protected String parseDirectoryString(String stringToBeParsed) throws StringIndexOutOfBoundsException{
         String parsedString;
         int indexStartName = 0;

@@ -1,5 +1,8 @@
 package tool;
 
+import utils.CommandRunner;
+import utils.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -7,6 +10,14 @@ import java.util.LinkedList;
 public class TerminalLinux extends Terminal {
     public TerminalLinux() throws IOException {
         batchExtension = "sh";
+    }
+
+    @Override
+    protected void makeBatchFileExecutable(String dirPath, String fileName) {
+        String escapedDirPath = FileUtils.substituteSpacesWithEscapeChars(dirPath);
+        String escapedFileName = FileUtils.substituteSpacesWithEscapeChars(fileName);
+
+        CommandRunner.runCommand("chmod +x " + escapedDirPath + "/" + escapedFileName);
     }
 
     @Override
