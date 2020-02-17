@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import tool.exceptions.erroreCancellazioneFileException;
 import tool.exceptions.osNotRecognizedException;
 import org.json.simple.parser.ParseException;
+import utils.JsonUtils;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -24,30 +25,7 @@ public abstract class Tool {
     static String nomeDirFileBatch;
 
     public Tool() {
-        Object objIstanza = null;
-        try {
-            objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // typecasting obj to JSONObject
-        JSONObject joIstanza = (JSONObject) objIstanza;
-
-        Map parametri = ((Map) joIstanza.get("parametri"));
-
-        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
-        while (itrParametri.hasNext()) {
-            Map.Entry pairParametri = itrParametri.next();
-
-            switch (pairParametri.getKey().toString()) {
-                case "nome_dir_file_batch":
-                    nomeDirFileBatch = (String) pairParametri.getValue();
-                    break;
-            }
-        }
+        nomeDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_batch");
 
         deleteBatchFile();
     }
@@ -108,23 +86,7 @@ public abstract class Tool {
     }
 
     private void getDirPath() throws ParseException, IOException {
-        Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
-
-        // typecasting obj to JSONObject
-        JSONObject joIstanza = (JSONObject) objIstanza;
-
-        Map parametri = ((Map) joIstanza.get("parametri"));
-
-        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
-        while (itrParametri.hasNext()) {
-            Map.Entry pairParametri = itrParametri.next();
-
-            switch (pairParametri.getKey().toString()) {
-                case "percorso_ccs_da_analizzare":
-                    analysisDirPath = (String) pairParametri.getValue();
-                    break;
-            }
-        }
+        analysisDirPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_ccs_da_analizzare");
     }
 
     protected void rimuoviFileNonCcs(String dirPath) {
@@ -234,33 +196,8 @@ public abstract class Tool {
     }
 
     private void copiaFileInCartelle() {
-        Object objIstanza = null;
-        try {
-            objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // typecasting obj to JSONObject
-        JSONObject joIstanza = (JSONObject) objIstanza;
-
-        Map jsonObject = ((Map) joIstanza.get("parametri"));
-
-        Iterator<Map.Entry> itrParametri = jsonObject.entrySet().iterator();
-        while (itrParametri.hasNext()) {
-            Map.Entry pairParametri = itrParametri.next();
-
-            switch (pairParametri.getKey().toString()) {
-                case "nome_dir_file_originali":
-                    nomeDirFileOriginali = (String) pairParametri.getValue();
-                    break;
-                case "nome_dir_file_invokemethod_sostituito":
-                    nomeDirFileInvokemethodSostituito = (String) pairParametri.getValue();
-                    break;
-            }
-        }
+        nomeDirFileOriginali = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_originali");
+        nomeDirFileInvokemethodSostituito = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_invokemethod_sostituito");
 
         // Crea cartella per i file originali
         String nomeCartella = costruisciPath(analysisDirPath, nomeDirFileOriginali);
@@ -311,21 +248,8 @@ public abstract class Tool {
 
     private String getJsonParameter(String jsonObject, String chiave) throws IOException, ParseException {
         String valore = "";
-        Object objIstanza = new JSONParser().parse(new FileReader("src/json/parametri.json"));
 
-        // typecasting obj to JSONObject
-        JSONObject joIstanza = (JSONObject) objIstanza;
-
-        Map parametri = ((Map) joIstanza.get(jsonObject));
-
-        Iterator<Map.Entry> itrParametri = parametri.entrySet().iterator();
-        while (itrParametri.hasNext()) {
-            Map.Entry pairParametri = itrParametri.next();
-
-            if (pairParametri.getKey().toString().equals(chiave)) {
-                valore = (String) pairParametri.getValue();
-            }
-        }
+        valore = JsonUtils.readValue("src/json/parametri.json", jsonObject, chiave);
 
         return valore;
     }

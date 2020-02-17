@@ -17,7 +17,7 @@ public class JsonUtils {
      *                           the json. Example value: <code>parameters</code>
      * @param   keyName   The name of the key positioned inside the object <code>jsonObjectName</code>
      */
-    public void readValue(String jsonPath, String jsonObjectName, String keyName) {
+    public static String readValue(String jsonPath, String jsonObjectName, String keyName) {
         String value = "";
         String keyExtracted = "";
 
@@ -44,5 +44,7 @@ public class JsonUtils {
                 value = (String) pairParametri.getValue();
             }
         }
+
+        return value;
     }
 }
