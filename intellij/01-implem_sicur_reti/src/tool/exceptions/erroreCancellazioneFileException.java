@@ -1,4 +1,4 @@
-package tool.except;
+package tool.exceptions;
 
 public class erroreCancellazioneFileException extends Throwable {
     public erroreCancellazioneFileException(String fileString){

@@ -1,6 +1,6 @@
 import tool.OsUtils;
 import tool.*;
-import tool.except.osNotRecognizedException;
+import tool.exceptions.osNotRecognizedException;
 
 import java.io.IOException;
 import org.json.simple.parser.ParseException;

@@ -1,7 +1,6 @@
 package tool;
 
-import tool.OsType;
-import tool.except.osNotRecognizedException;
+import tool.exceptions.osNotRecognizedException;
 
 public class OsUtils
 {

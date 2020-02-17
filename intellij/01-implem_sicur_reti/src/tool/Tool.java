@@ -3,8 +3,8 @@ package tool;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
-import tool.except.erroreCancellazioneFileException;
-import tool.except.osNotRecognizedException;
+import tool.exceptions.erroreCancellazioneFileException;
+import tool.exceptions.osNotRecognizedException;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;

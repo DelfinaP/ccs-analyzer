@@ -2,12 +2,9 @@ package utils;
 
 import tool.OsType;
 import tool.OsUtils;
-import tool.ToolLinux;
-import tool.ToolWindows;
-import tool.except.osNotRecognizedException;
+import tool.exceptions.osNotRecognizedException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;

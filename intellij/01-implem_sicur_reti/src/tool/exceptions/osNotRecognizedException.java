@@ -1,4 +1,4 @@
-package tool.except;
+package tool.exceptions;
 
 import tool.OsUtils;
 

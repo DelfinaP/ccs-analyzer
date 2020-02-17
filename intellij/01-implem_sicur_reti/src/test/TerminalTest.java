@@ -1,12 +1,9 @@
 package test;
 
-import org.json.simple.parser.ParseException;
 import tool.*;
-import tool.except.osNotRecognizedException;
+import tool.exceptions.osNotRecognizedException;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 
 public class TerminalTest {
 
