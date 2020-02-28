@@ -1,0 +1,16 @@
+Bisogna usare prima Alan (che trasforma l'apk originale nell'apk offuscato) e poi Leila (che estrae i ccs dall'apk offuscato).
+
+- Alan
+
+Si può clonare Alan dall'indirizzo:
+https://github.com/faber03/AndroidMalwareEvaluatingTools
+Apriamo Alan con Eclipse aprendo la cartella "AndroidMalwareEvaluatingTools\framework sources\Alan". Una volta avviato Alan, selezioniamo "Call Indirection" e selezioniamo "add apk", e selezioniamo la cartella contenente l'apk (il percorso della cartella non deve avere spazi). L'output di Alan sarà presente nella stessa directory di input, e sarà costituito dalla directory "evaluated" (contenente l'apk originale) e dalla directory "signed" (contenente l'apk offuscato).
+
+- Leila
+
+Leila è presente al seguente percorso nella macchina virtuale:
+C:\Users\sicurezza\workspace\CCS
+Aprendo Eclipse, Leila dovrebbe già essere aperta.
+Copiamo l'apk dell'app nella cartella "malwareToTest" presente nella directory del progetto Eclipse.
+In Eclipse fare clic destro sulla cartella "CCS" nella parte sinistra dello schermo e selezionare "Run". Quando Leila si è avviata, selezioniamo nel menu "Analysis/Run/Family Identification/Plankton". In questo modo viene avviato il processo che produce i file .ccs.
+Una volta terminata l'esecuzione, i risultati si trovano nella cartella "workResult" presente nella cartella del progetto Eclipse.
