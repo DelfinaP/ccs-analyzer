@@ -1,0 +1,84 @@
+*********************************************************************
+*  SR-latch as constructed by Robin Milner in "Calculi for Synchrony
+*  and Asynchrony", Theoretical Computer Science, vol. 25, 1983,
+*  pp 277-282. Copied by for testing on the CWB-NC
+*  for SCCS. Shows what you can do with copying capabilities!
+*
+*						S. Arun-Kumar
+*						July 1998.
+*********************************************************************
+
+************************** The SPECIFICATION ************************
+***
+*** An SR-latch is any object, animate or inanimate, human or divine 
+*** that can satisfy the following equation (for m, n in {0, 1}).
+*** 
+*** SpecFF(m, n) = Sum (i,j in {0,1}) 
+***		       `s(i).r(j).~c(m).~d(n)':SpecFF(k, l)
+*** 
+*** where k = (i nor n) and l = (m nor j)
+***        
+*** So here's the specification in CWB-NC-SCCS-ese.
+***
+**********************************************************************
+
+proc SpecFF00 = `s0.r0.~c0.~d0':SpecFF11 +
+	        `s0.r1.~c0.~d0':SpecFF10 +
+	        `s1.r0.~c0.~d0':SpecFF01 +
+	        `s1.r1.~c0.~d0':SpecFF00
+
+proc SpecFF01 = `s0.r0.~c0.~d1':SpecFF01 +
+	        `s0.r1.~c0.~d1':SpecFF00 +
+	        `s1.r0.~c0.~d1':SpecFF01 +
+	        `s1.r1.~c0.~d1':SpecFF00
+
+proc SpecFF10 = `s0.r0.~c1.~d0':SpecFF10 +
+	        `s0.r1.~c1.~d0':SpecFF10 +
+	        `s1.r0.~c1.~d0':SpecFF00 +
+	        `s1.r1.~c1.~d0':SpecFF00
+
+proc SpecFF11 = `s0.r0.~c1.~d1':SpecFF00 +
+	        `s0.r1.~c1.~d1':SpecFF00 +
+	        `s1.r0.~c1.~d1':SpecFF00 +
+	        `s1.r1.~c1.~d1':SpecFF00
+
+
+********************** The NOR-gate IMPLEMENTATION *******************
+
+proc NOR0 = `a0.b0.~c0':NOR1 +
+	    `a0.b1.~c0':NOR0 +
+	    `a1.b0.~c0':NOR0 +
+	    `a1.b1.~c0':NOR0
+proc NOR1 = `a0.b0.~c1':NOR1 +
+	    `a0.b1.~c1':NOR0 +
+	    `a1.b0.~c1':NOR0 +
+	    `a1.b1.~c1':NOR0
+
+*** The morphism phi = [a0/`s0', a1/`s1', c0/`c0.a0', c1/`c1.a1']
+*** The morphism psi = [b0/`r0', b1/`r1', c0/`b0.d0', c1/`b1.d1']
+
+proc NOR0phi = NOR0 [a0/`s0', a1/`s1', c0/`c0.a0', c1/`c1.a1']
+
+proc NOR1phi = NOR1 [a0/`s0', a1/`s1', c0/`c0.a0', c1/`c1.a1']
+
+proc NOR0psi = NOR0 [b0/`r0', b1/`r1', c0/`b0.d0', c1/`b1.d1']
+
+proc NOR1psi = NOR1 [b0/`r0', b1/`r1', c0/`b0.d0', c1/`b1.d1']
+
+*** Having created NORphi and NORpsi, we now connect them together
+*** and internalize the names "a" and "b".
+*** In other words, allow only actions generated from the set of names
+
+set Ext = {r0, r1, s0, s1, c0, c1, d0, d1}
+
+*** And now for the Flip-flop Implementation
+
+proc ImpFF00 = (NOR0phi # NOR0psi) ! Ext
+proc ImpFF01 = (NOR0phi # NOR1psi) ! Ext
+proc ImpFF10 = (NOR1phi # NOR0psi) ! Ext
+proc ImpFF11 = (NOR1phi # NOR1psi) ! Ext
+
+
+*** Now run the sucker!
+
+

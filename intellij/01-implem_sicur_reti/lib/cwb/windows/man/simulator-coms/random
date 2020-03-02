@@ -1,0 +1,29 @@
+
+\manpage{random}{random [num]}
+{
+    Simulator command that simulates num random execution steps  
+    of an agent.  The default value for num is 1. 
+}
+{    cwb-nc>  sim "a.b.c.nil | d.e.nil" 
+    a.b.c.nil | d.e.nil
+    1: -- d --> a.b.c.nil | e.nil
+    2: -- a --> b.c.nil | d.e.nil
+    cwb-nc-sim> random
+    b.c.nil | d.e.nil
+    1: -- d --> b.c.nil | e.nil
+    2: -- b --> c.nil | d.e.nil
+    cwb-nc-sim> random 3
+    c.nil | d.e.nil
+    1: -- d --> c.nil | e.nil
+    2: -- c --> nil | d.e.nil
+    nil | d.e.nil
+    1: -- d --> nil | e.nil
+    nil | e.nil
+    1: -- e --> nil | nil
+    cwb-nc-sim> history
+    1: a.b.c.nil | d.e.nil -- a -->
+    2: b.c.nil | d.e.nil -- b -->
+    3: c.nil | d.e.nil -- c -->
+    4: nil | d.e.nil -- d -->
+    5: nil | e.nil
+}{}{}

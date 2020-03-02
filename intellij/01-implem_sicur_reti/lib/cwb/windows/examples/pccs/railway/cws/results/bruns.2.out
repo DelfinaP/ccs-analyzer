@@ -1,0 +1,66 @@
+Executing CWB script file cws/bruns.2.cws, directing output to cws/results/bruns.2.out.
+July 25, 1996   13:37
+Execution time (user,system,gc,real):(0.001,0.004,0.000,0.060)
+cwb-nc> load bruns.pccs
+Execution time (user,system,gc,real):(0.030,0.006,0.000,0.037)
+cwb-nc> 
+cwb-nc> load formulas/failures_responded.mu
+Execution time (user,system,gc,real):(0.007,0.001,0.000,0.022)
+cwb-nc> load formulas/can_tick.mu
+Execution time (user,system,gc,real):(0.002,0.001,0.000,0.003)
+cwb-nc> load formulas/failures_possible.mu
+Execution time (user,system,gc,real):(0.002,0.001,0.000,0.020)
+cwb-nc> load formulas/no_false_alarms.mu
+Execution time (user,system,gc,real):(0.003,0.001,0.000,0.006)
+cwb-nc> load formulas/eventually_silent.mu
+Execution time (user,system,gc,real):(0.008,0.000,0.000,0.008)
+cwb-nc> 
+cwb-nc> min -S bisim SS SS-min
+Building automaton...
+........
+States: 899
+Transitions: 2567
+Done building automaton.
+Minimizing automaton...
+Computing bisimulation...
+Done computing bisimulation.
+Done minimizing automaton.
+Execution time (user,system,gc,real):(5.189,0.123,0.331,5.360)
+cwb-nc> 
+cwb-nc> chk SS-min failures_responded
+Invoking L2 model checker.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(4.786,0.233,0.976,5.066)
+cwb-nc> chk SS-min can_tick
+Invoking alternation-free model checker.
+Building automaton...
+.......
+States: 766
+Transitions: 2094
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.553,0.031,0.113,0.587)
+cwb-nc> chk SS-min failures_possible
+Invoking alternation-free model checker.
+Building automaton...
+.......
+States: 766
+Transitions: 2094
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.429,0.010,0.000,0.445)
+cwb-nc> chk SS-min no_false_alarms
+Invoking alternation-free model checker.
+Building automaton...
+.......
+States: 766
+Transitions: 2094
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.526,0.020,0.042,0.550)
+cwb-nc> chk SS-min eventually_silent
+Invoking L2 model checker.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(5.667,0.219,1.045,5.939)
+cwb-nc> 
+cwb-nc> 

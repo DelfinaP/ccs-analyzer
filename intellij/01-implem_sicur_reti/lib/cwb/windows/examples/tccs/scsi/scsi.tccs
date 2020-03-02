@@ -1,0 +1,537 @@
+******************************************************************************
+*
+* Case Study: Modeling the SCSI-2 Bus-Protocol
+*
+* Date: 4/5/97
+*
+******************************************************************************
+
+
+* Delay Factors ***************************************************************
+*
+* AD  = Arbitration Delay 2.4us                (approx  480 time units)
+* BCD = Bus Clear Delay 800ns                  (  160 time units)  
+* BSD = Bus Settle Delay 400ns                 (   80 time units)
+* DD  = Deskew Delay 45ns approx. 50ns         (   9 time unit )
+* CSD = Cable Skew Delay 10ns at least         (   9 time unit )            
+*
+* 50ns corresponds to 1 time unit
+*
+*******************************************************************************
+
+* Overall System **************************************************************
+
+
+set Restriction = {
+                setBSY,relBSY,isBSY,noBSY,     setSEL,relSEL,isSEL,noSEL,
+                setCD ,relCD ,isCD ,noCD ,     setIO ,relIO ,isIO ,noIO ,
+                setMSG,relMSG,isMSG,noMSG,     setATN,relATN,isATN,noATN,
+                setREQ,relREQ,isREQ,noREQ,     setACK,relACK,isACK,noACK,
+      
+                initiator0,initiator1,
+
+                placemsgIn,readmsgIn,          placemsgOut,readmsgOut,    
+                placecmd,readcmd,
+                placedata,readdata,            placestatus,readstatus,
+                placefinished,readfinished,
+                sentdisconnect,readdisconnect, sentcomplete,readcomplete, 
+                writetarget0,readtarget0,      writetarget1,readtarget1,
+                release,
+
+                setid0,setid1,
+                noid0,noid1,
+                isid0,isid1,
+                clear
+               }
+
+
+
+proc SCSIBus = (LUN0 | LUN1 | BusSignals) \ Restriction
+
+
+*******************************************************************************
+*
+* Protocol Layer
+*
+*******************************************************************************
+
+
+* LUN0 ************************************************************************
+
+proc LUN0  =   9.@start0.'relIO.(BusFree0  + GetSelected0)
+             + 9.@start0.'setIO(obs_setIO).(BusFree0  + GetSelected0) 
+             + 9.t.LUN0
+             + GetSelected0
+
+
+
+* Get selected
+
+proc GetSelected0 =  isATN.
+			(isSEL.noBSY.readtarget0.
+                               9.'setBSY(obs_setBSY). 
+                               'release.'clear.noSEL.
+                                ( noIO.Target0 
+                                 + isIO.Initiator0 
+                                )
+                       + noSEL.LUN0
+                       )
+
+
+* BusFree Phase
+
+proc BusFree0 =    80.@busfree.80.'setBSY(obs_setBSY).Arbitrate0
+                 + isSEL(obs_isSEL).LUN0
+                 + isBSY(obs_isBSY).LUN0
+                 
+   
+
+* Arbitration Phase
+
+proc Arbitrate0 =    480.noid1(obs_winner_id0).'setSEL(obs_setSEL).Selection0
+                   + 480.isid1(obs_winner_id1).LUN0
+
+                                           
+* Selection Phase
+
+proc Selection0 =   240.'writetarget1.9.'setATN.20.'relBSY(obs_relBSY).
+                    80.isBSY.9.'relSEL(obs_relSEL).@begin_ITP.
+                    (noIO.Initiator0 + isIO.Target0)
+
+
+*******************************************************************************
+
+* Initiator
+
+proc Initiator0  =  H0 [> noBSY(obs_noBSY).'relATN.LUN0 
+
+proc H0 = 9.t.@branch.'setATN(obs_setATN).H0
+        + 9.isREQ(obs_isREQ0).( noMSG.( noCD.( noIO.DataOutI0 
+                                             + isIO.DataInI0
+                                             )
+                                      + isCD.( noIO.CommandI0 
+                                             + isIO.StatusI0
+                                             )
+                              )
+                              + isMSG.isCD.( noIO.MsgOutI0     
+                                           + isIO.MsgInI0  
+                                           )
+                              )
+                   
+
+* Target
+
+proc Target0 =    (noIO.MsgOutT0 + isIO.'relATN.MsgInT0) 
+                [> noBSY.'relATN.LUN0
+
+****************************************************************************
+
+* MsgIn Phase
+
+proc MsgInI0  = isREQ.(  
+                  readmsgIn.'setACK.noREQ.'relACK.
+                  MsgInI0
+                + readfinished.'setACK.noREQ.'relACK.
+                  H0
+                + readcomplete.'setACK.noREQ.'relACK.
+                  nil
+                + readdisconnect.'setACK.noREQ.'relACK.
+                  nil
+                ) 
+
+proc MsgInT0  = 'setMSG.'setCD.'setIO(begin_MsgIn).@begin_Phase.
+                MsgInT0'
+
+proc MsgInT0' =   'placemsgIn.9.'setREQ(obs_setREQ).
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK.
+                  MsgInT0'
+                + 'placefinished.9.'setREQ(obs_setREQ).
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+                  (MsgOutT0+ DataOutT0 + DataInT0 + CommandT0 + StatusT0)
+                + 'sentcomplete.9.'setREQ.
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+                  @end_ITP.'relBSY(obs_relBSY).nil 
+                + 'sentdisconnect.9.'setREQ.
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+                  @end_ITP.'relBSY(obs_relBSY).nil
+
+
+* MsgOut Phase
+
+proc MsgOutI0  = isREQ.(
+                   'placemsgOut.9.'setACK.noREQ.'release.'relACK.
+                   MsgOutI0
+                 + 'placefinished.9.'relATN.'setACK.noREQ.'release.
+                   'relACK.
+                   H0
+                 )
+
+proc MsgOutT0  =  isATN.'setMSG.'setCD.'relIO(begin_MsgOut).
+		  @begin_Phase.
+                  MsgOutT0'
+
+proc MsgOutT0' = 'setREQ.isACK(obs_isACK).
+                 ( readmsgOut.'relREQ(obs_relREQ).noACK(obs_noACK).
+                    MsgOutT0' 
+                 + readfinished.'relREQ(obs_relREQ).noACK.
+                   ( @end_Phase.
+                     (MsgInT0  + DataOutT0 + DataInT0 + CommandT0 + StatusT0)
+                   + @more_read.MsgOutT0'
+                   )
+                 )
+
+* Command Phase
+
+proc CommandI0  = isREQ.(  
+                    'placecmd.9.'setACK.noREQ.'release.'relACK.
+                    CommandI0
+                  + 'placefinished.9.'setACK.noREQ.'release.'relACK.
+                    H0
+                  )
+
+proc CommandT0  = 'relMSG.'setCD.'relIO(begin_Command).@begin_Phase.
+                  CommandT0'
+
+proc CommandT0' = 'setREQ.isACK(obs_isACK).
+                  ( readcmd.'relREQ(obs_relREQ).noACK.
+                    CommandT0'
+                  + readfinished.'relREQ(obs_relREQ).noACK.
+		    @end_Phase.
+                    (MsgOutT0 + MsgInT0 + DataOutT0 + DataInT0 + StatusT0)
+                  )
+
+
+* DataIn Phase
+
+proc DataInI0  = isREQ.(  
+                   readdata.'setACK.noREQ.'relACK.
+                   DataInI0
+                 + readfinished.'setACK.noREQ.'relACK.
+                   H0
+                 )
+
+proc DataInT0  = 'relMSG.'relCD.'setIO(begin_DataIn).@begin_Phase.
+                 DataInT0'
+
+proc DataInT0' =   'placedata.9.'setREQ.
+                   isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK.
+                   DataInT0'
+                 + 'placefinished.9.'setREQ.
+                   isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+		   (MsgOutT0 + MsgInT0 + StatusT0)
+
+
+* DataOut Phase
+
+proc DataOutI0  = isREQ.(  
+                    'placedata.9.'setACK.noREQ.'release.'relACK.
+                    DataOutI0
+                  + 'placefinished.9.'setACK.noREQ.'release.'relACK.
+                    H0
+                  )
+
+proc DataOutT0  = 'relMSG.'relCD.'relIO(begin_DataOut).@begin_Phase.
+                  DataOutT0'
+
+proc DataOutT0' = 'setREQ.isACK(obs_isACK).
+                  ( readdata.'relREQ(obs_relREQ).noACK.
+                    DataOutT0'
+                  + readfinished.'relREQ(obs_relREQ).noACK(end_Phase).
+                    (MsgOutT0 + MsgInT0 + StatusT0)
+                  )
+
+* Status Phase
+
+proc StatusI0 =  readstatus.'setACK.noREQ.'relACK.
+                 H0
+
+proc StatusT0 =  'relMSG.'setCD.'setIO(begin_Status).@begin_Phase.
+                 'placestatus.9.'setREQ.
+                 isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+                 (MsgOutT0 + MsgInT0)
+
+
+* LUN1 ************************************************************************
+
+proc LUN1  =   9.@start1.'relIO.(BusFree1 + GetSelected1)
+             + 9.@start1.'setIO(obs_setIO).(BusFree1 + GetSelected1)
+             + 9.t.LUN1
+             + GetSelected1
+
+
+
+proc GetSelected1  = isATN.
+			(isSEL.noBSY.
+                              readtarget1.9.'setBSY(obs_setBSY).
+                             'release.'clear.noSEL.
+                              ( noIO.Target1 
+                              + isIO.Initiator1 
+                              )
+                        + noSEL.LUN1) 
+                     
+
+
+* BusFree Phase
+
+proc BusFree1 =    80.@busfree.80.'setBSY(obs_setBSY).'setid1.Arbitrate1
+                 + isSEL(obs_isSEL).LUN1
+                 + isBSY(obs_isBSY).LUN1
+                  
+
+   
+* Arbitration Phase
+
+proc Arbitrate1 =    80.noSEL.'setSEL(obs_setSEL).Selection1
+                   + 80.isSEL.LUN1
+
+
+* Selection Phase
+
+proc Selection1 = 240.'writetarget0.9.'setATN.20.'relBSY(obs_relBSY).
+                     80.isBSY.9.'relSEL(obs_relSEL).
+                     @begin_ITP.
+                     (noIO.Initiator1 + isIO.Target1)
+
+
+
+*******************************************************************************
+
+* Initiator
+
+
+proc Initiator1  =  H1 [> noBSY(obs_noBSY).'relATN.LUN1
+
+proc H1 = 9.t.'setATN(obs_setATN).H1
+        + 9.isREQ(obs_isREQ1).( noMSG.( noCD.( noIO.DataOutI1 
+                                             + isIO.DataInI1
+                                             )
+                                      + isCD.( noIO.CommandI1 
+                                             + isIO.StatusI1
+                                             )
+                                      )
+                              + isMSG.isCD.( noIO.MsgOutI1     
+                                           + isIO.MsgInI1
+                                           )
+                  )
+
+
+* Target
+
+proc Target1 =    (noIO.MsgOutT1 + isIO.'relATN.MsgInT1) 
+               [> noBSY(obs_noBSY1).'relATN.LUN1
+
+**************
+
+* MsgIn Phase
+
+proc MsgInI1  = isREQ.(  
+                  readmsgIn.'setACK.noREQ.'relACK.
+                  MsgInI1
+                + readfinished.'setACK.noREQ.'relACK.
+                  H1
+                + readcomplete.'setACK.noREQ.'relACK.
+                  nil
+                + readdisconnect.'setACK.noREQ.'relACK.
+                  nil
+                )
+
+proc MsgInT1  = 'setMSG.'setCD.'setIO(begin_MsgIn).@begin_Phase.
+		 MsgInT1'
+
+proc MsgInT1' =   'placemsgIn.9.'setREQ(obs_setREQ).
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK.
+                  MsgInT1'
+                + 'placefinished.9.'setREQ(obs_setREQ).
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase). 
+                  (MsgOutT1 + DataOutT1 + DataInT1 + CommandT1 + StatusT1)
+                + 'sentcomplete.9.'setREQ.
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+                  @end_ITP.'relBSY(obs_relBSY).nil 
+                + 'sentdisconnect.9.'setREQ.
+                  isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+		   @end_ITP.'relBSY(obs_relBSY).nil
+
+
+* MsgOut Phase
+
+proc MsgOutI1  = isREQ.(  
+                   'placemsgOut.9.'setACK.noREQ.'release.
+                   'relACK.MsgOutI1
+                 + 'placefinished.9.'relATN.'setACK.noREQ.'release.
+                   'relACK.
+                   H1
+                 )
+
+proc MsgOutT1  = isATN.'setMSG.'setCD.'relIO(begin_MsgOut).
+		 @begin_Phase.
+                 MsgOutT1'
+
+proc MsgOutT1' = 'setREQ.isACK(obs_isACK).
+                 ( readmsgOut.'relREQ(obs_relREQ).noACK(obs_noACK).MsgOutT1' 
+                 + readfinished.'relREQ(obs_relREQ).noACK.
+                   ( @end_Phase.
+                     (MsgInT1 + DataOutT1 + DataInT1 + CommandT1 + StatusT1)
+                   + @more_read.MsgOutT1'
+                   )
+                 )
+
+
+* Command Phase
+
+proc CommandI1 = isREQ.(  
+                   'placecmd.9.'setACK.noREQ.'release.'relACK.
+                   CommandI1
+                 + 'placefinished.9.'setACK.noREQ.'release.'relACK.
+                   H1
+                 )
+
+proc CommandT1  = 'relMSG.'setCD.'relIO(begin_Command).@begin_Phase.
+                  CommandT1'
+
+proc CommandT1' = 'setREQ.isACK(obs_isACK).
+                  ( readcmd.'relREQ(obs_relREQ).noACK.
+                    CommandT1'
+                  + readfinished.'relREQ(obs_relREQ).noACK(end_Phase).
+                    (MsgOutT1 + MsgInT1 + DataOutT1 + DataInT1 + StatusT1)
+                  )
+
+
+* DataIn Phase
+
+proc DataInI1  = isREQ.(  
+                   readdata.'setACK.noREQ.'relACK.
+                   DataInI1
+                 + readfinished.'setACK.noREQ.'relACK.
+                   H1
+                 )
+
+proc DataInT1  = 'relMSG.'relCD.'setIO(begin_DataIn).@begin_Phase.
+                 DataInT1'
+
+proc DataInT1' =    'placedata.9.'setREQ.
+                    isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK.
+                    DataInT1'
+                 + 'placefinished.9.'setREQ.
+                   isACK(obs_isACK).'release.'relREQ(obs_relREQ).
+		   noACK(end_Phase).
+                   (MsgOutT1 + MsgInT1 + StatusT1)
+
+
+* DataOut Phase
+
+proc DataOutI1  = isREQ.(  
+                    'placedata.9.'setACK.noREQ.'release.
+                    'relACK.DataOutI1
+                  + 'placefinished.9.'setACK.noREQ.'release.
+                    'relACK.H1
+                  )
+
+proc DataOutT1  = 'relMSG.'relCD.'relIO(begin_DataOut).@begin_Phase.
+                  DataOutT1'
+
+proc DataOutT1' = 'setREQ.isACK(obs_isACK).
+                  ( readdata.'relREQ(obs_relREQ).noACK.
+                    DataOutT1'
+                  + readfinished.'relREQ(obs_relREQ).noACK(end_Phase).
+                    (MsgOutT1 + MsgInT1 + StatusT1)
+                  )
+
+
+* Status Phase
+
+proc StatusI1 = readstatus.'setACK.noREQ.'relACK.
+                H1
+
+proc StatusT1 = 'relMSG.'setCD.'setIO(begin_Status).@begin_Phase.
+                'placestatus.9.'setREQ.
+                isACK(obs_isACK).'release.'relREQ(obs_relREQ).noACK(end_Phase).
+                (MsgOutT1 + MsgInT1)
+
+
+*******************************************************************************
+*
+* Physical Layer
+*
+*******************************************************************************
+
+* Bus signals
+
+proc BusSignals =   DataPath
+                  | Arbitrator
+                  | Off[setBSY/sset,relBSY/rel,isBSY/on,noBSY/off]
+                  | Off[setSEL/sset,relSEL/rel,isSEL/on,noSEL/off]
+                  | Off[setCD /sset,relCD /rel,isCD /on,noCD /off]
+                  | Off[setIO /sset,relIO /rel,isIO /on,noIO /off]
+                  | Off[setMSG/sset,relMSG/rel,isMSG/on,noMSG/off]
+                  | Off[setATN/sset,relATN/rel,isATN/on,noATN/off]
+                  | Off[setREQ/sset,relREQ/rel,isREQ/on,noREQ/off]
+                  | Off[setACK/sset,relACK/rel,isACK/on,noACK/off]
+
+
+
+* Datapath
+
+proc DataPath  = DataPath' [> release(obsrelease).DataPath
+
+proc DataPath' = placemsgIn(obsplace).
+                 'readmsgIn(obsread).
+		 DataPath'
+               + placemsgOut(obsplace).
+                 'readmsgOut(obsread).
+		 DataPath'
+               + placefinished(obsplace).
+                 'readfinished(obsread).
+                 DataPath'
+               + placedata(obsplace).
+                 'readdata(obsread).
+                 DataPath'
+               + placecmd(obsplace).
+                 'readcmd(obsread).
+                 DataPath'
+               + placestatus(obsplace).
+                 'readstatus(obsread).
+                 DataPath'
+               + sentdisconnect(obssentdiscon).
+                 'readdisconnect(obsreaddiscon).
+                 DataPath'
+               + sentcomplete(obssentcompl).
+                 'readcomplete(obsreadcompl).
+                 DataPath' 
+               + writetarget0(obswritet0).
+                 'readtarget0(obsreadt0).
+                 DataPath'
+               + writetarget1(obswritet1).
+                 'readtarget1(obsreadt1).
+                 DataPath'
+             
+
+* Signal = OFF
+
+proc Off  =   'off.Off + sset.On + rel.Off 
+
+proc On   =   'on.On   + sset.On + rel.Off 
+
+* Arbitrator           
+
+proc Arbitrator =  Undef [> clear.Arbitrator
+
+proc Undef = setid0.Id0 + setid1.Id1 +
+             'noid0.Undef + 'noid1.Undef
+
+proc Id0 = setid0.Id0 + setid1.Id0 +
+           'isid0.Id0 + 'noid1.Id0
+
+proc Id1 = setid0.Id1 + setid1.Id1 + 
+           'noid0.Id1 + 'isid1.Id1
+
+
+
+
+
+
+
+
+
+
+
+

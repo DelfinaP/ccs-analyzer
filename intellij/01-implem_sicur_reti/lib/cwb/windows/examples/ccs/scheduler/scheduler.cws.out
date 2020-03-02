@@ -1,0 +1,43 @@
+Executing CWB script file scheduler.cws, directing output to scheduler.cws.out.
+August 14, 1996   15:04
+Execution time (user,system,gc,real):(0.000,0.010,0.000,0.060)
+cwb-nc> load scheduler.ccs
+Execution time (user,system,gc,real):(0.120,0.030,0.000,0.225)
+cwb-nc> load scheduler.mu
+Execution time (user,system,gc,real):(0.040,0.000,0.000,0.044)
+cwb-nc> 
+cwb-nc> eq Spec Sched
+Building automaton...
+States: 67
+Transitions: 129
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.460,0.020,0.010,0.493)
+cwb-nc> 
+cwb-nc> chk Sched Cycle_broken
+Invoking alternation-free model checker.
+Building automaton...
+States: 42
+Transitions: 80
+Done building automaton.
+FALSE, the agent does not satisfy the formula.
+Execution time (user,system,gc,real):(0.200,0.020,0.000,0.223)
+cwb-nc> chk Sched Perform_a1_first
+Invoking alternation-free model checker.
+Building automaton...
+States: 42
+Transitions: 80
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.110,0.000,0.000,0.121)
+cwb-nc> chk Sched Repeat_reachable
+Invoking alternation-free model checker.
+Building automaton...
+States: 42
+Transitions: 80
+Done building automaton.
+FALSE, the agent does not satisfy the formula.
+Execution time (user,system,gc,real):(0.160,0.000,0.000,0.168)
+cwb-nc> 

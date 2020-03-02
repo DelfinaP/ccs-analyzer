@@ -29,8 +29,6 @@ public class TerminalTest {
             }
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         try {
@@ -68,8 +66,6 @@ public class TerminalTest {
                 }
             }
         } catch (osNotRecognizedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
 

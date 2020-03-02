@@ -1,19 +1,12 @@
 package tool;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import utils.JsonUtils;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ToolWindows extends Tool {
     @Override
-    protected String costruisciPath(String pathParte1, String parthParte2) {
+    protected String buildPath(String pathParte1, String parthParte2) {
         return pathParte1 + "\\" + parthParte2;
     }
 
@@ -24,8 +17,8 @@ public class ToolWindows extends Tool {
 
     @Override
     protected void startCwb(Terminal terminal) {
-        percorsoCwb = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb");
+        cwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb");
 
-        terminal.addCommand(percorsoCwb + " ccs");
+        terminal.addCommand(cwbPath + " ccs");
     }
 }

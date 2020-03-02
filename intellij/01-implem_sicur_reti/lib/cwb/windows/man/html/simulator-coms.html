@@ -1,0 +1,363 @@
+<!-- This file was generated with Format.format_man_pages,
+ -- located in cwb/man/format/format.sml.  Do not edit this
+ -- file.  Instead edit the man page sources in 
+ -- cwb/man/top-level-coms/ and simulator-coms/ and re-run
+ -- the formatting program.
+ -->
+
+<title>CWB-NC Simulator Commands</title>
+<h1>CWB-NC Simulator Commands</h1>
+
+<ul>
+<li><a href = "simulator-coms.html#!!-man-page">
+    !!</a>
+<li><a href = "simulator-coms.html#back-man-page">
+    back</a>
+<li><a href = "simulator-coms.html#break-man-page">
+    break</a>
+<li><a href = "simulator-coms.html#current-man-page">
+    current</a>
+<li><a href = "simulator-coms.html#goto-man-page">
+    goto</a>
+<li><a href = "simulator-coms.html#help-man-page">
+    help</a>
+<li><a href = "simulator-coms.html#history-man-page">
+    history</a>
+<li><a href = "simulator-coms.html#quit-man-page">
+    quit</a>
+<li><a href = "simulator-coms.html#random-man-page">
+    random</a>
+<li><a href = "simulator-coms.html#semantics-man-page">
+    semantics</a>
+<li><a href = "simulator-coms.html#trace-man-page">
+    trace</a>
+</ul>
+
+<hr>
+<p><a name = !!-man-page><b>NAME</b><br></a>
+<p>!!
+<p><b>SYNOPSIS</b>
+<p>
+!!
+<p><b>DESCRIPTION</b>
+<p>
+    Simulator command which repeats the previous command.
+<br><br>
+<hr>
+<p><a name = back-man-page><b>NAME</b><br></a>
+<p>back
+<p><b>SYNOPSIS</b>
+<p>
+back [num]
+<p><b>DESCRIPTION</b>
+<p>
+Simulator command which erases the previous num execution steps.
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim a.b.c.d.nil
+    a.b.c.d.nil
+    1: -- a --> b.c.d.nil
+    cwb-nc-sim> 1
+    b.c.d.nil
+    1: -- b --> c.d.nil
+    cwb-nc-sim> 1
+    c.d.nil
+    1: -- c --> d.nil
+    cwb-nc-sim> 1
+    d.nil
+    1: -- d --> nil
+    cwb-nc-sim> back 2
+    Current state moved 2 steps back.
+    cwb-nc-sim> current
+    b.c.d.nil
+    1: -- b --> c.d.nil
+
+</pre>
+<hr>
+<p><a name = break-man-page><b>NAME</b><br></a>
+<p>break
+<p><b>SYNOPSIS</b>
+<p>
+break [ flag ] act-list
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command used to add (-a), delete (-d), and list (-l) 
+    break points.  An agent is interpreted as a break point if one 
+    or more of its enabled transitions is labeled by an action in 
+    the break point set.  A message is displayed when a break point 
+    is reached and random execution is halted.  If no flag is given 
+    then each item in the list of actions is added to the set of 
+    break points.  The act list argument is a list of actions 
+    separated by spaces.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim "a.b.nil + a.c.nil"
+    a.b.nil + a.c.nil
+    1: -- a --> c.nil
+    2: -- a --> b.nil
+    cwb-nc-sim> break -a a b c  
+    cwb-nc-sim> break -d a
+    cwb-nc-sim> break -l
+     b c
+    cwb-nc-sim> random 3
+    Break point
+    b.nil
+    1: -- b --> nil
+
+</pre>
+<hr>
+<p><a name = current-man-page><b>NAME</b><br></a>
+<p>current
+<p><b>SYNOPSIS</b>
+<p>
+current
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command that displays the current agent and lists its 
+    available transitions.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim a.b.c.nil      
+    a.b.c.nil
+    1: -- a --> b.c.nil
+    cwb-nc-sim> 1
+    b.c.nil
+    1: -- b --> c.nil
+    cwb-nc-sim> 1
+    c.nil
+    1: -- c --> nil
+    cwb-nc-sim> current
+    c.nil
+    1: -- c --> nil
+    cwb-nc-sim> back 1
+    Current state moved 1 step back.
+    cwb-nc-sim> current
+    b.c.nil
+    1: -- b --> c.nil
+
+</pre>
+<hr>
+<p><a name = goto-man-page><b>NAME</b><br></a>
+<p>goto
+<p><b>SYNOPSIS</b>
+<p>
+goto num
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command which sets the current state to state 
+    "num" of the current session, where "num" is a positive integer
+    less than or equal to the current state number.  Note that state 
+    numbers are displayed by the history command for each state on 
+    the path from the start state to the current state.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim a.b.c.d.nil
+    a.b.c.d.nil
+    1: -- a --> b.c.d.nil
+    cwb-nc-sim> 1
+    b.c.d.nil
+    1: -- b --> c.d.nil
+    cwb-nc-sim> 1
+    c.d.nil
+    1: -- c --> d.nil
+    cwb-nc-sim> 1
+    d.nil
+    1: -- d --> nil
+    cwb-nc-sim> history
+    1: a.b.c.d.nil -- a -->
+    2: b.c.d.nil -- b -->
+    3: c.d.nil -- c -->
+    4: d.nil
+    cwb-nc-sim> goto 2
+    Current state moved 2 steps back.
+    cwb-nc-sim> current
+    b.c.d.nil
+    1: -- b --> c.d.nil
+
+</pre><p><b>SEE ALSO</b>
+<p>
+history
+
+<hr>
+<p><a name = help-man-page><b>NAME</b><br></a>
+<p>help
+<p><b>SYNOPSIS</b>
+<p>
+help [command name]
+<p><b>DESCRIPTION</b>
+<p>
+
+    help displays information about CWB-NC commands.  If 
+    executed with no arguments, then a list of available 
+    commands is displayed.  If given a command name as an 
+    argument, then information about the specific command
+    is displayed.
+
+<br><br>
+<hr>
+<p><a name = history-man-page><b>NAME</b><br></a>
+<p>history
+<p><b>SYNOPSIS</b>
+<p>
+history
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command that prints the history of the current 
+    simulator session.  Note that backtracking with the back
+    command removes transitions from the history;  thus, the 
+    path displayed by the history command represents a path
+    from the initial agent to the current agent.  The states
+    through which the path progresses are numbered starting
+    with 1.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim "a.b.c.nil | d.e.nil" 
+    a.b.c.nil | d.e.nil
+    1: -- d --> a.b.c.nil | e.nil
+    2: -- a --> b.c.nil | d.e.nil
+    cwb-nc-sim> 2
+    b.c.nil | d.e.nil
+    1: -- d --> b.c.nil | e.nil
+    2: -- b --> c.nil | d.e.nil
+    cwb-nc-sim> 1
+    b.c.nil | e.nil
+    1: -- e --> b.c.nil | nil
+    2: -- b --> c.nil | e.nil
+    cwb-nc-sim> 1
+    b.c.nil | nil
+    1: -- b --> c.nil | nil
+    cwb-nc-sim> history
+    1: a.b.c.nil | d.e.nil -- a -->
+    2: b.c.nil | d.e.nil -- d -->
+    3: b.c.nil | e.nil -- e -->
+    4: b.c.nil | nil
+
+</pre><p><b>SEE ALSO</b>
+<p>
+trace, goto
+
+<hr>
+<p><a name = quit-man-page><b>NAME</b><br></a>
+<p>quit
+<p><b>SYNOPSIS</b>
+<p>
+quit
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command that ends the current simulator session.
+
+<br><br>
+<hr>
+<p><a name = random-man-page><b>NAME</b><br></a>
+<p>random
+<p><b>SYNOPSIS</b>
+<p>
+random [num]
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command that simulates num random execution steps  
+    of an agent.  The default value for num is 1. 
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc>  sim "a.b.c.nil | d.e.nil" 
+    a.b.c.nil | d.e.nil
+    1: -- d --> a.b.c.nil | e.nil
+    2: -- a --> b.c.nil | d.e.nil
+    cwb-nc-sim> random
+    b.c.nil | d.e.nil
+    1: -- d --> b.c.nil | e.nil
+    2: -- b --> c.nil | d.e.nil
+    cwb-nc-sim> random 3
+    c.nil | d.e.nil
+    1: -- d --> c.nil | e.nil
+    2: -- c --> nil | d.e.nil
+    nil | d.e.nil
+    1: -- d --> nil | e.nil
+    nil | e.nil
+    1: -- e --> nil | nil
+    cwb-nc-sim> history
+    1: a.b.c.nil | d.e.nil -- a -->
+    2: b.c.nil | d.e.nil -- b -->
+    3: c.nil | d.e.nil -- c -->
+    4: nil | d.e.nil -- d -->
+    5: nil | e.nil
+
+</pre>
+<hr>
+<p><a name = semantics-man-page><b>NAME</b><br></a>
+<p>semantics
+<p><b>SYNOPSIS</b>
+<p>
+semantics semantic-type
+<p><b>DESCRIPTION</b>
+<p>
+
+  The "semantics" command sets the mode for computing transitions
+  in the simulator.  The two available "semantic-type" arguments are
+  "bisim" and "obseq".  The two different modes treat internal 
+  actions differently.  In "bisim" (bisimulation) mode internal 
+  actions are treated exactly as visible actions.  In "obseq" 
+  (observational equivalence) mode the transitions displayed
+  are those that may be taken from the current system state by
+  performing zero or more internal actions followed by some action
+  (either visible or internal) followed by zero or more internal 
+  actions.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+
+
+
+
+
+</pre>
+<hr>
+<p><a name = trace-man-page><b>NAME</b><br></a>
+<p>trace
+<p><b>SYNOPSIS</b>
+<p>
+trace
+<p><b>DESCRIPTION</b>
+<p>
+
+    Simulator command that prints the trace of the current 
+    simulator session.  Note that backtracking with the back
+    command removes transitions from the trace;  thus, the 
+    sequence displayed by the trace command represents a path
+    from the initial agent to the current agent.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim "a.b.c.nil | d.e.nil"
+    a.b.c.nil | d.e.nil
+    1: -- d --> a.b.c.nil | e.nil
+    2: -- a --> b.c.nil | d.e.nil
+    cwb-nc-sim> 2
+    b.c.nil | d.e.nil
+    1: -- d --> b.c.nil | e.nil
+    2: -- b --> c.nil | d.e.nil
+    cwb-nc-sim> 1
+    b.c.nil | e.nil
+    1: -- e --> b.c.nil | nil
+    2: -- b --> c.nil | e.nil
+    cwb-nc-sim> 1
+    b.c.nil | nil
+    1: -- b --> c.nil | nil
+    cwb-nc-sim> trace  
+     a d e
+
+</pre><p><b>SEE ALSO</b>
+<p>
+history
+

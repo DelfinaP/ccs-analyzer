@@ -1,0 +1,16 @@
+
+The current ccs examples are listed below.  See the comments in the 
+.ccs files for more information.
+
+  abp           Two versions of the alternating bit protocol.
+
+  dictionary    Several versions of a simple dictionary; given a key 
+                a meaning is returned if one is found for the key.
+
+  jobshop       The jobshop example from Milner's book.
+
+  scheduler     The scheduler example from Milner's book.
+
+  simp_protocol A simple communications protocol.
+
+  toll_booth    Models a highway toll booth.

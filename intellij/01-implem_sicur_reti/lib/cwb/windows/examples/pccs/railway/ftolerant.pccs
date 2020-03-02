@@ -1,0 +1,185 @@
+*******************************************************************************
+*  ftolerant.pccs 
+*  
+*  This file contains a specification of a railway system called 
+*  Solid State Interlocking which was described in:
+*    "A Case Study in Safety-Critical Design" 
+*    Glenn Bruns 
+*    CAV 92
+*
+*  fault tolerant version with error recovery scheme,
+*  sequential buffer, and a prioritization scheme.
+*
+*******************************************************************************
+*
+* highest priority is 0
+*
+* level 0: fail_overfull, det, recovered, mcs, mct 
+* level 1: online (ok, ok'), init, ack_init, switch, ack_switch, reset 
+* level 2: out (c2, s2), out' (c2', s2'), fail_wire, repaired 
+*          comm_in, comm_out, stat_in, stat_out
+* level 3: in (c1, s1), in' (c1', s1')
+* level 4: outu (c2u, s2u), outu' (c2u', s2u'), tick
+*
+*******************************************************************************
+
+**********************
+*  Slow-scan system
+**********************
+
+set Restr = {c1,c2,c2u,s1,s2,s2u,c1',c2',c2u',s1',s2',s2u',
+             mcs,mct,ok,ok',init,ack_init,
+             switch,ack_switch,reset}
+
+proc SS =
+   (SPC | LGL | TPC | Clock)\Restr
+
+**************************************
+*  SSI-side protocol converter (SPC)
+**************************************
+
+proc SPC =
+   SPC0 [> (init:1.'ack_init:1.SPCi + ack_init:1.SPC +
+            switch:1.'ack_switch:1.SPCi' + ack_switch:1.SPC')
+
+proc SPCi = 'recovered:0.SPC + t:0.SPCi
+
+proc SPC0 =
+   comm_in:2.'stat_out:2.SPC0 + 'c1:3.SPC0 + s2:2.SPC0 + s2u:4.SPC0 +
+   mcs:0.'c1:3.SPC1
+
+proc SPC1 =
+   comm_in:2.'stat_out:2.SPC1 + 'c1:3.SPC1 + s2:2.SPC0 + s2u:4.SPC1 +
+   mcs:0.'c1:3.SPC2
+
+proc SPC2 =
+   comm_in:2.'stat_out:2.SPC2 + 'c1:3.SPC2 + s2:2.SPC0 + s2u:4.SPC2 +
+   mcs:0.SPCt
+
+proc SPCt = 'det:0.SPCF + t:0.SPCt
+
+proc SPCF =
+   comm_in:2.SPCF + s2:2.SPCF + s2u:4.SPCF + mcs:0.SPCF +
+   ok:1.'reset:0.'init:1.nil + ok':1.'reset:0.'switch:1.nil 
+
+
+proc SPC' =
+   SPC0' [> (init:1.'ack_init:1.SPCi' + ack_init:1.SPC' +
+             switch:1.'ack_switch:1.SPCi + ack_switch:1.SPC) 
+
+proc SPCi' = 'recovered:0.SPC' + t:0.SPCi'
+
+proc SPC0' =
+   comm_in:2.'stat_out:2.SPC0' + 'c1':3.SPC0' + s2':2.SPC0' + s2u':4.SPC0' +
+   mcs:0.'c1':3.SPC1'
+
+proc SPC1' =
+   comm_in:2.'stat_out:2.SPC1' + 'c1':3.SPC1' + s2':2.SPC0' + s2u':4.SPC1' +
+   mcs:0.'c1':3.SPC2'
+
+proc SPC2' =
+   comm_in:2.'stat_out:2.SPC2' + 'c1':3.SPC2' + s2':2.SPC0' + s2u':4.SPC2' +
+   mcs:0.SPCt'
+
+proc SPCt' = 'det:0.SPCF' + t:0.SPCt'
+
+proc SPCF' =
+   comm_in:2.SPCF' + s2':2.SPCF' + s2u':4.SPCF' + mcs:0.SPCF' +
+   ok':1.'reset:0.'init:1.nil + ok:1.'reset:0.'switch:1.nil
+
+****************************************
+*  Track-side protocol converter (TPC)
+****************************************
+
+proc TPC =
+   TPC0 [> (init:1.'ack_init:1.TPCi + ack_init:1.TPC +
+            switch:1.'ack_switch:1.TPCi' + ack_switch:1.TPC')
+
+proc TPCi = 'recovered:0.TPC + t:0.TPCi 
+
+proc TPC0 =
+   'comm_out:2.stat_in:2.TPC0 + 's1:3.TPC0 + c2:2.TPC0 + c2u:4.TPC0 +
+   mct:0.'s1:3.TPC1
+
+proc TPC1 =
+   'comm_out:2.stat_in:2.TPC1 + 's1:3.TPC1 + c2:2.TPC0 + c2u:4.TPC1 +
+   mct:0.'s1:3.TPC2
+
+proc TPC2 =
+   'comm_out:2.stat_in:2.TPC2 + 's1:3.TPC2 + c2:2.TPC0 + c2u:4.TPC2 +
+   mct:0.TPCt
+
+proc TPCt = 'det:0.TPCF + t:0.TPCt
+
+proc TPCF =
+   stat_in:2.TPCF + c2:2.TPCF + c2u:4.TPCF + mct:0.TPCF + 
+   ok:1.'reset:0.'init:1.nil + ok':1.'switch:1.'reset:0.'switch:1.nil
+
+
+proc TPC' =
+   TPC0' [> (init:1.'ack_init:1.TPCi' + ack_init:1.TPC' +
+             switch:1.'ack_switch:1.TPCi + ack_switch:1.TPC)
+
+proc TPCi' = 'recovered:0.TPC' + t:0.TPCi' 
+
+proc TPC0' =
+   'comm_out:2.stat_in:2.TPC0' + 's1':3.TPC0' + c2':2.TPC0' + c2u':4.TPC0' +
+   mct:0.'s1':3.TPC1'
+
+proc TPC1' =
+   'comm_out:2.stat_in:2.TPC1' + 's1':3.TPC1' + c2':2.TPC0' + c2u':4.TPC1' +
+   mct:0.'s1':3.TPC2'
+
+proc TPC2' =
+   'comm_out:2.stat_in:2.TPC2' + 's1':3.TPC2' + c2':2.TPC0' + c2u':4.TPC2' +
+   mct:0.TPCt'
+
+proc TPCt' =
+   'det:0.TPCF' + t:0.TPCt'
+
+proc TPCF' =
+   stat_in:2.TPCF' + c2':2.TPCF' + c2u':4.TPCF' + mct:0.TPCF' +
+   ok':1.'reset:0.'init:1.nil + ok:1.'reset:0.'switch:1.nil
+
+*************************
+*  Low grade link (LGL)
+*************************
+
+proc LGL =
+   Comm00[c1/in,s1/in',c2/out,s2/out',c2u/outu,s2u/outu',ok/online] |
+   Comm00[c1'/in,s1'/in',c2'/out,s2'/out',c2u'/outu,s2u'/outu',ok'/online]
+
+proc Comm00 =
+   in:3.Comm10 + 'outu:4.Comm00 + in':3.Comm01 + 'outu':4.Comm00 +
+   'fail_wire:2.CommF + 'online:1.Comm00
+
+proc Comm10 =
+   in:3.CommFt + 'out:2.Comm00 + in':3.Comm11 + 
+   'outu':4.Comm10 + 'fail_wire:2.CommF + 'online:1.Comm10
+
+proc Comm01 =
+   in:3.Comm11 + 'outu:4.Comm01 + in':3.CommFt + 
+   'out':2.Comm00 + 'fail_wire:2.CommF + 'online:1.Comm01
+
+proc Comm11 =
+   in:3.CommFt + 'out:2.Comm01 + in':3.CommFt +
+   'out':2.Comm10 + 'fail_wire:2.CommF + 'online:1.Comm11
+
+proc CommFt =
+   'fail_overfull:0.CommF + t:0.CommFt
+
+proc CommF =
+   in:3.CommF + 'outu:4.CommF + in':3.CommF + 'outu':4.CommF +
+   'repaired:2.Comm00
+
+**********
+*  Clock
+**********
+
+proc Clock = Clock0 [> reset:0.Clock
+
+proc Clock0 = 'tick:4.'mcs:0.'mct:0.Clock0
+
+
+
+

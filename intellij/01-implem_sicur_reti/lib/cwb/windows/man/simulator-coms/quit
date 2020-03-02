@@ -1,0 +1,6 @@
+
+\manpage{quit}{quit}
+{
+    Simulator command that ends the current simulator session.
+}{}{}{}
+

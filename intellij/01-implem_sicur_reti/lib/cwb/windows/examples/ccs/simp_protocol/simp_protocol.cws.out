@@ -1,0 +1,95 @@
+Executing CWB script file simp_protocol.cws, directing output to simp_protocol.cws.out.
+August 15, 1996   11:58
+Execution time (user,system,gc,real):(0.000,0.000,0.000,0.145)
+cwb-nc> load simp_protocol.ccs
+Execution time (user,system,gc,real):(0.010,0.060,0.000,0.086)
+cwb-nc> load simp_protocol.mu
+Execution time (user,system,gc,real):(0.020,0.000,0.000,0.028)
+cwb-nc> eq PROTOCOL SERVICE
+Building automaton...
+States: 9
+Transitions: 9
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.030,0.020,0.000,0.056)
+cwb-nc> eq -S may PROTOCOL SERVICE
+Building automaton...
+States: 9
+Transitions: 9
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.030,0.010,0.000,0.054)
+cwb-nc> eq -S must PROTOCOL SERVICE
+Building automaton...
+States: 9
+Transitions: 9
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.030,0.010,0.010,0.068)
+cwb-nc> le -S may PARTIAL_MEDIUM NEW_MEDIUM
+Building automaton...
+States: 4
+Transitions: 6
+Done building automaton.
+Building automaton...
+States: 5
+Transitions: 10
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.030,0.000,0.000,0.065)
+cwb-nc> le -S must PARTIAL_MEDIUM NEW_MEDIUM
+Building automaton...
+States: 4
+Transitions: 6
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+Building automaton...
+States: 5
+Transitions: 10
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.030,0.020,0.000,0.074)
+cwb-nc> chk PROTOCOL can_send
+Invoking alternation-free model checker.
+Building automaton...
+States: 7
+Transitions: 7
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.010,0.030,0.000,0.039)
+cwb-nc> chk PROTOCOL always_can_send_or_receive
+Invoking alternation-free model checker.
+Building automaton...
+States: 7
+Transitions: 7
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.030,0.010,0.000,0.036)
+cwb-nc> chk PROTOCOL no_repeat
+Invoking alternation-free model checker.
+Building automaton...
+States: 7
+Transitions: 7
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.030,0.010,0.000,0.036)
+cwb-nc> chk PROTOCOL can_deadlock
+Invoking alternation-free model checker.
+Building automaton...
+States: 7
+Transitions: 7
+Done building automaton.
+FALSE, the agent does not satisfy the formula.
+Execution time (user,system,gc,real):(0.010,0.010,0.000,0.032)
+cwb-nc> 

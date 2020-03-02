@@ -1,0 +1,42 @@
+
+\manpage{back}{back [num]}
+{Simulator command which erases the previous num execution steps.}
+{    cwb-nc> sim a.b.c.d.nil
+    a.b.c.d.nil
+    1: -- a --> b.c.d.nil
+    cwb-nc-sim> 1
+    b.c.d.nil
+    1: -- b --> c.d.nil
+    cwb-nc-sim> 1
+    c.d.nil
+    1: -- c --> d.nil
+    cwb-nc-sim> 1
+    d.nil
+    1: -- d --> nil
+    cwb-nc-sim> back 2
+    Current state moved 2 steps back.
+    cwb-nc-sim> current
+    b.c.d.nil
+    1: -- b --> c.d.nil
+}
+{
+    cwb-nc> sim a;b;c;d;stop
+    a;b;c;d;stop
+    1: -- a --> b;c;d;stop
+    cwb-nc-sim> 1
+    b;c;d;stop
+    1: -- b --> c;d;stop
+    cwb-nc-sim> 1
+    c;d;stop
+    1: -- c --> d;stop
+    cwb-nc-sim> 1
+    d;stop
+    1: -- d --> stop
+    cwb-nc-sim> back 2
+    Current state moved 2 steps back.
+    cwb-nc-sim> current
+    b;c;d;stop
+    1: -- b --> c;d;stop
+}
+{}
+

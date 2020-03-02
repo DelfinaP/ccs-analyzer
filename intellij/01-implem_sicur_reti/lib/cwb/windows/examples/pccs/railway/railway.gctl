@@ -1,0 +1,73 @@
+****************************************************************************
+*
+* Author:  Rance Cleaveland
+* Date:    13 June 2000
+*
+* Encodings in GCTL* of properties for case study reported in "Modeling and
+* verifying distributed systems using priorities: A case study".  Paper is
+* available on-line at www.cs.sunysb.edu/~rance/publications/1996.html#sct96.
+*
+* Notes:
+*
+* 1.  Properties correspond to ones in .mu file, which differ slightly from
+*     paper.
+* 
+* 2.  Following encodings of constructs in paper are used.
+*       even Phi        = A ((G F {'tick:4}) -> F Phi)
+*       again P         = A G (['recovered:0] Phi)
+*       [-S]^\infty Phi = A ({S} R Phi)
+
+* failures-responded
+
+prop failures_responded =
+  A ({'fail_overfull:0,'fail_wire:2} R 
+        ['fail_overfull:0,'fail_wire:2](
+            A ((G F {'tick:4}) -> F (E {'det:0, 'repaired:2}))))
+
+* failures-responded-again
+
+prop failures_responded_again = 
+    A G (['recovered:0]failures_responded)
+
+* can-tick
+
+prop can_tick = A G E F {'tick:4}
+
+* failures-possible
+
+prop failures_possible = 
+  E ((~{'recovered:0}) U {'fail_overfull:0, 'fail_wire:2})
+
+* failures-possible-again
+
+prop failures_possible_again =
+  A G (['recovered:0]failures_possible)
+  
+* no-false-alarms
+
+prop no_false_alarms = 
+  A ({'fail_overfull:0, 'fail_wire:2, 'recovered:0} R
+        ((~{'det:0}) \/ {'fail_overfull:0}))
+
+* no-false-alarms-again
+
+prop no_false_alarms_again = 
+  A G (['recovered:0]no_false_alarms)
+
+* eventually-silent
+
+prop eventually_silent = 
+  A G ['det:0](
+    A ((G F {'tick:4}) -> F ({'recovered:0} R ~{'comm_out:2, 'stat_out:2})))
+
+* react-on-repair
+
+prop react_on_repair = 
+  A G ['det:0](
+        A ({'recovered:0} R ([repaired:2](
+            A (G F {'tick:4} -> {'recovered:0})))))
+
+* no-deadlock
+
+prop no_deadlock = A G {- }
+

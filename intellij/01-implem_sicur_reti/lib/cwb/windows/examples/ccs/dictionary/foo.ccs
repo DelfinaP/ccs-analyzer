@@ -1,0 +1,324 @@
+
+proc Spec = 
+key.'meaning.Spec + key.'no.Spec
+
+proc S0 = 
+send.S0'
+
+proc S0' = 
+'s0.(rack0.S1 + rack1.S0' + t.S0')
+
+proc S1 = 
+send.S1'
+
+proc S1' = 
+'s1.(rack1.S0 + rack0.S1' + t.S1')
+
+proc R0 = 
+r0.'receive.'sack0.R1 + r1.'sack1.R0 + t.'sack1.R0
+
+proc R1 = 
+r1.'receive.'sack1.R0 + r0.'sack0.R1 + t.'sack0.R1
+
+proc Msafe = 
+s0.'r0.Msafe + s1.'r1.Msafe + sack0.'rack0.Msafe + sack1.'rack1.Msafe
+
+proc Mlossy = 
+s0.('r0.Mlossy + Mlossy) +
+ s1.('r1.Mlossy + Mlossy) +
+  sack0.('rack0.Mlossy + Mlossy) + sack1.('rack1.Mlossy + Mlossy)
+
+proc ABP-safe = 
+(R0 | Msafe | S0)\Internals
+
+proc ABP-lossy = 
+(R0 | Mlossy | S0)\Internals
+
+proc Spec2 = 
+send.Spec2'
+
+proc Spec2' = 
+send.Spec2'' + 'receive.Spec2
+
+proc Spec2'' = 
+'receive.Spec2'
+
+proc Two-link-netw = 
+(ABP-lossy[inode/receive] | ABP-lossy[inode/send])\ {inode} 
+
+proc Spec3 = 
+send.Spec3'
+
+proc Spec3' = 
+send.Spec3'' + 'receive.Spec3
+
+proc Spec3'' = 
+send.Spec3''' + 'receive.Spec3'
+
+proc Spec3''' = 
+'receive.Spec3''
+
+proc Three-link-netw = 
+(ABP-lossy[inode1/receive] |
+  ABP-lossy[inode1/send,inode2/receive] | ABP-lossy[inode2/send])\
+  {inode1,inode2} 
+
+proc ABP-lossy-min = 
+Aut(start = 0,
+ 0: t {1} send {2} 1: t {0} send {3} 2: t {3,4} 3: t {2,5} 
+  4: t {5,6,7} 5: t {3} 6: t {8} 'receive {9} 7: t {3,4,8} 
+  8: t {6} 'receive {10} 9: t {10,11} 10: t {9,12} 11: t {0,12,13} 
+  12: t {10} 13: t {1,10,11} )
+
+proc Impl1 = 
+(DM1 | DB1)\ {ik,im,in} 
+
+proc DM1 = 
+key.'ik.(im.'meaning.DM1 + in.'no.DM1)
+
+proc DB1 = 
+ik.(t.'im.DB1 + t.'in.DB1)
+
+proc Impl2 = 
+(DM2 | DB2)\ {ik,reset} 
+
+proc DM2 = 
+key.'ik.reset.DM2
+
+proc DB2 = 
+ik.(t.'meaning.'reset.DB2 + t.'no.'reset.DB2)
+
+proc Impl3 = 
+(DM | MED | REP)\Internals
+
+proc DM = 
+key.DM'
+
+proc MED = 
+kDM.('kMR.MED + t.MED) +
+ mRM.('mMD.MED + t.MED) + nRM.('nMD.MED + t.MED)
+
+proc REP = 
+kMR.(t.'mRM.REP + t.'nRM.REP)
+
+proc DM' = 
+'kDM.(mMD.'meaning.DM + nMD.'no.DM + t.DM')
+
+set Internals = 
+ {kDM,mMD,nMD,kMR,mRM,nRM} 
+
+proc Spec = 
+key.'meaning.Spec + key.'no.Spec
+
+proc S0 = 
+send.S0'
+
+proc S0' = 
+'s0.(rack0.S1 + rack1.S0' + t.S0')
+
+proc S1 = 
+send.S1'
+
+proc S1' = 
+'s1.(rack1.S0 + rack0.S1' + t.S1')
+
+proc R0 = 
+r0.'receive.'sack0.R1 + r1.'sack1.R0 + t.'sack1.R0
+
+proc R1 = 
+r1.'receive.'sack1.R0 + r0.'sack0.R1 + t.'sack0.R1
+
+proc Msafe = 
+s0.'r0.Msafe + s1.'r1.Msafe + sack0.'rack0.Msafe + sack1.'rack1.Msafe
+
+proc Mlossy = 
+s0.('r0.Mlossy + Mlossy) +
+ s1.('r1.Mlossy + Mlossy) +
+  sack0.('rack0.Mlossy + Mlossy) + sack1.('rack1.Mlossy + Mlossy)
+
+proc ABP-safe = 
+(R0 | Msafe | S0)\Internals
+
+proc ABP-lossy = 
+(R0 | Mlossy | S0)\Internals
+
+proc Spec2 = 
+send.Spec2'
+
+proc Spec2' = 
+send.Spec2'' + 'receive.Spec2
+
+proc Spec2'' = 
+'receive.Spec2'
+
+proc Two-link-netw = 
+(ABP-lossy[inode/receive] | ABP-lossy[inode/send])\ {inode} 
+
+proc Spec3 = 
+send.Spec3'
+
+proc Spec3' = 
+send.Spec3'' + 'receive.Spec3
+
+proc Spec3'' = 
+send.Spec3''' + 'receive.Spec3'
+
+proc Spec3''' = 
+'receive.Spec3''
+
+proc Three-link-netw = 
+(ABP-lossy[inode1/receive] |
+  ABP-lossy[inode1/send,inode2/receive] | ABP-lossy[inode2/send])\
+  {inode1,inode2} 
+
+proc ABP-lossy-min = 
+Aut(start = 0,
+ 0: t {1} send {2} 1: t {0} send {3} 2: t {3,4} 3: t {2,5} 
+  4: t {5,6,7} 5: t {3} 6: t {8} 'receive {9} 7: t {3,4,8} 
+  8: t {6} 'receive {10} 9: t {10,11} 10: t {9,12} 11: t {0,12,13} 
+  12: t {10} 13: t {1,10,11} )
+
+proc Impl1 = 
+(DM1 | DB1)\ {ik,im,in} 
+
+proc DM1 = 
+key.'ik.(im.'meaning.DM1 + in.'no.DM1)
+
+proc DB1 = 
+ik.(t.'im.DB1 + t.'in.DB1)
+
+proc Impl2 = 
+(DM2 | DB2)\ {ik,reset} 
+
+proc DM2 = 
+key.'ik.reset.DM2
+
+proc DB2 = 
+ik.(t.'meaning.'reset.DB2 + t.'no.'reset.DB2)
+
+proc Impl3 = 
+(DM | MED | REP)\Internals
+
+proc DM = 
+key.DM'
+
+proc MED = 
+kDM.('kMR.MED + t.MED) +
+ mRM.('mMD.MED + t.MED) + nRM.('nMD.MED + t.MED)
+
+proc REP = 
+kMR.(t.'mRM.REP + t.'nRM.REP)
+
+proc DM' = 
+'kDM.(mMD.'meaning.DM + nMD.'no.DM + t.DM')
+
+set Internals = 
+ {kDM,mMD,nMD,kMR,mRM,nRM} 
+
+proc Spec = 
+key.'meaning.Spec + key.'no.Spec
+
+proc S0 = 
+send.S0'
+
+proc S0' = 
+'s0.(rack0.S1 + rack1.S0' + t.S0')
+
+proc S1 = 
+send.S1'
+
+proc S1' = 
+'s1.(rack1.S0 + rack0.S1' + t.S1')
+
+proc R0 = 
+r0.'receive.'sack0.R1 + r1.'sack1.R0 + t.'sack1.R0
+
+proc R1 = 
+r1.'receive.'sack1.R0 + r0.'sack0.R1 + t.'sack0.R1
+
+proc Msafe = 
+s0.'r0.Msafe + s1.'r1.Msafe + sack0.'rack0.Msafe + sack1.'rack1.Msafe
+
+proc Mlossy = 
+s0.('r0.Mlossy + Mlossy) +
+ s1.('r1.Mlossy + Mlossy) +
+  sack0.('rack0.Mlossy + Mlossy) + sack1.('rack1.Mlossy + Mlossy)
+
+proc ABP-safe = 
+(R0 | Msafe | S0)\Internals
+
+proc ABP-lossy = 
+(R0 | Mlossy | S0)\Internals
+
+proc Spec2 = 
+send.Spec2'
+
+proc Spec2' = 
+send.Spec2'' + 'receive.Spec2
+
+proc Spec2'' = 
+'receive.Spec2'
+
+proc Two-link-netw = 
+(ABP-lossy[inode/receive] | ABP-lossy[inode/send])\ {inode} 
+
+proc Spec3 = 
+send.Spec3'
+
+proc Spec3' = 
+send.Spec3'' + 'receive.Spec3
+
+proc Spec3'' = 
+send.Spec3''' + 'receive.Spec3'
+
+proc Spec3''' = 
+'receive.Spec3''
+
+proc Three-link-netw = 
+(ABP-lossy[inode1/receive] |
+  ABP-lossy[inode1/send,inode2/receive] | ABP-lossy[inode2/send])\
+  {inode1,inode2} 
+
+proc ABP-lossy-min = 
+Aut(start = 0,
+ 0: t {1} send {2} 1: t {0} send {3} 2: t {3,4} 3: t {2,5} 
+  4: t {5,6,7} 5: t {3} 6: t {8} 'receive {9} 7: t {3,4,8} 
+  8: t {6} 'receive {10} 9: t {10,11} 10: t {9,12} 11: t {0,12,13} 
+  12: t {10} 13: t {1,10,11} )
+
+proc Impl1 = 
+(DM1 | DB1)\ {ik,im,in} 
+
+proc DM1 = 
+key.'ik.(im.'meaning.DM1 + in.'no.DM1)
+
+proc DB1 = 
+ik.(t.'im.DB1 + t.'in.DB1)
+
+proc Impl2 = 
+(DM2 | DB2)\ {ik,reset} 
+
+proc DM2 = 
+key.'ik.reset.DM2
+
+proc DB2 = 
+ik.(t.'meaning.'reset.DB2 + t.'no.'reset.DB2)
+
+proc Impl3 = 
+(DM | MED | REP)\Internals
+
+proc DM = 
+key.DM'
+
+proc MED = 
+kDM.('kMR.MED + t.MED) +
+ mRM.('mMD.MED + t.MED) + nRM.('nMD.MED + t.MED)
+
+proc REP = 
+kMR.(t.'mRM.REP + t.'nRM.REP)
+
+proc DM' = 
+'kDM.(mMD.'meaning.DM + nMD.'no.DM + t.DM')
+
+set Internals = 
+ {kDM,mMD,nMD,kMR,mRM,nRM} 

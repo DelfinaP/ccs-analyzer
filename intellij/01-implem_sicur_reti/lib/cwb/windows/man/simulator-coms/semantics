@@ -1,0 +1,19 @@
+
+\manpage{semantics}{semantics semantic-type}
+{
+  The "semantics" command sets the mode for computing transitions
+  in the simulator.  The two available "semantic-type" arguments are
+  "bisim" and "obseq".  The two different modes treat internal 
+  actions differently.  In "bisim" (bisimulation) mode internal 
+  actions are treated exactly as visible actions.  In "obseq" 
+  (observational equivalence) mode the transitions displayed
+  are those that may be taken from the current system state by
+  performing zero or more internal actions followed by some action
+  (either visible or internal) followed by zero or more internal 
+  actions.
+}
+{
+
+
+
+}{}{}

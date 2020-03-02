@@ -1,0 +1,78 @@
+******************************************************************************
+*
+* Author:  Rance Cleaveland
+* Date:    12 June 2000
+*
+* Properties for SCSI model rendered in GCTL*.  The properties are
+* reformulations of the mu-calculus properties with the same names given in
+* the file scsi.mu.  The scsi.mu formulas in turn are adaptations of those
+* given in the paper "A Practical Approach to Implementing Real-Time
+* Semantics".  Property numbers correspond to numbers given in the paper.
+
+* It is always the case that every phase is reachable.
+
+prop Property1 =
+    A G
+    (
+      (E F {@begin_MsgIn}) /\
+      (E F {@begin_MsgOut}) /\
+      (E F {@begin_DataIn}) /\
+      (E F {@begin_DataOut}) /\
+      (E F {@begin_Command}) /\
+      (E F {@begin_Status})
+    )
+
+* Whenever a phase begins, it eventually ends, provided ATN  is not
+* continually set and messages are not continually placed.
+
+prop Property2 =
+    A G ({@begin_Phase} -> ((F {@end_Phase}) \/ G F {@obs_setATN, @obsplace}))
+
+
+* The signals REQ and ACK cannot change values between phases.
+
+prop Property3 =
+    A G (
+      {@end_Phase} ->
+        X (
+          {- @obs_setREQ, @obs_relREQ, @obs_setACK, @obs_relACK}
+          W {@begin_Phase}
+        )
+    )
+
+* The signals BSY and SEL cannot change during a phase.
+
+prop Property4 =
+    A G (
+      {@begin_Phase} ->
+        X (
+          {- @obs_setBSY, @obs_relBSY, @obs_setSEL, @obs_relSEL}
+          W {@end_Phase}
+        )
+    )
+
+* Whenever a message is placed (i.e. sent), it is eventually read and no other 
+* messages placed, provided ATN is not continually set.
+
+prop Property5 =
+    A G (
+    {@obsplace} ->
+      X (
+        ({- obsplace} U {@obsread})
+        \/ (G ({- @obsplace} /\ F {@obs_setATN}))
+      )
+    )
+
+* Whenever signal ATN is set, then either the MessageOut phase is entered or a 
+* phase ends, provided ATN is not continally reset or messages continually
+* placed.
+
+prop Property6 =
+    A G ({@obs_setATN} -> ((F {@begin_MsgOut, @end_Phase}) \/ G F
+     {@obs_setATN, @obsplace}))
+
+* Deadlock-freedom.  Note that {- } is satisfied by any action, since this set 
+* corresponds to the complement of empty set.
+
+prop NoDeadlock =
+    A G {- }

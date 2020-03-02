@@ -1,0 +1,17 @@
+
+\manpage{cd}{cd directory}
+{
+    cd sets the present working directory (the unix directory in 
+    which the CWB-NC searches when the load command is executed).
+    The initial working directory is the one from which the CWB-NC
+    was invoked.
+}
+{    cwb-nc> cd /usr/local/src/cwb-nc/examples/ccs 
+    Execution time (user,system,gc,real):(0.000,0.000,0.000,0.000)
+    cwb-nc> 
+}
+{    cwb-nc> cd /usr/local/src/cwb-nc/examples/lotos 
+    Execution time (user,system,gc,real):(0.000,0.000,0.000,0.000)
+    cwb-nc> 
+}
+{load}

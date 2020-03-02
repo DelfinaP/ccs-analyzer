@@ -1,0 +1,15 @@
+Executing CWB script file toll_booth.cws, directing output to toll_booth.cws.out.
+August 15, 1996   12:00
+Execution time (user,system,gc,real):(0.000,0.010,0.000,0.146)
+cwb-nc> load toll_booth.ccs
+Execution time (user,system,gc,real):(0.090,0.040,0.000,0.136)
+cwb-nc> eq Spec Toll_booth
+Building automaton...
+States: 46
+Transitions: 57
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.250,0.010,0.000,0.283)
+cwb-nc> 

@@ -1,0 +1,40 @@
+**********************************************************************
+*  A verification of a simple communication protocol.  A discussion
+*  of this example appeared in:
+*  "The Concurrency Workbench: A Semantics Based Tool for the 
+*   Verification of Concurrent Systems"
+*   Rance Cleaveland, Joachim Parrow, Bernhard Steffen
+*   ACM Transactions on Programming Languages and Systems, 
+*   15(1):36-72, January 1993    
+**********************************************************************
+
+proc SERVICE = send.'receive.SERVICE
+
+proc SENDER = send.'from.ack_to.SENDER
+
+proc MEDIUM = from.'to.MEDIUM + ack_from.'ack_to.MEDIUM
+
+proc RECEIVER = to.'receive.'ack_from.RECEIVER
+
+proc PROTOCOL =
+  (SENDER | MEDIUM | RECEIVER) \ {from,to,ack_from,ack_to}
+
+proc PARTIAL_MEDIUM =
+  from.('to.PARTIAL_MEDIUM + ack_from.@) +
+  ack_from.('ack_to.PARTIAL_MEDIUM + from.@)
+
+proc PARTIAL_PROTOCOL =
+  (SENDER | PARTIAL_MEDIUM | RECEIVER) \ {from,to,ack_from,ack_to}
+
+proc NEW_MEDIUM =
+  MESSAGE_BUFFER | ACK_BUFFER
+
+proc MESSAGE_BUFFER =
+  from.'to.MESSAGE_BUFFER
+
+proc ACK_BUFFER =
+  ack_from.'ack_to.ACK_BUFFER
+
+proc NEW_PROTOCOL =
+  (SENDER | NEW_MEDIUM | RECEIVER) \ {to, from, ack_to, ack_from}
+

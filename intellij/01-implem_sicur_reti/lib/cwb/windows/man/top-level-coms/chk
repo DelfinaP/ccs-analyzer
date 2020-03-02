@@ -1,0 +1,51 @@
+
+\manpage{chk}{chk [-L logic] [-O] agent formula}
+{
+     chk invokes the model checker to determine whether or not
+     "agent" satisfies "formula".  The currently supported temporal
+     logics for the specification of formulas are the mu-calculus
+     (-L mu, which is the default) and GCTL* (-L gctl).  The -O option
+     indicates that model-checking is to be on-the-fly, if possible.
+     Global model-checking, if possible, is the default.  At this time,
+     global model-checking is not possible for GCTL* formulas and is only
+     available for alternation-free mu-calculus formulas.
+}
+{    cwb-nc> load abp.ccs
+     Execution time (user,system,gc,real):(0.010,0.020,0.000,0.074)
+     cwb-nc> load /abp.mu
+     Execution time (user,system,gc,real):(0.010,0.000,0.000,0.016)
+     cwb-nc> chk ABP-safe can_deadlock
+     Invoking alternation-free model checker.
+     Building automaton...
+     States: 49
+     Transitions: 74
+     Done building automaton.
+     TRUE, the agent satisfies the formula.
+     Execution time (user,system,gc,real):(0.030,0.000,0.000,0.027)
+     cwb-nc> chk -O ABP-safe can_deadlock
+     Invoking L2 model checker.
+     TRUE, the agent satisfies the formula.
+     Execution time (user,system,gc,real):(0.000,0.010,0.000,0.016)
+     cwb-nc> chk -L gctl ABP-safe "E F ~{-\}"
+     Generating ABTA from GCTL* formula...done
+     Initial ABTA has 6 states.
+     Simplifying ABTA:
+     Minimizing sets of accepting states...done
+     Performing constant propagation...done
+     Joining commutative operations...done
+     Shrinking automaton...done
+     Computing bisimulation...
+     Done computing bisimulation.
+     Simplification completed.
+     Simplified ABTA has 4 states.
+     Starting ABTA model checker.
+     Model checking completed.
+     Expanded state-space 15 times.
+     Stored 0 dependencies.
+     TRUE, the agent satisfies the formula.
+     Execution time (user,system,gc,real):(0.010,0.000,0.000,0.013)
+}{}{load}
+
+
+
+

@@ -5,7 +5,7 @@ import java.io.File;
 public class ToolLinux extends Tool {
 
     @Override
-    protected String costruisciPath(String pathParte1, String parthParte2) {
+    protected String buildPath(String pathParte1, String parthParte2) {
         return pathParte1 + "/" + parthParte2;
     }
 
@@ -17,6 +17,6 @@ public class ToolLinux extends Tool {
     @Override
     protected void startCwb(Terminal terminal) {
 
-        //todo
+
     }
 }

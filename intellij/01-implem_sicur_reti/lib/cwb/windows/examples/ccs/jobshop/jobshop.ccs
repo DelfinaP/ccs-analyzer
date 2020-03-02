@@ -1,0 +1,42 @@
+**********************************************************************
+*  jobshop.ccs
+*
+*  This example implements the jobshop presented by Robin Milner
+*  in Sections 1.3 and 5.6 of his book "Communication and Concurrency",
+*  Prentice Hall, 1989.
+*
+*  Spec is observationally equivalent to Jobshop
+*
+**********************************************************************
+
+****  Specification   ****
+
+proc Spec = Strongjobber | Strongjobber
+
+proc Strongjobber = 
+  in_easy.'out_easy.Strongjobber +
+  in_avg.'out_avg.Strongjobber +
+  in_hard.'out_hard.Strongjobber
+
+****  Implementation  ****
+
+proc Jobshop =
+  (Jobber | Jobber | Hammer | Mallet)\{geth,puth,getm,putm}
+
+proc Jobber = in_easy.Start_easy + in_hard.Start_hard + in_avg.Start_avg
+
+proc Start_easy = 'out_easy.Jobber
+
+proc Start_hard = 'geth.'puth.'out_hard.Jobber
+
+proc Start_avg = 
+  'geth.'puth.'out_avg.Jobber + 
+  'getm.'putm.'out_avg.Jobber 
+
+proc Hammer = geth.Busyhammer
+proc Busyhammer = puth.Hammer
+
+proc Mallet = getm.Busymallet
+proc Busymallet = putm.Mallet
+
+

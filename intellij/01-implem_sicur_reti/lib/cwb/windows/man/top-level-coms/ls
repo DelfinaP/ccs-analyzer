@@ -1,0 +1,7 @@
+
+\manpage{ls}{ls}
+{
+    ls lists the names of variables bound in the various 
+    environments, i.e. agent variables, set variables, ...
+}
+{}{}{}

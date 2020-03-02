@@ -1,0 +1,107 @@
+**********************************************************************
+*
+*  toll_booth.ccs  
+*  Author:  Steve Sims
+*
+*  This file contains a specification for a highway toll booth.
+*  The system has three parts: an operator booth, a coin basket,
+*  and a gate.  The operator stands in the operator booth and upon
+*  collecting a toll pushes the "up_button" to raise the gate.
+*  Alternatively, the coin basket may accept a quarter from a customer 
+*  (represented by action "quarter"), after which the gate is raised.
+*  Actions "'gate_up" and "'gate_down" correspond to the movements 
+*  of the gate.
+*
+*  Analysis
+*  --------
+*  "Spec" is observationally equivalent to the implementation 
+*  "Toll_booth".  
+*
+**********************************************************************
+
+**********************************************************************
+*  Specification
+**********************************************************************
+
+proc Spec = quarter.(up_button.Spec' + t.Spec') +
+            up_button.(quarter.Spec' + t.Spec') 
+
+proc Spec = 
+  quarter.Spec' +
+  up_button.Spec' +
+  quarter.up_button.Spec' +
+  up_button.quarter.Spec' 
+
+proc Spec' =
+  'disable_coin_basket.'gate_up.'gate_down.'enable_coin_basket.Spec 
+
+**********************************************************************  
+*  Implementation
+**********************************************************************
+
+proc Toll_booth =
+  (Operator_booth | Coin_basket | Gate) \ Internals
+
+*****************
+* Operator booth
+*****************
+
+proc Operator_booth  =
+  up_button.'req_disable_coin_basket.coin_disable_granted.Op_booth' +
+  disable_op_booth.op_booth_restart.Operator_booth
+
+proc Op_booth' =
+  'raise_gate.gate_lowered.'coin_basket_restart.
+     coin_basket_ready.Operator_booth
+
+**************
+* Coin basket 
+**************
+
+proc Coin_basket =
+  quarter.('disable_op_booth.Coin_basket' +
+            req_disable_coin_basket.'disable_coin_basket.
+              'coin_disable_granted.coin_basket_restart.
+                 'enable_coin_basket.'coin_basket_ready.Coin_basket) +
+  req_disable_coin_basket.'disable_coin_basket.'coin_disable_granted.
+    coin_basket_restart.'enable_coin_basket.
+      'coin_basket_ready.Coin_basket
+
+proc Coin_basket'=
+  'disable_coin_basket.'raise_gate.gate_lowered.
+    'enable_coin_basket.'op_booth_restart.Coin_basket
+
+******************************************************************
+* Gate has three parts:  an arm which moves up and down, a sensor
+* to determine if a vehicle is beneath the arm, and a timer.
+******************************************************************
+
+proc Gate =
+  (Arm | Sensor | Timer)
+
+proc Arm =
+  raise_gate.'gate_up.'start_timer_long.timer_expire.Lower_arm
+
+proc Lower_arm =
+  'query_sensor.(path_clear.'gate_down.'gate_lowered.Arm + 
+                 path_blocked.'start_timer_short.timer_expire.Lower_arm)
+
+proc Sensor =
+  query_sensor.('path_clear.Sensor + 'path_blocked.Sensor)
+
+proc Timer =
+  start_timer_long.'timer_expire.Timer + 
+  start_timer_short.'timer_expire.Timer
+
+set Internals =
+  {
+    raise_gate,gate_lowered,
+    start_timer_long,start_timer_short,timer_expire,
+    query_sensor,path_clear,path_blocked,
+    disable_op_booth,op_booth_restart,
+    req_disable_coin_basket,coin_disable_granted, 
+    coin_basket_restart, coin_basket_ready
+  }
+    
+
+

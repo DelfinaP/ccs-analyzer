@@ -1,0 +1,5 @@
+load palindromes.sccs
+le -Smay SpecPAL2 ImpPAL0 
+le -Smay SpecPAL2a ImpPAL2 
+le -Smay SpecPAL2ab ImpPAL4 
+le -Smay SpecPAL2bb ImpPAL20

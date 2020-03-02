@@ -1,0 +1,9 @@
+load bruns.pccs
+load railway.mu
+
+chk SS failures_responded
+chk SS can_tick
+chk SS failures_possible
+chk SS no_false_alarms
+chk SS eventually_silent
+

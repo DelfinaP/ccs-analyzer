@@ -1,0 +1,13 @@
+load abp.csp
+load abp.mu
+
+eq Spec ABP-safe
+eq Spec ABP-lossy
+
+chk ABP-lossy can_send
+chk ABP-lossy always_can_send_or_receive
+chk ABP-lossy no_repeat
+chk ABP-lossy can_deadlock
+
+chk ABP-safe can_deadlock
+

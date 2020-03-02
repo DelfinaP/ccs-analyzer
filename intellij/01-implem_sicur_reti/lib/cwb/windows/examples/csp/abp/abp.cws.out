@@ -1,0 +1,78 @@
+Executing CWB-NC script file abp.cws, directing output to abp.cws.out.
+August 15, 1996   16:24
+Execution time (user,system,gc,real):(0.000,0.000,0.000,0.070)
+cwb-nc> load abp.csp
+Execution time (user,system,gc,real):(0.050,0.000,0.000,0.048)
+cwb-nc> load abp.mu
+Execution time (user,system,gc,real):(0.010,0.000,0.000,0.012)
+cwb-nc> 
+cwb-nc> eq Spec ABP-safe
+Building automaton...
+States: 96
+Transitions: 160
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+FALSE...
+Spec satisfies:
+	[[send]]<<receive>>tt
+ABP-safe does not.
+Execution time (user,system,gc,real):(0.270,0.010,0.000,0.289)
+cwb-nc> eq Spec ABP-lossy
+Building automaton...
+.
+States: 120
+Transitions: 266
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.360,0.010,0.000,0.371)
+cwb-nc> 
+cwb-nc> chk ABP-lossy can_send
+Invoking alternation-free model checker.
+Building automaton...
+.
+States: 118
+Transitions: 264
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.170,0.010,0.000,0.177)
+cwb-nc> chk ABP-lossy always_can_send_or_receive
+Invoking alternation-free model checker.
+Building automaton...
+.
+States: 118
+Transitions: 264
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.150,0.000,0.010,0.150)
+cwb-nc> chk ABP-lossy no_repeat
+Invoking alternation-free model checker.
+Building automaton...
+.
+States: 118
+Transitions: 264
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.150,0.000,0.000,0.146)
+cwb-nc> chk ABP-lossy can_deadlock
+Invoking alternation-free model checker.
+Building automaton...
+.
+States: 118
+Transitions: 264
+Done building automaton.
+FALSE, the agent does not satisfy the formula.
+Execution time (user,system,gc,real):(0.110,0.010,0.000,0.116)
+cwb-nc> 
+cwb-nc> chk ABP-safe can_deadlock
+Invoking alternation-free model checker.
+Building automaton...
+States: 94
+Transitions: 158
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.120,0.000,0.000,0.117)
+cwb-nc> 
+cwb-nc> 

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 public class TerminalWindows extends Terminal{
 
-    public TerminalWindows() throws IOException {
+    public TerminalWindows() {
         batchExtension = "bat";
     }
 

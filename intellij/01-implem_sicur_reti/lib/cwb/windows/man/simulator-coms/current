@@ -1,0 +1,26 @@
+
+\manpage{current}{current}
+{
+    Simulator command that displays the current agent and lists its 
+    available transitions.
+}
+{    cwb-nc> sim a.b.c.nil      
+    a.b.c.nil
+    1: -- a --> b.c.nil
+    cwb-nc-sim> 1
+    b.c.nil
+    1: -- b --> c.nil
+    cwb-nc-sim> 1
+    c.nil
+    1: -- c --> nil
+    cwb-nc-sim> current
+    c.nil
+    1: -- c --> nil
+    cwb-nc-sim> back 1
+    Current state moved 1 step back.
+    cwb-nc-sim> current
+    b.c.nil
+    1: -- b --> c.nil
+}
+{}
+{}

@@ -1,0 +1,16 @@
+
+\manpage{sort}{sort agent}
+{
+    sort displays the set of visible actions that agent may
+    engage in.
+}
+{    cwb-nc> sort "a.b.nil | 'a.c.nil"
+    \{ a, b, c, 'a \}
+    Execution time (user,system,gc,real):(0.000,0.020,0.000,0.016)
+}
+{    cwb-nc> sort a;b;stop
+    \{ a, b \}
+    Execution took 0.000 seconds.
+}
+{}
+

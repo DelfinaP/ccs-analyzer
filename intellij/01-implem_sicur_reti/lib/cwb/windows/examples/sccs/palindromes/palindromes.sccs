@@ -1,0 +1,242 @@
+*********************************************************************
+*  A Palindrome recognizer in SCCS as constructed by Matthew Hennessy
+*  in his paper "Proving Systolic Systems Correct", ACM TOPLAS, vol.
+*  8, No. 3, July 1986, pp 345-386. Copied with some small modifica-
+*  tions. Shows what you can do with copying capabilities!
+*  
+*  But that's not the whole story. Read every line in this file before
+*  you say "Phooey!".
+*
+*						S. Arun-Kumar
+*						July 1998.
+*********************************************************************
+
+************************** The SPECIFICATION ************************
+***
+*** Let the alphabet be {a, b}. We write the specification for the case
+*** of strings of length at most 2. But that's not the whole story. 
+*** Read every line in this file before you say "Phooey!".
+*** 
+*** For all input strings of length > 2, the specification takes just
+*** the first and last letters of the string and checks whether it is
+*** a palindrome.
+*** 
+*** We use the labels "lbf", "lbt", "lsa", and "lsb" to denote the actions
+*** "Lbool!false", "Lbool!true", "Lsym?a", "Lsym?b" used in the paper.
+*** Similarly the parameters of a process are suffixed to its name.
+*** Lastly we use the prefixes "Spec" and "Imp" respectively to denote
+*** the obvious references to the specification and the implementation
+*** respectively.
+*** 
+*** Further note that any string of length at most 1 is always a 
+*** palindrome.
+***
+*** So here's the specification in CWB-NC-SCCS-ese.
+***
+*** Notation: We use for any palindrome recognizer that can take words
+*** of length 2k, we affix the specification name with the value 2k. The
+*** external interface has two output boolean actions  for which we
+*** use the labels "bkt" and "bkf" where "b" stands for boolean, k is an
+*** integer (obtained by halving 2k) and "t" and "f" stand respectively
+*** for true and false. It has two input actions (viz. taking in a
+*** symbol of the alphabet) similarly labelled "ska" and "skb".
+***
+**********************************************************************
+
+proc SpecPAL2 = `':SpecPAL2 + 
+		`~b1t':SpecPAL2 +
+		`s1a':`~b1t':SpecPAL2a +
+		`s1b':`~b1t':SpecPAL2b 
+proc SpecPAL2a = `s1a':`~b1t':SpecPAL2aa +
+		 `s1b':`~b1f':SpecPAL2ab
+proc SpecPAL2b = `s1a':`~b1f':SpecPAL2ba +
+		 `s1b':`~b1t':SpecPAL2bb
+proc SpecPAL2aa = `s1a':`~b1t':SpecPAL2aa +
+		  `s1b':`~b1f':SpecPAL2ab
+proc SpecPAL2ab = `s1a':`~b1t':SpecPAL2aa +
+		  `s1b':`~b1f':SpecPAL2ab
+proc SpecPAL2ba = `s1a':`~b1f':SpecPAL2ba +
+		  `s1b':`~b1t':SpecPAL2bb
+proc SpecPAL2bb = `s1a':`~b1f':SpecPAL2ba +
+		  `s1b':`~b1t':SpecPAL2bb
+
+*********************** The IMPLEMENTATION ******************************
+
+*** The Terminator ***
+
+*** The Terminator has two actions "~lbf", "lbt" for outputting booleans to the
+*** cell to its left and input actions "lsa", "lsb", to receive symbols from
+*** the cell to its left.
+
+proc TC = `':TC + `~lbt':TC + `lsa':TC + `lsb':TC
+
+*** The individual cell ***
+
+*** Each cell can output and input booleans respectively to its left and from
+*** its right. Similarly it can input and output symbols respectively from its
+*** left and to its right.
+
+proc Cell0 = `':Cell0 + `~lbt':Cell0 + 
+	     `lsa':`~lbt':Cell1a + `lsb':`~lbt':Cell1b
+
+proc Cell1a = `lsa.rbf':Cell2aa0 +
+	      `lsa.rbt':Cell2aa1 +
+	      `lsb.rbf':Cell2ab0 +
+	      `lsb.rbt':Cell2ab1
+
+proc Cell1b = `lsa.rbf':Cell2ba0 +
+	      `lsa.rbt':Cell2ba1 +
+	      `lsb.rbf':Cell2bb0 +
+	      `lsb.rbt':Cell2bb1
+
+proc Cell2aa0 = `~lbf.~rsa':Cell1a
+proc Cell2aa1 = `~lbt.~rsa':Cell1a
+proc Cell2ab0 = `~lbf.~rsb':Cell1a
+proc Cell2ab1 = `~lbf.~rsb':Cell1a
+proc Cell2ba0 = `~lbf.~rsa':Cell1b
+proc Cell2ba1 = `~lbf.~rsa':Cell1b
+proc Cell2bb0 = `~lbf.~rsb':Cell1b
+proc Cell2bb1 = `~lbt.~rsb':Cell1b
+
+*** Connect them all up.
+*** The cells all stand together holding hands left and right respectively.
+*** The rightmost cell is the terminator TC (and you are looking at their
+*** backs, not their faces -- so your left and right are the same as those of
+*** the individual cells).
+*** We may define an internalization as follows. Given an implementation
+*** with k-cells (k >= 0) whose interface with the external world are the 
+*** output actions "~lbf", "~lbt" and input actions "lsa", "lsb".
+*** The ith-cell (0 <= i <= k) has its actions relabelled as follows:
+***
+***	lbf |--> bi0		lbt |--> bi1
+***	lsa |--> sia		lsb |--> sib
+***	rbf |--> b(i-1)0	rbt |--> b(i-1)1  for (i > 0)
+***	rsa |--> s(i-1)a	rsb |--> s(i-1)b  for (i > 0)
+***
+*** This will help us to inductively extend the palindrome recognizer by 
+*** another cell. A palindrome recognizer (that works correctly for words
+*** of length upto 2k), when extended by one more cell will work correctly
+*** for words of length 2(k+1). Of course, all this is an excellent idea
+*** except for the fact that we are only only going to try k=1. But it's
+*** the principle of the thing that matters. Right!
+
+proc ImpPAL0 = TC [lbf/`b0f', lbt/`b0t', lsa/`s0a', lsb/`s0b']
+
+proc ImpPAL~2 = (Cell0 [lbf/`b1f', lbt/`b1t', lsa/`s1a', lsb/`s1b', 
+		      rbf/`b0f', rbt/`b0t', rsa/`s0a', rsb/`s0b'] ) #
+	        ImpPAL0 
+
+*** Now  localize the internal names by specifying the external interface
+
+set Ext1 = {b1f, b1t, s1a, s1b}
+
+proc ImpPAL2 = ImpPAL~2 ! Ext1
+
+************************ EPILOGUE **************************************
+
+*** Now that's an awful lot of sweat to verify that the implementation meets
+*** the specification for words of length at most 2! So why don't we extend the
+*** 'spec' and the 'imp' for arbitrarily long words? Well, the simple answer is
+*** that we don't have induction available with the model-checker. Then 
+*** why don't we extend it to words of at most some k where k is a large 
+*** make enough number to model-checking useful? Well, this can definitely be 
+*** done for the 'imp' for it involves writing SCCS code whose length 
+*** increases LINEARLY as k. For example, ImpPAL4 looks like this:
+***
+
+proc ImpPAL~4 = (Cell0 [lbf/`b2f', lbt/`b2t', lsa/`s2a', lsb/`s2b', 
+		      rbf/`b1f', rbt/`b1t', rsa/`s1a', rsb/`s1b'] ) #
+		ImpPAL2 
+
+set Ext2 = {b2f, b2t, s2a, s2b}
+
+proc ImpPAL4 = ImpPAL~4 ! Ext2
+
+*** In fact, we can do better. Since the chaining operation ("holding hands")
+*** is associative and commutative, we can create complex cells from simpler
+*** ones by doubling and then chaining the various cells together and then
+*** appending the terminator. So here is how we can create a palindrome
+*** recognizer for k = 10 (words of length 20) by chaining the processes
+*** Cellx8, Cellx2 and TC. Here is the construction of Cellx2 and Cellx8.
+*** This would require constructing Cellx4 too but that can be used for 
+*** creating ImpPAL30 for example!
+
+*** For each k, Cellxk has as interface the set Ext defined below. We connect
+*** Cellxk and Cellxm to obtain Cellx(k+m) by first renaming all the right
+*** side signals of Cellxk (signals with prefix "r") to corresponding ones
+*** with prefix "i" (for "internal") and similarly renaming all left side
+*** signals of Cellxm (ones with "l") to ones with "i".
+
+set Ext = {lbf, lbt, rbf, rbt, lsa, lsb, rsa, rsb}
+
+proc Cellx1 = Cell0
+
+proc Cellx2 = ((Cellx1 [rbf/`ibf', rbt/`ibt', rsa/`isa', rsb/`isb']) #
+	       (Cellx1 [lbf/`ibf', lbt/`ibt', lsa/`isa', lsb/`isb']))
+	      ! Ext
+
+proc Cellx4 = ((Cellx2 [rbf/`ibf', rbt/`ibt', rsa/`isa', rsb/`isb']) #
+	       (Cellx2 [lbf/`ibf', lbt/`ibt', lsa/`isa', lsb/`isb']))
+	      ! Ext
+
+proc Cellx8 = ((Cellx4 [rbf/`ibf', rbt/`ibt', rsa/`isa', rsb/`isb']) #
+	       (Cellx4 [lbf/`ibf', lbt/`ibt', lsa/`isa', lsb/`isb']))
+	      ! Ext
+
+proc Cellx10 = ((Cellx8 [rbf/`ibf', rbt/`ibt', rsa/`isa', rsb/`isb']) #
+	        (Cellx2 [lbf/`ibf', lbt/`ibt', lsa/`isa', lsb/`isb']))
+	       ! Ext
+
+proc ImpPAL20 = ((Cellx10 [rbf/`ibf', rbt/`ibt', rsa/`isa', rsb/`isb']) #
+	    (TC [lbf/`ibf', lbt/`ibt', lsa/`isa', lsb/`isb']))
+	   ! Ext
+
+*** Hence the length of an implementation increases logarithmically as the
+*** the length of the words that need to be recognized.
+*** But the length of the specification increases EXPONENTIALLY with the 
+*** with the length of the words because the specification has to specify
+*** the responses of the system for every possible input. This is due to
+*** the fact that we don't have a suitable inductive procedure  or abstraction 
+*** mechanisms for generating specifications that scale up with the size
+*** of input. If we did manage to write specifications for larger k, the
+*** the model-checking procedure will only allow you to verify the humongous
+*** specification against the tiny implementation as opposed to doing things
+*** the other way round.
+
+*** A way out is the following (thanks to Rance Cleaveland). Create a context
+*** which generates arbitrary length words and then run the simulator. Such
+*** a context consists of a test sequence generator which may be run
+*** synchronously with the palindrome recognizer after connecting them up
+*** suitably. 
+
+proc TestGen = `~a':(`':nil + `':TestGen) + 
+	       `~b':(`':nil + `':TestGen)
+
+*** The idling action after each symbol ensures that the result of the 
+*** evaluation is output without the sytem deadlocking.
+*** To make the output more convenient to recognize we do a renaming on both 
+*** processes so that we know what symbol was accepted and what truth value 
+*** returned.
+
+proc Test~4 = TestGen [a/`s2a', b/`s2b'] # 
+	     ImpPAL4 [s2a/`a.s2a', s2b/`b.s2b', b2f/`false', b2t/`true']
+
+
+proc Test~20 = TestGen [a/`lsa', b/`lsb'] #
+	       ImpPAL20 [lsa/`a.lsa', lsb/`b.lsb', lbf/`false', lbt/`true']
+
+set Out = {a, b, true, false}
+
+proc Test4 = Test~4 ! Out
+
+proc Test20 = Test~20 ! Out
+
+*** Another possibility is to come up with crucial properties expressed in the
+*** modal mu-calculus (with no atoms except tt and ff) and verify that 
+
+
+
+
+
+
+

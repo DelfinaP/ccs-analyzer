@@ -1,0 +1,7 @@
+load dictionary.ccs
+eq -S may Spec Impl1
+eq -S must Spec Impl1
+eq -S may Spec Impl2
+eq -S must Spec Impl2
+eq -S may Spec Impl3
+eq -S must Spec Impl3

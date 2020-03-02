@@ -1,0 +1,95 @@
+(*  peterson-2.lotos
+ *  4-18-96
+ *
+ *  This example models a solution to the two-process critical section 
+ *  problem using Peterson's algorithm.  This is adapted from David
+ *  Walker's CCS example.
+ *
+ *)
+
+process Spec[enter_cs,exit_cs] :=
+  enter_cs;exit_cs;Spec[enter_cs,exit_cs]
+endproc (* Spec *)
+
+process Peterson_2[p1_enter_cs,p1_exit_cs,p2_enter_cs,p2_exit_cs] :=
+  hide 
+    flag1_r_t,flag1_r_f,flag1_w_t,flag1_w_f,
+    flag2_r_t,flag2_r_f,flag2_w_t,flag2_w_f,
+    turn_r_1,turn_w_1,turn_r_2,turn_w_2 
+  in
+    (
+      Proc[p1_enter_cs,p1_exit_cs,flag1_w_t,flag1_w_f,flag2_r_t,flag2_r_f,
+           turn_r_2,turn_w_2,turn_r_1] 
+        |[flag1_w_t,flag1_w_f,flag2_r_t,flag2_r_f,
+          turn_r_2,turn_w_2,turn_r_1]|  
+      System_state[flag1_r_t,flag1_r_f,flag1_w_t,flag1_w_f,
+                   flag2_r_t,flag2_r_f,flag2_w_t,flag2_w_f,
+                   turn_r_1,turn_w_1,turn_r_2,turn_w_2]
+        |[flag2_w_t,flag2_w_f,flag1_r_t,flag1_r_f,
+          turn_r_1,turn_w_1,turn_r_2]|
+      Proc[p2_enter_cs,p2_exit_cs,flag2_w_t,flag2_w_f,flag1_r_t,flag1_r_f,
+           turn_r_1,turn_w_1,turn_r_2] 
+    )
+endproc (* Peterson_2 *)
+
+process Proc[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me] := 
+  myflag_w_t;turn_w_other;P11[enter_cs,exit_cs,myflag_w_t,myflag_w_f,
+                              otherflag_r_t,otherflag_r_f,
+                              turn_r_other,turn_w_other,turn_r_me]
+endproc (* Proc *)
+
+process P11[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me] := 
+  otherflag_r_t;P11[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me] [] 
+  otherflag_r_f;P12[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me] [] 
+  turn_r_other;P11[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me] [] 
+  turn_r_me;P12[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me]
+endproc (* P11 *)
+
+process P12[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+             turn_r_other,turn_w_other,turn_r_me] :=
+  enter_cs;exit_cs;myflag_w_f;
+    Proc[enter_cs,exit_cs,myflag_w_t,myflag_w_f,otherflag_r_t,otherflag_r_f,
+         turn_r_other,turn_w_other,turn_r_me] 
+endproc (* P12 *)
+
+process System_state[flag1_r_t,flag1_r_f,flag1_w_t,flag1_w_f,
+                     flag2_r_t,flag2_r_f,flag2_w_t,flag2_w_f,
+                     turn_r_1,turn_w_1,turn_r_2,turn_w_2] :=
+
+  Turn[turn_r_1,turn_w_1,turn_r_2,turn_w_2]  |||
+  Flag[flag1_r_t,flag1_r_f,flag1_w_t,flag1_w_f] |||
+  Flag[flag2_r_t,flag2_r_f,flag2_w_t,flag2_w_f]  
+endproc (* System_state *)
+
+process Flag[r_t,r_f,w_t,w_f] :=
+  Flag_f[r_t,r_f,w_t,w_f] 
+endproc (* Flag *)
+
+process Flag_f[r_t,r_f,w_t,w_f] := 
+  r_f;Flag_f[r_t,r_f,w_t,w_f] []
+  w_f;Flag_f[r_t,r_f,w_t,w_f] []
+  w_t;Flag_t[r_t,r_f,w_t,w_f]
+endproc
+
+process Flag_t[r_t,r_f,w_t,w_f] := 
+  r_t;Flag_t[r_t,r_f,w_t,w_f] []
+  w_t;Flag_t[r_t,r_f,w_t,w_f] []
+  w_f;Flag_f[r_t,r_f,w_t,w_f]
+endproc
+
+process Turn[turn_r_1,turn_w_1,turn_r_2,turn_w_2] := 
+  turn_r_1;Turn[turn_r_1,turn_w_1,turn_r_2,turn_w_2] []
+  turn_w_1;Turn[turn_r_1,turn_w_1,turn_r_2,turn_w_2] []
+  turn_w_2;Turn[turn_r_2,turn_w_2,turn_r_1,turn_w_1]
+endproc (* Turn *)
+
+
+
+
+

@@ -1,0 +1,19 @@
+load SR-latch.sccs
+compile SpecFF00
+compile SpecFF01
+compile SpecFF10
+compile SpecFF11
+compile ImpFF00
+compile ImpFF01
+compile ImpFF10
+compile ImpFF11
+compile "NOR0phi # NOR0psi"
+compile "NOR0phi # NOR1psi"
+compile "NOR1phi # NOR0psi"
+compile "NOR1phi # NOR1psi"
+eq SpecFF00 ImpFF00
+eq SpecFF01 ImpFF01
+eq SpecFF10 ImpFF10
+eq SpecFF11 ImpFF11
+
+

@@ -1,0 +1,19 @@
+
+\manpage{trans}{trans agent}
+{
+    trans displays the single step transitions which agent 
+    may perform.
+}
+{
+    Command: trans "a.nil + b.nil"
+    -- b --> nil
+    -- a --> nil
+    Execution took 0.000 seconds.
+}
+{
+    Command: trans "a;stop [] b;stop"
+    -- b --> stop
+    -- a --> stop
+    Execution took 0.000 seconds.
+}
+{}

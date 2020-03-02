@@ -1,0 +1,23 @@
+:
+#!/bin/sh
+# @(#) run_analysis - This Bourne Shell script runs the analysis
+# @(#) for the railway case study using the Concurrency Workbench 
+# @(#) of New Century.  For a complete description of the 
+# @(#) study see:
+# @(#) 
+# @(#) "Modeling and Verifying Distributed Systems Using Priorities: 
+# @(#) A Case Study", Cleaveland, Luettgen, Natarajan, and Sims.
+# @(#) in Software - Concepts and Tools (1996) 17. Springer Verlag.
+#
+# This script lauches the CWB-NC several times to execute each 
+# Concurrency Workbench script in the cws subdirectory, placing results 
+# of each execution in the cws/results subdirectory.
+
+echo "es cws/basic.1.cws cws/results/basic.1.out" | cwb-nc pccs
+echo "es cws/basic.2.cws cws/results/basic.2.out" | cwb-nc pccs
+echo "es cws/bruns.1.cws cws/results/bruns.1.out" | cwb-nc pccs
+echo "es cws/bruns.2.cws cws/results/bruns.2.out" | cwb-nc pccs
+echo "es cws/recovery.1.cws cws/results/recovery.1.out" | cwb-nc pccs
+echo "es cws/recovery.2.cws cws/results/recovery.2.out" | cwb-nc pccs
+echo "es cws/ftolerant.1.cws cws/results/ftolerant.1.out" | cwb-nc pccs
+echo "es cws/ftolerant.2.cws cws/results/ftolerant.2.out" | cwb-nc pccs

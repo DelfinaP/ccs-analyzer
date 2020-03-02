@@ -1,0 +1,10 @@
+
+\manpage{load}{load filename}
+{
+    This command loads a file into the current CWB-NC session.
+    The file suffix indicates the type of file to be loaded:
+    .ccs files contain a sequence of ccs process definitions.
+    .mu files contain a sequence of mu-calculus formulas.
+}
+{}{}{}
+

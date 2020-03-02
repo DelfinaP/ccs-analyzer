@@ -1,0 +1,69 @@
+CWB-NC LICENSE
+
+This is the License agreement for the Concurrency Workbench
+of North Carolina hereafter referred to as the CWB-NC or the 
+software.
+
+NOTICE: Do not use this software until you have read the 
+following license agreement.  By proceeding beyond this screen, you 
+certify that you have read, understood, and accepted all terms and 
+conditions in the license agreement.  This license must not be
+removed from the distribution directory.
+
+Rights Granted
+
+The CWB-NC is being made available to you by North Carolina
+State University (NCSU) under a site license.  You may network
+the software on as many workstations at your site as you wish,
+but it may not be used at all off-site.  You may not use the
+software as the basis for a commercial product of any kind
+without prior permission of NCSU.  You may merge the software
+with other programs but you may not distribute any program that
+contains the software.  You may make as many copies of the
+software as needed for installation on workstations at your
+site and for backup purposes, but no more.  You may not reverse
+engineer, decompile, rewrite or otherwise modify the software
+in order to derive a benefit not granted by this license.
+
+Copyright
+
+The software and documentation have been copyrighted by North
+Carolina State University (NCSU) and are protected by United
+States Copyright Law from unauthorized duplication.  Title to
+the software, including all intellectual property (copyrights,
+trademarks and patentable material) shall remain with North
+Carolina State University at all times.  If you make any copies
+of the software, NCSU's copyright notices shall be included on
+the copies.  If you publish results of your use of the
+software, you will include NCSU's copyright notice on such
+publications and will acknowledge the authors and NCSU as the 
+source of the software.  
+
+No Support
+
+No support is provided for this software.
+
+Warranty and Limitation of Liability
+
+You acknowledge and understand that the software and related
+documentation are provided "AS IS" and without warranty of any
+kind.  NCSU EXPRESSLY DISCLAIMS ALL WARRANTIES, EXPRESS OR
+IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTY OF
+MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, AND THE
+WARRANTY THAT USE OF THE SOFTWARE WILL NOT INFRINGE THE
+INTELLECTUAL PROPERTY RIGHTS OF A THIRD PARTY.
+
+UNDER NO CIRCUMSTANCES, INCLUDING NEGLIGENCE , SHALL NCSU BE
+LIABLE FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES
+THAT RESULT FROM THE USE OR INABILITY TO USE THE SOFTWARE OR
+RELATED DOCUMENTATION, EVEN IF NCSU HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+Legal Agreement
+
+This is a legal agreement between you and NCSU. Should any
+dispute arise under this agreement, such dispute shall be
+settled according to the laws of the State of North Carolina.
+You agree to abide by all of the terms as stated herein. 
+IF YOU DO NOT AGREE WITH EVEN ONE TERM OF THIS AGREEMENT, DO
+NOT USE THIS SOFTWARE.

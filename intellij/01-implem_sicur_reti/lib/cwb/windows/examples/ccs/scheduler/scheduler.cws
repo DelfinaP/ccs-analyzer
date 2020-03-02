@@ -1,0 +1,8 @@
+load scheduler.ccs
+load scheduler.mu
+
+eq Spec Sched
+
+chk Sched Cycle_broken
+chk Sched Perform_a1_first
+chk Sched Repeat_reachable

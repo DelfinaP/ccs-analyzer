@@ -1,0 +1,92 @@
+Executing CWB script file cws/recovery.1.cws, directing output to cws/results/recovery.1.out.
+July 25, 1996   13:38
+Execution time (user,system,gc,real):(0.001,0.004,0.000,0.054)
+cwb-nc> load recovery.pccs
+Execution time (user,system,gc,real):(0.042,0.008,0.000,0.087)
+cwb-nc> 
+cwb-nc> load formulas/failures_responded.mu
+Execution time (user,system,gc,real):(0.007,0.000,0.000,0.008)
+cwb-nc> load formulas/failures_responded_again.mu
+Execution time (user,system,gc,real):(0.009,0.002,0.000,0.043)
+cwb-nc> load formulas/can_tick.mu
+Execution time (user,system,gc,real):(0.002,0.000,0.000,0.002)
+cwb-nc> load formulas/failures_possible.mu
+Execution time (user,system,gc,real):(0.003,0.000,0.000,0.004)
+cwb-nc> load formulas/failures_possible_again.mu
+Execution time (user,system,gc,real):(0.004,0.002,0.000,0.025)
+cwb-nc> load formulas/no_false_alarms.mu
+Execution time (user,system,gc,real):(0.004,0.000,0.000,0.004)
+cwb-nc> load formulas/no_false_alarms_again.mu
+Execution time (user,system,gc,real):(0.005,0.002,0.000,0.027)
+cwb-nc> load formulas/eventually_silent.mu
+Execution time (user,system,gc,real):(0.012,0.002,0.002,0.014)
+cwb-nc> load formulas/react_on_repair.mu
+Execution time (user,system,gc,real):(0.006,0.002,0.000,0.103)
+cwb-nc> 
+cwb-nc> chk SS failures_responded
+Invoking L2 model checker.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(3.437,0.062,0.229,3.527)
+cwb-nc> chk SS failures_responded_again
+Invoking L2 model checker.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(19.332,0.499,2.288,21.476)
+cwb-nc> chk SS can_tick
+Invoking alternation-free model checker.
+Building automaton...
+.........1000
+States: 1100
+Transitions: 2801
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(2.011,0.104,0.414,2.224)
+cwb-nc> chk SS failures_possible
+Invoking alternation-free model checker.
+Building automaton...
+.........1000
+States: 1100
+Transitions: 2801
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(1.603,0.018,0.017,1.642)
+cwb-nc> chk SS failures_possible_again
+Invoking alternation-free model checker.
+Building automaton...
+.........1000
+States: 1100
+Transitions: 2801
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(1.623,0.018,0.014,1.670)
+cwb-nc> chk SS no_false_alarms
+Invoking alternation-free model checker.
+Building automaton...
+.........1000
+States: 1100
+Transitions: 2801
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(1.674,0.016,0.011,1.741)
+cwb-nc> chk SS no_false_alarms_again
+Invoking alternation-free model checker.
+Building automaton...
+.........1000
+States: 1100
+Transitions: 2801
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(1.724,0.017,0.018,1.758)
+cwb-nc> chk SS eventually_silent
+Invoking L2 model checker.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(14.662,0.299,1.806,15.524)
+cwb-nc> chk SS react_on_repair
+Invoking L2 model checker.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(26.354,0.598,3.455,30.498)
+cwb-nc> 
+cwb-nc> 
+cwb-nc> 
+cwb-nc> 
+cwb-nc> 
+cwb-nc> 

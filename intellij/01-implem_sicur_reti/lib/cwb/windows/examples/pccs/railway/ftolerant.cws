@@ -1,0 +1,8 @@
+load ftolerant.pccs
+
+min -S bisim SPC SPC_min
+min -S bisim LGL LGL_min
+min -S bisim TPC TPC_min
+min -S bisim Clock Clock_min
+
+size "(SPC_min | LGL_min | TPC_min | Clock_min)\Restr"

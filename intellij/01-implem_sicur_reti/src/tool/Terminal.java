@@ -21,7 +21,7 @@ public abstract class Terminal {
 
     protected Thread readBufferThread;
 
-    public Terminal() throws IOException {
+    public Terminal() {
         commandsList = new LinkedList<String>();
         isExecuted = false;
 

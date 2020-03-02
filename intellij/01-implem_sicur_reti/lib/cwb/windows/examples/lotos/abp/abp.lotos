@@ -1,0 +1,199 @@
+
+(**********************************************************************
+ *  abp.lotos   (written by Rance Cleaveland, translated to 
+ *               Basic Lotos by Steve Sims)
+ *
+ *  This file contains a version of the Alternating Bit Protocol.
+ *  This version uses no local process definintions
+ *
+ *  The specification of the protocol is represented by the agent
+ *  "Spec", and there are two implementations, "ABP-lossy", which
+ *  uses a lossy medium "Mlossy", and "ABP-safe, which uses a
+ *  reliable medum "Msafe".
+ *
+ *  "ABP-lossy" is correct in the sense that it is observationally
+ *  equivalent to "Spec", whereas "ABP-safe" is not. 
+ *
+ **********************************************************************)
+
+
+(**********************************************************************
+ *  The definition of the specification 
+ **********************************************************************)
+
+process Spec[send,receive] :=
+  send;receive;Spec[send,receive]
+endproc
+
+(**********************************************************************
+ *  The definition of the sender
+ **********************************************************************)
+
+process Sender[send,s0,s1,rack0,rack1] :=
+  S0[send,s0,s1,rack0,rack1]
+endproc
+
+process S0[send,s0,s1,rack0,rack1] :=
+  send;S0'[send,s0,s1,rack0,rack1]
+endproc
+
+process S0'[send,s0,s1,rack0,rack1] := 
+    s0;(rack0;S1[send,s0,s1,rack0,rack1] [] 
+    rack1;S0'[send,s0,s1,rack0,rack1] [] 
+    i;S0'[send,s0,s1,rack0,rack1])
+endproc
+
+process S1[send,s0,s1,rack0,rack1] := 
+  send;S1'[send,s0,s1,rack0,rack1]
+endproc
+
+process S1'[send,s0,s1,rack0,rack1] := 
+  s1;(rack1;S0[send,s0,s1,rack0,rack1] [] 
+  rack0;S1'[send,s0,s1,rack0,rack1] [] 
+  i;S1'[send,s0,s1,rack0,rack1])
+endproc
+
+(**********************************************************************
+ *  The definition of the receiver
+ **********************************************************************)
+
+process Receiver[receive,r0,r1,sack0,sack1] :=
+  R0[receive,r0,r1,sack0,sack1]
+endproc
+  
+process R0[receive,r0,r1,sack0,sack1] :=
+  r0;receive;sack0;R1[receive,r0,r1,sack0,sack1] [] 
+  r1;sack1;R0[receive,r0,r1,sack0,sack1] [] 
+  i;sack1;R0[receive,r0,r1,sack0,sack1]
+endproc
+
+process R1[receive,r0,r1,sack0,sack1] :=
+  r1;receive;sack1;R0[receive,r0,r1,sack0,sack1] [] 
+  r0;sack0;R1[receive,r0,r1,sack0,sack1] [] 
+  i;sack0;R1[receive,r0,r1,sack0,sack1]
+endproc
+
+(**********************************************************************
+ *  The definition of the lossy medium "Mlossy"
+ **********************************************************************)
+
+process Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] :=
+  s0;(r0;Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] [] 
+         Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] 
+     ) [] 
+  s1;(r1;Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] [] 
+         Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1]
+     ) []
+  sack0;(rack0;Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] [] 
+               Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1]
+        ) [] 
+  sack1;(rack1;Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] [] 
+               Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1]
+        )
+endproc
+
+process ABP-lossy[send,receive] :=
+
+  hide s0,s1,r0,r1,sack0,sack1,rack0,rack1 in
+    (
+      Sender[send,s0,s1,rack0,rack1] |[s0,s1,rack0,rack1]|
+      Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1] |[r0,r1,sack0,sack1]|
+      Receiver[receive,r0,r1,sack0,sack1]
+    )
+
+endproc
+
+(**********************************************************************
+ *  The definition of the reliable medium "Msafe"
+ **********************************************************************)
+
+process Msafe[s0,s1,r0,r1,sack0,sack1,rack0,rack1] := 
+
+  s0;r0;Msafe[s0,s1,r0,r1,sack0,sack1,rack0,rack1] []
+  s1;r1;Msafe[s0,s1,r0,r1,sack0,sack1,rack0,rack1] []
+  sack0;rack0;Msafe[s0,s1,r0,r1,sack0,sack1,rack0,rack1] []
+  sack1;rack1;Msafe[s0,s1,r0,r1,sack0,sack1,rack0,rack1] 
+
+endproc
+
+process ABP-safe[send,receive] :=
+
+  hide s0,s1,r0,r1,sack0,sack1,rack0,rack1 in
+    (
+      Sender[send,s0,s1,rack0,rack1] |[s0,s1,rack0,rack1]|
+      Msafe[s0,s1,r0,r1,sack0,sack1,rack0,rack1] |[r0,r1,sack0,sack1]|
+      Receiver[receive,r0,r1,sack0,sack1]
+    )
+
+endproc
+
+(**********************************************************************
+ *  Two-link network can be built by chaining ABP links
+ *  Added by Steve Sims (8-16-95)
+ **********************************************************************)
+
+(**********************************************************************
+ *  Specification
+ **********************************************************************)
+
+process Spec2[send,receive] := 
+   send;Spec2'[send,receive]
+endproc
+
+process Spec2'[send,receive] :=
+   send;Spec2''[send,receive] [] receive;Spec2[send,receive]
+endproc
+
+process Spec2''[send,receive] := 
+   receive;Spec2'[send,receive]
+endproc
+
+(**********************************************************************
+ *  Implementation
+ **********************************************************************)
+
+process Two-link-netw[send,receive] :=
+  hide inode in
+    (ABP-lossy[send,inode] |[inode]| ABP-lossy[inode,receive])
+endproc
+
+(**********************************************************************
+ *  Three-link network
+ **********************************************************************)
+
+(**********************************************************************
+ *  Specification
+ **********************************************************************)
+
+process Spec3[send,receive] :=
+   send;Spec3'[send,receive]
+endproc 
+
+process Spec3'[send,receive] :=
+   send;Spec3''[send,receive] [] receive;Spec3[send,receive]
+endproc
+
+process Spec3''[send,receive] := 
+   send;Spec3'''[send,receive] [] receive;Spec3'[send,receive]
+endproc
+
+process Spec3'''[send,receive] :=
+   receive;Spec3''[send,receive]
+endproc
+
+(**********************************************************************
+ *  Implementation
+ **********************************************************************)
+
+process Three-link-netw[send,receive] :=
+
+  hide inode1,inode2 in
+    (
+      ABP-lossy[send,inode1] |[inode1]|
+      ABP-lossy[inode1,inode2] |[inode2]|
+      ABP-lossy[inode2,receive]      
+    )
+
+endproc
+
+

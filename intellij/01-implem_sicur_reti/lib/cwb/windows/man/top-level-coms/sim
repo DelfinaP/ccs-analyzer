@@ -1,0 +1,58 @@
+
+\manpage{sim}{sim agent}
+{
+    sim allows user-directed or random simulation of agent.  
+    After invoking the simulator the following commands are
+    available: help [command], current, transition-num,
+    random [num], break [-a][-d][-l] [act list], back [num],
+    history, trace, goto num, !!, quit,
+    More information on each of these commands is available 
+    via the simulator's help command.
+}
+{    cwb-nc> sim "a.b.nil + c.nil"
+    a.b.nil + c.nil
+    1: -- c --> nil
+    2: -- a --> b.nil
+    sim: 2
+    b.nil
+    1: -- b --> nil
+    sim: 1
+    nil
+    The agent has no transitions
+    sim: history
+    1: a.b.nil + c.nil -- a -->
+    2: b.nil -- b -->
+    3: nil
+    sim: trace
+     a b
+    sim: goto 2
+    Current state moved 1 step back.
+    sim: current
+    b.nil
+    1: -- b --> nil
+}
+{
+    cwb-nc> sim "a;b;stop [] c;stop"
+    a;b;stop [] c;stop
+    1: -- c --> stop
+    2: -- a --> b;stop
+    sim: 2
+    b;stop
+    1: -- b --> stop
+    sim: 1
+    stop
+    The agent has no transitions
+    sim: history
+    1: a;b;stop [] c;stop -- a -->
+    2: b;stop -- b -->
+    3: stop
+    sim: trace
+     a b
+    sim: goto 2
+    Current state moved 1 step back.
+    sim: current
+    b;stop
+    1: -- b --> stop
+}
+{}
+

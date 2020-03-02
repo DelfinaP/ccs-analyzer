@@ -1,0 +1,29 @@
+@echo off
+REM #  cwb-nc - The Concurrency Workbench of New Century.
+REM #  This script launches the Concurrency Workbench of New
+REM #  Century.  The command line arguments indicate which
+REM #  language interface to invoke. For more info, see the CWB-NC
+REM #  home page:
+REM #  URL http://www.cs.sunysb.edu.edu/~cwb
+REM #
+
+REM # Site specific
+REM # The following two variables must be set to the appropriate
+REM # directories at your site.
+REM #
+REM # CWB_NC_DIR  should be set to the top-level directory that contains
+REM #             the CWB-NC distribution.  For example, if you have placed
+REM #             the distribution in /usr/local/src/cwb-nc then the following
+REM #             assignment should be:
+REM #               CWB_NC_DIR=c:\program file\cwb-nc
+REM #
+
+set CWB_NC_DIR=C:\CWB-NC
+set RUN_SML=%CWB_NC_DIR%\bin\run.x86-win32.exe
+set HEAP_DIR=%CWB_NC_DIR%\bin\heaps-x86-win32
+
+echo Currently supported languages are : ccs, pccs, sccs, tccs, csp, lotos
+
+echo off
+%RUN_SML% "@SMLload=%HEAP_DIR%\cwb-nc-%1.x86-win32"
+

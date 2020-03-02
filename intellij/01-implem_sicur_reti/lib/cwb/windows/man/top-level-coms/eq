@@ -1,0 +1,33 @@
+
+\manpage{eq}{eq [-S semantic-type] agent1 agent2}
+{
+    eq computes whether agent1 and agent2 are related by the 
+    equivalence relation indicated by semantic-type (obseq by
+    default).  The currently available semantic-type arguments
+    are obseq (observational equivalence), bisim (strong 
+    bisimulation equivalence), trace (trace equivalence),
+    may (may equivalence), and must (must equivalence).
+}
+{    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.080,0.070,0.000,0.198)
+    cwb-nc> eq Spec ABP-lossy
+    Building automaton...
+    States: 59
+    Transitions: 132
+    Done building automaton.
+    Transforming automaton...
+    Done transforming automaton.
+    TRUE
+    Execution time (user,system,gc,real):(0.250,0.010,0.000,0.423)
+    cwb-nc> eq -S bisim Spec ABP-lossy
+    Building automaton...
+    States: 59
+    Transitions: 132
+    Done building automaton.
+    FALSE...
+    Spec satisfies:
+            [t]ff
+    ABP-lossy does not.
+    Execution time (user,system,gc,real):(0.190,0.050,0.010,0.343)
+}{}{}
+

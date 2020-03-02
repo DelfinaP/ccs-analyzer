@@ -1,0 +1,63 @@
+Executing CWB script file dictionary.cws, directing output to dictionary.cws.out.
+August 14, 1996   15:09
+Execution time (user,system,gc,real):(0.000,0.020,0.000,0.036)
+cwb-nc> load dictionary.ccs
+Execution time (user,system,gc,real):(0.050,0.050,0.000,0.210)
+cwb-nc> eq -S may Spec Impl1
+Building automaton...
+States: 11
+Transitions: 13
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.040,0.010,0.000,0.062)
+cwb-nc> eq -S must Spec Impl1
+Building automaton...
+States: 11
+Transitions: 13
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.040,0.000,0.000,0.060)
+cwb-nc> eq -S may Spec Impl2
+Building automaton...
+States: 10
+Transitions: 12
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.030,0.020,0.000,0.066)
+cwb-nc> eq -S must Spec Impl2
+Building automaton...
+States: 10
+Transitions: 12
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.040,0.010,0.000,0.056)
+cwb-nc> eq -S may Spec Impl3
+Building automaton...
+States: 27
+Transitions: 50
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.110,0.000,0.000,0.121)
+cwb-nc> eq -S must Spec Impl3
+Building automaton...
+States: 27
+Transitions: 50
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+FALSE...
+Spec must pass:
+	key->CONV
+Impl3 may fail it.
+Execution time (user,system,gc,real):(0.100,0.000,0.000,0.118)
+cwb-nc> 

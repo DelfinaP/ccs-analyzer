@@ -1,0 +1,21 @@
+
+\manpage{cat}{cat identifier}
+{
+    cat displays the item bound to "identifier".  If "identifier" 
+    is bound in more than one environment, each binding is 
+    displayed.  
+}
+{}
+{    cwb-nc> cat ABP-lossy
+
+    ===Process===
+
+    process ABP-lossy[send,receive] :=
+     hide s0,s1,rack0,rack1,r0,r1,sack0,sack1 in
+      (Sender[send,s0,s1,rack0,rack1] |[s0,s1,rack0,rack1]|
+        Mlossy[s0,s1,r0,r1,sack0,sack1,rack0,rack1]
+          |[r0,r1,sack0,sack1]|
+         Receiver[receive,r0,r1,sack0,sack1]) endproc 
+    Execution time (user,system,gc,real):(0.040,0.000,0.000,0.040)
+}
+{ls}

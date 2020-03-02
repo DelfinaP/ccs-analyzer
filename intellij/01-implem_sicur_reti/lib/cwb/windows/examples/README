@@ -1,0 +1,27 @@
+
+This directory contains subdirectories which contain CWB-NC examples 
+implemented in the various design languages currently supported by
+the CWB-NC.  Each example has a corresponding subdirectory which
+contains files with the following suffixes:
+
+  .ccs     A ccs implementation of the system(s) and specification(s).
+  .pccs    A prioritized ccs implementation of the system(s) and 
+           specification(s). 
+  .tccs    A timed ccs implementation of the system(s) and 
+           specification(s). 
+  .csp     A csp implementation of the system(s) and specification(s).
+  .lotos   A lotos implementation of the system(s) and specification(s). 
+  .sccs    A synchronized ccs implementation of the system(s) and
+	   specification(s)
+
+  .mu      Contains mu-calculus formulas that formulate various 
+           properties the system should have.
+
+  .cws     (C)oncurrency (W)orkbench (S)cript.  This file contains a 
+           sequence of CWB-NC commands to perform various analyses 
+           for the example.
+
+  .cws.out This file conains the output generated when the .cws 
+           file is executed (i.e. cwb-nc> es foo.cws foo.cws.out).
+
+

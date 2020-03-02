@@ -1,0 +1,6 @@
+
+The current lotos examples are listed below.  See the comments in the 
+.lotos files for more information.
+
+  abp           Two versions of the alternating bit protocol.
+  peterson-2    Solution to the two-process critical section problem.

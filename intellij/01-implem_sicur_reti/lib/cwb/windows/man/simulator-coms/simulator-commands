@@ -1,0 +1,14 @@
+
+Available simulator commands are:
+  !!
+  back [num]
+  break [-a | -d | -l] act-list
+  current  
+  goto num
+  help [command-name]
+  history
+  random [num]
+  quit
+  semantics {obseq | bisim}
+  trace
+

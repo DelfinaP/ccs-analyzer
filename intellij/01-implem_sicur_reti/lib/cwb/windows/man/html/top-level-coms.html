@@ -1,0 +1,599 @@
+<!-- This file was generated with Format.format_man_pages,
+ -- located in cwb/man/format/format.sml.  Do not edit this
+ -- file.  Instead edit the man page sources in 
+ -- cwb/man/top-level-coms/ and simulator-coms/ and re-run
+ -- the formatting program.
+ -->
+
+<title>CWB-NC Top-Level Commands</title>
+<h1>CWB-NC Top-Level Commands</h1>
+
+<ul>
+<li><a href = "top-level-coms.html#caching-man-page">
+    caching</a>
+<li><a href = "top-level-coms.html#cat-man-page">
+    cat</a>
+<li><a href = "top-level-coms.html#cd-man-page">
+    cd</a>
+<li><a href = "top-level-coms.html#chk-man-page">
+    chk</a>
+<li><a href = "top-level-coms.html#compile-man-page">
+    compile</a>
+<li><a href = "top-level-coms.html#eq-man-page">
+    eq</a>
+<li><a href = "top-level-coms.html#es-man-page">
+    es</a>
+<li><a href = "top-level-coms.html#help-man-page">
+    help</a>
+<li><a href = "top-level-coms.html#le-man-page">
+    le</a>
+<li><a href = "top-level-coms.html#load-man-page">
+    load</a>
+<li><a href = "top-level-coms.html#ls-man-page">
+    ls</a>
+<li><a href = "top-level-coms.html#min-man-page">
+    min</a>
+<li><a href = "top-level-coms.html#quit-man-page">
+    quit</a>
+<li><a href = "top-level-coms.html#save-man-page">
+    save</a>
+<li><a href = "top-level-coms.html#search-man-page">
+    search</a>
+<li><a href = "top-level-coms.html#sim-man-page">
+    sim</a>
+<li><a href = "top-level-coms.html#size-man-page">
+    size</a>
+<li><a href = "top-level-coms.html#sort-man-page">
+    sort</a>
+<li><a href = "top-level-coms.html#trans-man-page">
+    trans</a>
+</ul>
+
+<hr>
+<p><a name = caching-man-page><b>NAME</b><br></a>
+<p>caching
+<p><b>SYNOPSIS</b>
+<p>
+caching arg
+<p><b>DESCRIPTION</b>
+<p>
+
+    The "caching" command toggles whether or not transitions
+    are cached during analysis.  "arg" is either "on" or "off"
+    When caching is on, the transitions of subterms of the parallel 
+    composition operator are cached as they are computed, which usually 
+    leads to impressive speedups since these are recomputed numerous 
+    times for a typical design.  However, if the subterms of a parallel 
+    composition operator are automata (as is the case when doing component 
+    wise minimization) caching is unnecessary and wastes space, therefore 
+    should not be used.
+
+<br><br>
+<hr>
+<p><a name = cat-man-page><b>NAME</b><br></a>
+<p>cat
+<p><b>SYNOPSIS</b>
+<p>
+cat identifier
+<p><b>DESCRIPTION</b>
+<p>
+
+    cat displays the item bound to "identifier".  If "identifier" 
+    is bound in more than one environment, each binding is 
+    displayed.  
+
+<br><br><p><b>SEE ALSO</b>
+<p>
+ls
+
+<hr>
+<p><a name = cd-man-page><b>NAME</b><br></a>
+<p>cd
+<p><b>SYNOPSIS</b>
+<p>
+cd directory
+<p><b>DESCRIPTION</b>
+<p>
+
+    cd sets the present working directory (the unix directory in 
+    which the CWB-NC searches when the load command is executed).
+    The initial working directory is the one from which the CWB-NC
+    was invoked.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> cd /usr/local/src/cwb-nc/examples/ccs 
+    Execution time (user,system,gc,real):(0.000,0.000,0.000,0.000)
+    cwb-nc> 
+
+</pre><p><b>SEE ALSO</b>
+<p>
+load
+
+<hr>
+<p><a name = chk-man-page><b>NAME</b><br></a>
+<p>chk
+<p><b>SYNOPSIS</b>
+<p>
+chk [-L logic] [-O] agent formula
+<p><b>DESCRIPTION</b>
+<p>
+
+     chk invokes the model checker to determine whether or not
+     "agent" satisfies "formula".  The currently supported temporal
+     logics for the specification of formulas are the mu-calculus
+     (-L mu, which is the default) and GCTL* (-L gctl).  The -O option
+     indicates that model-checking is to be on-the-fly, if possible.
+     Global model-checking, if possible, is the default.  At this time,
+     global model-checking is not possible for GCTL* formulas and is only
+     available for alternation-free mu-calculus formulas.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> load abp.ccs
+     Execution time (user,system,gc,real):(0.010,0.020,0.000,0.074)
+     cwb-nc> load /abp.mu
+     Execution time (user,system,gc,real):(0.010,0.000,0.000,0.016)
+     cwb-nc> chk ABP-safe can_deadlock
+     Invoking alternation-free model checker.
+     Building automaton...
+     States: 49
+     Transitions: 74
+     Done building automaton.
+     TRUE, the agent satisfies the formula.
+     Execution time (user,system,gc,real):(0.030,0.000,0.000,0.027)
+     cwb-nc> chk -O ABP-safe can_deadlock
+     Invoking L2 model checker.
+     TRUE, the agent satisfies the formula.
+     Execution time (user,system,gc,real):(0.000,0.010,0.000,0.016)
+     cwb-nc> chk -L gctl ABP-safe "E F ~{-}"
+     Generating ABTA from GCTL* formula...done
+     Initial ABTA has 6 states.
+     Simplifying ABTA:
+     Minimizing sets of accepting states...done
+     Performing constant propagation...done
+     Joining commutative operations...done
+     Shrinking automaton...done
+     Computing bisimulation...
+     Done computing bisimulation.
+     Simplification completed.
+     Simplified ABTA has 4 states.
+     Starting ABTA model checker.
+     Model checking completed.
+     Expanded state-space 15 times.
+     Stored 0 dependencies.
+     TRUE, the agent satisfies the formula.
+     Execution time (user,system,gc,real):(0.010,0.000,0.000,0.013)
+
+</pre><p><b>SEE ALSO</b>
+<p>
+load
+
+<hr>
+<p><a name = compile-man-page><b>NAME</b><br></a>
+<p>compile
+<p><b>SYNOPSIS</b>
+<p>
+compile agent1 [ agent2 ... ]
+<p><b>DESCRIPTION</b>
+<p>
+
+    compile builds an automaton for the agents given as arguments
+    and displays a textual representation of the constructed 
+    automaton.  In the example below, the start state is 0 and
+    this state has an "a" transition to state 1 and a "c" transition
+    to state 2.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> compile "a.b.nil | c.nil"       
+    Building automaton...
+    States: 6
+    Transitions: 7
+    Done building automaton.
+    0:      a       {1}
+            c       {2}
+
+    1:      b       {3}
+            c       {4}
+
+    2:      a       {4}
+
+    3:      c       {5}
+
+    4:      b       {5}
+
+    5:
+
+    Start States:  [0]
+    Execution time (user,system,gc,real):(0.010,0.020,0.000,0.082)
+
+</pre>
+<hr>
+<p><a name = eq-man-page><b>NAME</b><br></a>
+<p>eq
+<p><b>SYNOPSIS</b>
+<p>
+eq [-S semantic-type] agent1 agent2
+<p><b>DESCRIPTION</b>
+<p>
+
+    eq computes whether agent1 and agent2 are related by the 
+    equivalence relation indicated by semantic-type (obseq by
+    default).  The currently available semantic-type arguments
+    are obseq (observational equivalence), bisim (strong 
+    bisimulation equivalence), trace (trace equivalence),
+    may (may equivalence), and must (must equivalence).
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.080,0.070,0.000,0.198)
+    cwb-nc> eq Spec ABP-lossy
+    Building automaton...
+    States: 59
+    Transitions: 132
+    Done building automaton.
+    Transforming automaton...
+    Done transforming automaton.
+    TRUE
+    Execution time (user,system,gc,real):(0.250,0.010,0.000,0.423)
+    cwb-nc> eq -S bisim Spec ABP-lossy
+    Building automaton...
+    States: 59
+    Transitions: 132
+    Done building automaton.
+    FALSE...
+    Spec satisfies:
+            [t]ff
+    ABP-lossy does not.
+    Execution time (user,system,gc,real):(0.190,0.050,0.010,0.343)
+
+</pre>
+<hr>
+<p><a name = es-man-page><b>NAME</b><br></a>
+<p>es
+<p><b>SYNOPSIS</b>
+<p>
+es filename1 [filename2]
+<p><b>DESCRIPTION</b>
+<p>
+
+    es executes the sequence of CWB-NC commands contained in 
+    filename1 and directs the output to filename2 (stdout if
+    second argument is not given).  Note that each command in
+    filename1 (including the final command) must end with a 
+    newline character.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    Let the file abp.cws contain:
+
+      load abp.ccs
+      eq -S obseq Spec ABP-safe
+      load abp.mu
+      chk ABP-safe can_deadlock
+
+    After,
+
+      cwb-nc> es abp.cws abp.cws.output
+      Executing CWB script file abp.cws, directing output 
+        to abp.cws.output.
+      June 17, 1996   10:03
+      ....................
+      cwb-nc>
+
+    the file abp.cws.output contains:
+
+      Executing CWB script file abp.cws, directing output 
+        to abp.cws.output.
+      June 17, 1996   10:01
+      Execution time (user,system,gc,real):(0.010,0.000,0.000,0.120)
+      cwb-nc> load abp.ccs
+      Execution time (user,system,gc,real):(0.110,0.030,0.000,0.179)
+      cwb-nc> eq -S obseq Spec ABP-safe
+      Building automaton...
+      States: 51
+      Transitions: 76
+      Done building automaton.
+      Transforming automaton...
+      Done transforming automaton.
+      FALSE...
+      Spec satisfies:
+       	[[send]]<<'receive>>tt
+      ABP-safe does not.
+      Execution time (user,system,gc,real):(0.240,0.010,0.010,0.259)
+      cwb-nc> load abp.mu
+      Execution time (user,system,gc,real):(0.020,0.000,0.000,0.018)
+      cwb-nc> chk ABP-safe can_deadlock
+      Building automaton...
+      States: 49
+      Transitions: 74
+      Done building automaton.
+      True, the agent satisfies the formula.
+      Execution time (user,system,gc,real):(0.110,0.010,0.000,0.121)
+      cwb-nc>        
+
+</pre>
+<hr>
+<p><a name = help-man-page><b>NAME</b><br></a>
+<p>help
+<p><b>SYNOPSIS</b>
+<p>
+help [command-name]
+<p><b>DESCRIPTION</b>
+<p>
+
+    help displays information about CWB-NC commands.  If 
+    executed with no arguments, then a list of available 
+    commands is displayed.  If given a command name as an 
+    argument, then information about the specific command
+    is displayed.
+
+<br><br>
+<hr>
+<p><a name = le-man-page><b>NAME</b><br></a>
+<p>le
+<p><b>SYNOPSIS</b>
+<p>
+le [-S semantic-type] agent1 agent2
+<p><b>DESCRIPTION</b>
+<p>
+
+    le computes whether agent1 and agent2 are related by the 
+    behavioral preorder indicated by semantic-type.  The currently 
+    available semantic-type arguments are may (may preorder) and must 
+    (must preorder).
+
+<br><br>
+<hr>
+<p><a name = load-man-page><b>NAME</b><br></a>
+<p>load
+<p><b>SYNOPSIS</b>
+<p>
+load filename
+<p><b>DESCRIPTION</b>
+<p>
+
+    This command loads a file into the current CWB-NC session.
+    The file suffix indicates the type of file to be loaded:
+    .ccs files contain a sequence of ccs process definitions.
+    .mu files contain a sequence of mu-calculus formulas.
+
+<br><br>
+<hr>
+<p><a name = ls-man-page><b>NAME</b><br></a>
+<p>ls
+<p><b>SYNOPSIS</b>
+<p>
+ls
+<p><b>DESCRIPTION</b>
+<p>
+
+    ls lists the names of variables bound in the various 
+    environments, i.e. agent variables, set variables, ...
+
+<br><br>
+<hr>
+<p><a name = min-man-page><b>NAME</b><br></a>
+<p>min
+<p><b>SYNOPSIS</b>
+<p>
+ min [-S semantic-type] agent identifier
+<p><b>DESCRIPTION</b>
+<p>
+
+    min minimizes agent with respect to the equivalence relation
+    indicated by semantic-type (obseq by default) and binds
+    the resulting agent to identifier.  The currently available 
+    semantic type arguments are obseq (observational equivalence) 
+    and bisim (strong bisimulation equivalence).
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.090,0.040,0.000,0.163)
+    cwb-nc> min -S bisim ABP-lossy ABP-lossy-min
+    Building automaton...
+    States: 57
+    Transitions: 130
+    Done building automaton.
+    Minimizing automaton...
+    Computing bisimulation...
+    Done computing bisimulation.
+    Done minimizing automaton.
+    Execution time (user,system,gc,real):(0.210,0.060,0.000,0.489)
+    cwb-nc> size ABP-lossy-min
+    Building automaton...
+    States: 15
+    Transitions: 32
+    Done building automaton.
+            15       states
+            32       transitions
+    Execution time (user,system,gc,real):(0.010,0.000,0.000,0.013)
+
+</pre>
+<hr>
+<p><a name = quit-man-page><b>NAME</b><br></a>
+<p>quit
+<p><b>SYNOPSIS</b>
+<p>
+quit
+<p><b>DESCRIPTION</b>
+<p>
+quit ends the current CWB-NC session.
+<br><br>
+<hr>
+<p><a name = save-man-page><b>NAME</b><br></a>
+<p>save
+<p><b>SYNOPSIS</b>
+<p>
+save filename [ identifier ... ]
+<p><b>DESCRIPTION</b>
+<p>
+
+    The save command saves the bindings in the current environment,
+    or selected bindings, to a file.  If one or more identifier
+    arguments are given, then the bindings for these identifiers 
+    are saved to filename.  If no identifier arguments are given,
+    then all bindings in the environment are saved to a file. The
+    save command is useful for saving minimized automata for future
+    use.  
+
+<br><br><p><b>SEE ALSO</b>
+<p>
+load
+
+<hr>
+<p><a name = search-man-page><b>NAME</b><br></a>
+<p>search
+<p><b>SYNOPSIS</b>
+<p>
+search agent formula
+<p><b>DESCRIPTION</b>
+<p>
+
+    search invokes the CWB-NC reachability analysis routine.
+    Given an agent and a formula the routine searches the set
+    of reachable states in the agent for a state satisfying the 
+    given formula.  If such a state is found, the simulator is 
+    invoked with a path to the state pre-loaded.  The formula 
+    may be any mu-calculus (or CTL) formula supported by the 
+    CWB-NC model checkers; however, in most cases it will be 
+    a Hennessy-Milner Logic (HML) formula that may be checked very 
+    quickly at each state.  Note that a HML formula is simply 
+    a mu-calculus formula that contains no fix point operators
+    or weak modalities.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.140,0.020,0.020,0.212)
+    cwb-nc> load abp.mu
+    Execution time (user,system,gc,real):(0.030,0.000,0.000,0.035)
+    cwb-nc> search ABP-safe is_deadlocked
+
+    States explored: 8
+    State found satisfying is_deadlocked.
+    Path to state contains 8 states, invoking simulator.
+    1: ABP-safe -- send -->
+    2: (R0 | Msafe | S0')\Internals -- t -->
+    3: (R0 | 'r0.Msafe | (rack0.S1 + rack1.S0' + t.S0'))\Internals -- t -->
+    4: ('receive.'sack0.R1 | Msafe | (rack0.S1 + rack1.S0' + t.S0'))\
+     Internals -- t -->
+    5: ('receive.'sack0.R1 | Msafe | S0')\Internals -- t -->
+    6: ('receive.'sack0.R1 | 'r0.Msafe | (rack0.S1 + rack1.S0' + t.S0'))\
+     Internals -- t -->
+    7: ('receive.'sack0.R1 | 'r0.Msafe | S0')\Internals -- 'receive -->
+    8: ('sack0.R1 | 'r0.Msafe | S0')\Internals
+    cwb-nc-sim>
+
+</pre><p><b>SEE ALSO</b>
+<p>
+fd, chk, load
+
+<hr>
+<p><a name = sim-man-page><b>NAME</b><br></a>
+<p>sim
+<p><b>SYNOPSIS</b>
+<p>
+sim agent
+<p><b>DESCRIPTION</b>
+<p>
+
+    sim allows user-directed or random simulation of agent.  
+    After invoking the simulator the following commands are
+    available: help [command], current, transition-num,
+    random [num], break [-a][-d][-l] [act list], back [num],
+    history, trace, goto num, !!, quit,
+    More information on each of these commands is available 
+    via the simulator's help command.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sim "a.b.nil + c.nil"
+    a.b.nil + c.nil
+    1: -- c --> nil
+    2: -- a --> b.nil
+    sim: 2
+    b.nil
+    1: -- b --> nil
+    sim: 1
+    nil
+    The agent has no transitions
+    sim: history
+    1: a.b.nil + c.nil -- a -->
+    2: b.nil -- b -->
+    3: nil
+    sim: trace
+     a b
+    sim: goto 2
+    Current state moved 1 step back.
+    sim: current
+    b.nil
+    1: -- b --> nil
+
+</pre>
+<hr>
+<p><a name = size-man-page><b>NAME</b><br></a>
+<p>size
+<p><b>SYNOPSIS</b>
+<p>
+size agent
+<p><b>DESCRIPTION</b>
+<p>
+
+    size builds an automaton which models the behavior of agent
+    and displays the number of states and transitions in the 
+    constructed automaton.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> size "a.b.nil | 'a.c.nil"   
+    Building automaton...
+    States: 9
+    Transitions: 13
+    Done building automaton.
+    Execution time (user,system,gc,real):(0.010,0.010,0.000,0.052)
+
+</pre>
+<hr>
+<p><a name = sort-man-page><b>NAME</b><br></a>
+<p>sort
+<p><b>SYNOPSIS</b>
+<p>
+sort agent
+<p><b>DESCRIPTION</b>
+<p>
+
+    sort displays the set of visible actions that agent may
+    engage in.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+    cwb-nc> sort "a.b.nil | 'a.c.nil"
+    { a, b, c, 'a }
+    Execution time (user,system,gc,real):(0.000,0.020,0.000,0.016)
+
+</pre>
+<hr>
+<p><a name = trans-man-page><b>NAME</b><br></a>
+<p>trans
+<p><b>SYNOPSIS</b>
+<p>
+trans agent
+<p><b>DESCRIPTION</b>
+<p>
+
+    trans displays the single step transitions which agent 
+    may perform.
+
+<br><br><p><b>EXAMPLE</b>
+<pre>
+
+    Command: trans "a.nil + b.nil"
+    -- b --> nil
+    -- a --> nil
+    Execution took 0.000 seconds.
+
+</pre>

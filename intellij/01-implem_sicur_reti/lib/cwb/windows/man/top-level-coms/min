@@ -1,0 +1,31 @@
+
+\manpage{min}{ min [-S semantic-type] agent identifier}
+{
+    min minimizes agent with respect to the equivalence relation
+    indicated by semantic-type (obseq by default) and binds
+    the resulting agent to identifier.  The currently available 
+    semantic type arguments are obseq (observational equivalence) 
+    and bisim (strong bisimulation equivalence).
+}
+{    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.090,0.040,0.000,0.163)
+    cwb-nc> min -S bisim ABP-lossy ABP-lossy-min
+    Building automaton...
+    States: 57
+    Transitions: 130
+    Done building automaton.
+    Minimizing automaton...
+    Computing bisimulation...
+    Done computing bisimulation.
+    Done minimizing automaton.
+    Execution time (user,system,gc,real):(0.210,0.060,0.000,0.489)
+    cwb-nc> size ABP-lossy-min
+    Building automaton...
+    States: 15
+    Transitions: 32
+    Done building automaton.
+            15       states
+            32       transitions
+    Execution time (user,system,gc,real):(0.010,0.000,0.000,0.013)
+}{}{}
+

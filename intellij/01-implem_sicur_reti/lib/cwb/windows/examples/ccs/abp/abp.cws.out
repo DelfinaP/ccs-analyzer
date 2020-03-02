@@ -1,0 +1,83 @@
+Executing CWB script file abp.cws, directing output to abp.cws.out.
+August 15, 1996   11:17
+Execution time (user,system,gc,real):(0.000,0.020,0.000,0.040)
+cwb-nc> load abp.ccs
+Execution time (user,system,gc,real):(0.100,0.040,0.000,0.138)
+cwb-nc> load abp.mu
+Execution time (user,system,gc,real):(0.000,0.000,0.000,0.004)
+cwb-nc> 
+cwb-nc> eq Spec ABP-safe
+Building automaton...
+States: 51
+Transitions: 76
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+FALSE...
+Spec satisfies:
+	[[send]]<<'receive>>tt
+ABP-safe does not.
+Execution time (user,system,gc,real):(0.250,0.020,0.020,0.307)
+cwb-nc> eq Spec ABP-lossy
+Building automaton...
+States: 59
+Transitions: 132
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.310,0.000,0.000,0.492)
+cwb-nc> eq Spec2 Two-link-netw
+Building automaton...
+.........1000.....
+States: 1592
+Transitions: 6823
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(7.830,0.370,0.490,43.485)
+cwb-nc> 
+cwb-nc> chk ABP-lossy can_send
+
+ERROR:  Formula is not closed.
+cwb-nc> chk ABP-lossy always_can_send_or_receive
+
+ERROR:  Formula is not closed.
+cwb-nc> chk ABP-lossy no_repeat
+
+ERROR:  Formula is not closed.
+cwb-nc> chk ABP-lossy can_deadlock
+Invoking alternation-free model checker.
+Building automaton...
+States: 57
+Transitions: 130
+Done building automaton.
+FALSE, the agent does not satisfy the formula.
+Execution time (user,system,gc,real):(0.200,0.020,0.000,0.941)
+cwb-nc> 
+cwb-nc> chk ABP-safe can_deadlock
+Invoking alternation-free model checker.
+Building automaton...
+States: 49
+Transitions: 74
+Done building automaton.
+TRUE, the agent satisfies the formula.
+Execution time (user,system,gc,real):(0.130,0.010,0.000,0.781)
+cwb-nc> 
+cwb-nc> chk Two-link-netw can_send
+
+ERROR:  Formula is not closed.
+cwb-nc> chk Two-link-netw always_can_send_or_receive
+
+ERROR:  Formula is not closed.
+cwb-nc> chk Two-link-netw can_deadlock
+Invoking alternation-free model checker.
+Building automaton...
+.........1000.....
+States: 1589
+Transitions: 6819
+Done building automaton.
+FALSE, the agent does not satisfy the formula.
+Execution time (user,system,gc,real):(5.810,0.120,0.360,34.936)
+cwb-nc> 

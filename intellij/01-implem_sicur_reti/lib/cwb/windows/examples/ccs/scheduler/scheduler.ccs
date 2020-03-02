@@ -1,0 +1,123 @@
+*******************************************************************
+*  scheduler.ccs
+*
+*  This example implements the scheduler presented by Robin Milner
+*  in Section 5.4 of his book "Communication and Concurrency",
+*  Prentice Hall, 1989.
+*
+*  We implement a system with 3 processes.
+*
+*  Schedspec(1,emptyset) is the specification, defined by Milner 
+*  as follows:
+*  if i in X 
+*  then Schedspec(i,X) = for all j in X : b_j.Schedspec(i,X - {j})
+*  else Schedspec(i,X) = a_i.Schedspec(i+1,X + {i})
+*
+*  We use the notation: Schedspec_i_X, where i is 1,2, or 3 and
+*  X is a subset of {1,2,3}. ({} = empty, {1} = 1, {1,2} = 12,...).
+*
+*  Spec is observationally equivalent to Sched.  Several properties
+*  formulated in scheduler.mu can also be checked.  The file 
+*  scheduler.cws is a (C)oncurrency (W)orkbench (S)cript which 
+*  executes the analysis for this example.  Which can be run with
+*  the (e)xecute (s)cript command:
+*  
+*  cwb-nc> es scheduler.cws scheduler.cws.out
+*
+*******************************************************************
+
+proc Spec = Schedspec_1_empty
+
+proc Schedspec_1_empty = 
+  a1.Schedspec_2_1
+
+proc Schedspec_1_1 =
+  b1.Schedspec_1_empty
+
+proc Schedspec_1_2 =
+  a1.Schedspec_2_12 + b2.Schedspec_1_empty
+
+proc Schedspec_1_3 =
+  a1.Schedspec_2_13 + b3.Schedspec_1_empty
+
+proc Schedspec_1_12 =
+  b1.Schedspec_1_2 + b2.Schedspec_1_1
+
+proc Schedspec_1_13 = 
+  b1.Schedspec_1_3 + b3.Schedspec_1_1
+
+proc Schedspec_1_23 = 
+  a1.Schedspec_2_123 + b2.Schedspec_1_3 + b3.Schedspec_1_2
+
+proc Schedspec_1_123 = 
+  b1.Schedspec_1_23 + b2.Schedspec_1_13 + b3.Schedspec_1_12
+
+***** Schedspec_2_ *****
+
+proc Schedspec_2_empty = 
+  a2.Schedspec_3_2
+
+proc Schedspec_2_1 =
+  a2.Schedspec_3_12 + b1.Schedspec_2_empty
+
+proc Schedspec_2_2 =
+  b2.Schedspec_2_empty
+
+proc Schedspec_2_3 =
+  a2.Schedspec_3_23 + b3.Schedspec_2_empty
+
+proc Schedspec_2_12 =
+  b1.Schedspec_2_2 + b2.Schedspec_2_1
+
+proc Schedspec_2_13 = 
+  a2.Schedspec_3_123 + b1.Schedspec_2_3 + b3.Schedspec_2_1
+
+proc Schedspec_2_23 = 
+  b2.Schedspec_2_3 + b3.Schedspec_2_2
+
+proc Schedspec_2_123 = 
+  b1.Schedspec_2_23 + b2.Schedspec_2_13 + b3.Schedspec_2_12
+
+***** Schedspec_3_ *****
+
+proc Schedspec_3_empty = 
+  a3.Schedspec_1_3
+
+proc Schedspec_3_1 =
+  a3.Schedspec_1_13 + b1.Schedspec_3_empty
+
+proc Schedspec_3_2 =
+  a3.Schedspec_1_23 + b2.Schedspec_3_empty
+
+proc Schedspec_3_3 =
+  b3.Schedspec_3_empty
+
+proc Schedspec_3_12 =
+  a3.Schedspec_1_123 + b1.Schedspec_3_2 + b2.Schedspec_3_1
+
+proc Schedspec_3_13 = 
+  b1.Schedspec_3_3 + b3.Schedspec_3_1
+
+proc Schedspec_3_23 = 
+  b2.Schedspec_3_3 + b3.Schedspec_3_2
+
+proc Schedspec_3_123 = 
+  b1.Schedspec_3_23 + b2.Schedspec_3_13 + b3.Schedspec_3_12
+
+**********************
+*** Implementation ***
+**********************
+
+proc A = a.c.(b.'d.A + 'd.b.A)
+
+proc D = 'd.A
+
+proc A1 = A[a1/a,b1/b,c1/c,c3/d]
+proc D2 = D[a2/a,b2/b,c2/c,c1/d]
+proc D3 = D[a3/a,b3/b,c3/c,c2/d]
+
+set Internals = {c1,c2,c3}
+
+proc Sched = (A1 | D2 | D3)\ Internals
+
+

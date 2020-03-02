@@ -1,0 +1,21 @@
+load scsi.tccs
+load scsi.mu
+load scsi.gctl
+
+size SCSIBus
+
+chk -O SCSIBus Property1
+chk -O SCSIBus Property2
+chk -O SCSIBus Property3
+chk -O SCSIBus Property4
+chk -O SCSIBus Property5
+chk -O SCSIBus Property6
+chk -O SCSIBus NoDeadlock
+
+chk -L gctl SCSIBus Property1
+chk -L gctl SCSIBus Property2
+chk -L gctl SCSIBus Property3
+chk -L gctl SCSIBus Property4
+chk -L gctl SCSIBus Property5
+chk -L gctl SCSIBus Property6
+chk -L gctl SCSIBus NoDeadlock

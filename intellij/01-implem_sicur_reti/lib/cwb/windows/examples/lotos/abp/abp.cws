@@ -1,0 +1,8 @@
+load abp.lotos
+load abp.mu
+size ABP-safe[send,receive]
+eq -S obseq Spec[s,r] ABP-safe[s,r]
+eq -S obseq Spec[s,r] ABP-lossy[s,r]
+cp ABP-safe[send,receive] can_deadlock
+cp ABP-lossy[send,receive] can_deadlock
+cp ABP-lossy[send,receive] always_send_or_receive

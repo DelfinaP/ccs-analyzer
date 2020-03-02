@@ -1,0 +1,654 @@
+
+proc Spec = 
+quarter.(up_button.Spec' + t.Spec') +
+ up_button.(quarter.Spec' + t.Spec')
+
+proc S0 = 
+send.S0'
+
+proc S0' = 
+'s0.(rack0.S1 + rack1.S0' + t.S0')
+
+proc S1 = 
+send.S1'
+
+proc S1' = 
+'s1.(rack1.S0 + rack0.S1' + t.S1')
+
+proc R0 = 
+r0.'receive.'sack0.R1 + r1.'sack1.R0 + t.'sack1.R0
+
+proc R1 = 
+r1.'receive.'sack1.R0 + r0.'sack0.R1 + t.'sack0.R1
+
+proc Msafe = 
+s0.'r0.Msafe + s1.'r1.Msafe + sack0.'rack0.Msafe + sack1.'rack1.Msafe
+
+proc Mlossy = 
+s0.('r0.Mlossy + Mlossy) +
+ s1.('r1.Mlossy + Mlossy) +
+  sack0.('rack0.Mlossy + Mlossy) + sack1.('rack1.Mlossy + Mlossy)
+
+proc ABP-safe = 
+(R0 | Msafe | S0)\Internals
+
+proc ABP-lossy = 
+(R0 | Mlossy | S0)\Internals
+
+proc Spec2 = 
+send.Spec2'
+
+proc Spec2' = 
+send.Spec2'' + 'receive.Spec2
+
+proc Spec2'' = 
+'receive.Spec2'
+
+proc Two-link-netw = 
+(ABP-lossy[inode/receive] | ABP-lossy[inode/send])\ {inode} 
+
+proc Spec3 = 
+send.Spec3'
+
+proc Spec3' = 
+send.Spec3'' + 'receive.Spec3
+
+proc Spec3'' = 
+send.Spec3''' + 'receive.Spec3'
+
+proc Spec3''' = 
+'receive.Spec3''
+
+proc Three-link-netw = 
+(ABP-lossy[inode1/receive] |
+  ABP-lossy[inode1/send,inode2/receive] | ABP-lossy[inode2/send])\
+  {inode1,inode2} 
+
+proc ABP-lossy-min = 
+Aut(start = 0,
+ 0: t {1} send {2} 1: t {0} send {3} 2: t {3,4} 3: t {2,5} 
+  4: t {5,6,7} 5: t {3} 6: t {8} 'receive {9} 7: t {3,4,8} 
+  8: t {6} 'receive {10} 9: t {10,11} 10: t {9,12} 11: t {0,12,13} 
+  12: t {10} 13: t {1,10,11} )
+
+proc Impl1 = 
+(DM1 | DB1)\ {ik,im,in} 
+
+proc DM1 = 
+key.'ik.(im.'meaning.DM1 + in.'no.DM1)
+
+proc DB1 = 
+ik.(t.'im.DB1 + t.'in.DB1)
+
+proc Impl2 = 
+(DM2 | DB2)\ {ik,reset} 
+
+proc DM2 = 
+key.'ik.reset.DM2
+
+proc DB2 = 
+ik.(t.'meaning.'reset.DB2 + t.'no.'reset.DB2)
+
+proc Impl3 = 
+(DM | MED | REP)\Internals
+
+proc DM = 
+key.DM'
+
+proc MED = 
+kDM.('kMR.MED + t.MED) +
+ mRM.('mMD.MED + t.MED) + nRM.('nMD.MED + t.MED)
+
+proc REP = 
+kMR.(t.'mRM.REP + t.'nRM.REP)
+
+proc DM' = 
+'kDM.(mMD.'meaning.DM + nMD.'no.DM + t.DM')
+
+proc Strongjobber = 
+in_easy.'out_easy.Strongjobber +
+ in_avg.'out_avg.Strongjobber + in_hard.'out_hard.Strongjobber
+
+proc Jobshop = 
+(Jobber | Jobber | Hammer | Mallet)\ {geth,puth,getm,putm} 
+
+proc Jobber = 
+in_easy.Start_easy + in_hard.Start_hard + in_avg.Start_avg
+
+proc Hammer = 
+geth.Busyhammer
+
+proc Mallet = 
+getm.Busymallet
+
+proc Start_easy = 
+'out_easy.Jobber
+
+proc Start_hard = 
+'geth.'puth.'out_hard.Jobber
+
+proc Start_avg = 
+'geth.'puth.'out_avg.Jobber + 'getm.'putm.'out_avg.Jobber
+
+proc Busyhammer = 
+puth.Hammer
+
+proc Busymallet = 
+putm.Mallet
+
+proc Schedspec_1_empty = 
+a1.Schedspec_2_1
+
+proc Schedspec_2_1 = 
+a2.Schedspec_3_12 + b1.Schedspec_2_empty
+
+proc Schedspec_1_1 = 
+b1.Schedspec_1_empty
+
+proc Schedspec_1_2 = 
+a1.Schedspec_2_12 + b2.Schedspec_1_empty
+
+proc Schedspec_2_12 = 
+b1.Schedspec_2_2 + b2.Schedspec_2_1
+
+proc Schedspec_1_3 = 
+a1.Schedspec_2_13 + b3.Schedspec_1_empty
+
+proc Schedspec_2_13 = 
+a2.Schedspec_3_123 + b1.Schedspec_2_3 + b3.Schedspec_2_1
+
+proc Schedspec_1_12 = 
+b1.Schedspec_1_2 + b2.Schedspec_1_1
+
+proc Schedspec_1_13 = 
+b1.Schedspec_1_3 + b3.Schedspec_1_1
+
+proc Schedspec_1_23 = 
+a1.Schedspec_2_123 + b2.Schedspec_1_3 + b3.Schedspec_1_2
+
+proc Schedspec_2_123 = 
+b1.Schedspec_2_23 + b2.Schedspec_2_13 + b3.Schedspec_2_12
+
+proc Schedspec_1_123 = 
+b1.Schedspec_1_23 + b2.Schedspec_1_13 + b3.Schedspec_1_12
+
+proc Schedspec_2_empty = 
+a2.Schedspec_3_2
+
+proc Schedspec_3_2 = 
+a3.Schedspec_1_23 + b2.Schedspec_3_empty
+
+proc Schedspec_3_12 = 
+a3.Schedspec_1_123 + b1.Schedspec_3_2 + b2.Schedspec_3_1
+
+proc Schedspec_2_2 = 
+b2.Schedspec_2_empty
+
+proc Schedspec_2_3 = 
+a2.Schedspec_3_23 + b3.Schedspec_2_empty
+
+proc Schedspec_3_23 = 
+b2.Schedspec_3_3 + b3.Schedspec_3_2
+
+proc Schedspec_3_123 = 
+b1.Schedspec_3_23 + b2.Schedspec_3_13 + b3.Schedspec_3_12
+
+proc Schedspec_2_23 = 
+b2.Schedspec_2_3 + b3.Schedspec_2_2
+
+proc Schedspec_3_empty = 
+a3.Schedspec_1_3
+
+proc Schedspec_3_1 = 
+a3.Schedspec_1_13 + b1.Schedspec_3_empty
+
+proc Schedspec_3_3 = 
+b3.Schedspec_3_empty
+
+proc Schedspec_3_13 = 
+b1.Schedspec_3_3 + b3.Schedspec_3_1
+
+proc A = 
+a.c.(b.'d.A + 'd.b.A)
+
+proc D = 
+'d.A
+
+proc A1 = 
+A[a1/a,c1/c,b1/b,c3/d]
+
+proc D2 = 
+D[a2/a,c2/c,b2/b,c1/d]
+
+proc D3 = 
+D[a3/a,c3/c,b3/b,c2/d]
+
+proc Sched = 
+(A1 | D2 | D3)\Internals
+
+proc SERVICE = 
+send.'receive.SERVICE
+
+proc SENDER = 
+send.'from.ack_to.SENDER
+
+proc MEDIUM = 
+from.'to.MEDIUM + ack_from.'ack_to.MEDIUM
+
+proc RECEIVER = 
+to.'receive.'ack_from.RECEIVER
+
+proc PROTOCOL = 
+(SENDER | MEDIUM | RECEIVER)\ {from,ack_to,to,ack_from} 
+
+proc PARTIAL_MEDIUM = 
+from.('to.PARTIAL_MEDIUM + ack_from.@) +
+ ack_from.('ack_to.PARTIAL_MEDIUM + from.@)
+
+proc PARTIAL_PROTOCOL = 
+(SENDER | PARTIAL_MEDIUM | RECEIVER)\ {from,ack_to,to,ack_from} 
+
+proc NEW_MEDIUM = 
+MESSAGE_BUFFER | ACK_BUFFER
+
+proc MESSAGE_BUFFER = 
+from.'to.MESSAGE_BUFFER
+
+proc ACK_BUFFER = 
+ack_from.'ack_to.ACK_BUFFER
+
+proc NEW_PROTOCOL = 
+(SENDER | NEW_MEDIUM | RECEIVER)\ {from,ack_to,to,ack_from} 
+
+proc Spec' = 
+'disable_coin_basket.'gate_up.'gate_down.'enable_coin_basket.Spec
+
+proc Toll_booth = 
+(Operator_booth | Coin_basket | Gate)\Internals
+
+proc Operator_booth = 
+up_button.'req_disable_coin_basket.coin_disable_granted.Op_booth' +
+ disable_op_booth.op_booth_restart.Operator_booth
+
+proc Coin_basket = 
+quarter
+ .('disable_op_booth.Coin_basket' +
+    req_disable_coin_basket
+     .'
+       disable_coin_basket
+        .'
+          coin_disable_granted
+           .coin_basket_restart
+             .'enable_coin_basket.'coin_basket_ready.Coin_basket) +
+ req_disable_coin_basket
+  .'
+    disable_coin_basket
+     .'
+       coin_disable_granted
+        .coin_basket_restart
+          .'enable_coin_basket.'coin_basket_ready.Coin_basket
+
+proc Gate = 
+Arm | Sensor | Timer
+
+proc Op_booth' = 
+'
+ raise_gate
+  .gate_lowered.'coin_basket_restart.coin_basket_ready.Operator_booth
+
+proc Coin_basket' = 
+'
+ disable_coin_basket
+  .'
+    raise_gate
+     .gate_lowered.'enable_coin_basket.'op_booth_restart.Coin_basket
+
+proc Arm = 
+raise_gate.'gate_up.'start_timer_long.timer_expire.Lower_arm
+
+proc Sensor = 
+query_sensor.('path_clear.Sensor + 'path_blocked.Sensor)
+
+proc Timer = 
+start_timer_long.'timer_expire.Timer +
+ start_timer_short.'timer_expire.Timer
+
+proc Lower_arm = 
+'
+ query_sensor
+  .(path_clear.'gate_down.'gate_lowered.Arm +
+     path_blocked.'start_timer_short.timer_expire.Lower_arm)
+
+set Internals = 
+ {
+ req_disable_coin_basket,coin_disable_granted,disable_op_booth,
+  op_booth_restart,raise_gate,gate_lowered,coin_basket_restart,
+  coin_basket_ready,start_timer_long,timer_expire,query_sensor,
+  path_clear,path_blocked,start_timer_short} 
+
+proc Spec = 
+quarter.(up_button.Spec' + t.Spec') +
+ up_button.(quarter.Spec' + t.Spec')
+
+proc S0 = 
+send.S0'
+
+proc S0' = 
+'s0.(rack0.S1 + rack1.S0' + t.S0')
+
+proc S1 = 
+send.S1'
+
+proc S1' = 
+'s1.(rack1.S0 + rack0.S1' + t.S1')
+
+proc R0 = 
+r0.'receive.'sack0.R1 + r1.'sack1.R0 + t.'sack1.R0
+
+proc R1 = 
+r1.'receive.'sack1.R0 + r0.'sack0.R1 + t.'sack0.R1
+
+proc Msafe = 
+s0.'r0.Msafe + s1.'r1.Msafe + sack0.'rack0.Msafe + sack1.'rack1.Msafe
+
+proc Mlossy = 
+s0.('r0.Mlossy + Mlossy) +
+ s1.('r1.Mlossy + Mlossy) +
+  sack0.('rack0.Mlossy + Mlossy) + sack1.('rack1.Mlossy + Mlossy)
+
+proc ABP-safe = 
+(R0 | Msafe | S0)\Internals
+
+proc ABP-lossy = 
+(R0 | Mlossy | S0)\Internals
+
+proc Spec2 = 
+send.Spec2'
+
+proc Spec2' = 
+send.Spec2'' + 'receive.Spec2
+
+proc Spec2'' = 
+'receive.Spec2'
+
+proc Two-link-netw = 
+(ABP-lossy[inode/receive] | ABP-lossy[inode/send])\ {inode} 
+
+proc Spec3 = 
+send.Spec3'
+
+proc Spec3' = 
+send.Spec3'' + 'receive.Spec3
+
+proc Spec3'' = 
+send.Spec3''' + 'receive.Spec3'
+
+proc Spec3''' = 
+'receive.Spec3''
+
+proc Three-link-netw = 
+(ABP-lossy[inode1/receive] |
+  ABP-lossy[inode1/send,inode2/receive] | ABP-lossy[inode2/send])\
+  {inode1,inode2} 
+
+proc ABP-lossy-min = 
+Aut(start = 0,
+ 0: t {1} send {2} 1: t {0} send {3} 2: t {3,4} 3: t {2,5} 
+  4: t {5,6,7} 5: t {3} 6: t {8} 'receive {9} 7: t {3,4,8} 
+  8: t {6} 'receive {10} 9: t {10,11} 10: t {9,12} 11: t {0,12,13} 
+  12: t {10} 13: t {1,10,11} )
+
+proc Impl1 = 
+(DM1 | DB1)\ {ik,im,in} 
+
+proc DM1 = 
+key.'ik.(im.'meaning.DM1 + in.'no.DM1)
+
+proc DB1 = 
+ik.(t.'im.DB1 + t.'in.DB1)
+
+proc Impl2 = 
+(DM2 | DB2)\ {ik,reset} 
+
+proc DM2 = 
+key.'ik.reset.DM2
+
+proc DB2 = 
+ik.(t.'meaning.'reset.DB2 + t.'no.'reset.DB2)
+
+proc Impl3 = 
+(DM | MED | REP)\Internals
+
+proc DM = 
+key.DM'
+
+proc MED = 
+kDM.('kMR.MED + t.MED) +
+ mRM.('mMD.MED + t.MED) + nRM.('nMD.MED + t.MED)
+
+proc REP = 
+kMR.(t.'mRM.REP + t.'nRM.REP)
+
+proc DM' = 
+'kDM.(mMD.'meaning.DM + nMD.'no.DM + t.DM')
+
+proc Strongjobber = 
+in_easy.'out_easy.Strongjobber +
+ in_avg.'out_avg.Strongjobber + in_hard.'out_hard.Strongjobber
+
+proc Jobshop = 
+(Jobber | Jobber | Hammer | Mallet)\ {geth,puth,getm,putm} 
+
+proc Jobber = 
+in_easy.Start_easy + in_hard.Start_hard + in_avg.Start_avg
+
+proc Hammer = 
+geth.Busyhammer
+
+proc Mallet = 
+getm.Busymallet
+
+proc Start_easy = 
+'out_easy.Jobber
+
+proc Start_hard = 
+'geth.'puth.'out_hard.Jobber
+
+proc Start_avg = 
+'geth.'puth.'out_avg.Jobber + 'getm.'putm.'out_avg.Jobber
+
+proc Busyhammer = 
+puth.Hammer
+
+proc Busymallet = 
+putm.Mallet
+
+proc Schedspec_1_empty = 
+a1.Schedspec_2_1
+
+proc Schedspec_2_1 = 
+a2.Schedspec_3_12 + b1.Schedspec_2_empty
+
+proc Schedspec_1_1 = 
+b1.Schedspec_1_empty
+
+proc Schedspec_1_2 = 
+a1.Schedspec_2_12 + b2.Schedspec_1_empty
+
+proc Schedspec_2_12 = 
+b1.Schedspec_2_2 + b2.Schedspec_2_1
+
+proc Schedspec_1_3 = 
+a1.Schedspec_2_13 + b3.Schedspec_1_empty
+
+proc Schedspec_2_13 = 
+a2.Schedspec_3_123 + b1.Schedspec_2_3 + b3.Schedspec_2_1
+
+proc Schedspec_1_12 = 
+b1.Schedspec_1_2 + b2.Schedspec_1_1
+
+proc Schedspec_1_13 = 
+b1.Schedspec_1_3 + b3.Schedspec_1_1
+
+proc Schedspec_1_23 = 
+a1.Schedspec_2_123 + b2.Schedspec_1_3 + b3.Schedspec_1_2
+
+proc Schedspec_2_123 = 
+b1.Schedspec_2_23 + b2.Schedspec_2_13 + b3.Schedspec_2_12
+
+proc Schedspec_1_123 = 
+b1.Schedspec_1_23 + b2.Schedspec_1_13 + b3.Schedspec_1_12
+
+proc Schedspec_2_empty = 
+a2.Schedspec_3_2
+
+proc Schedspec_3_2 = 
+a3.Schedspec_1_23 + b2.Schedspec_3_empty
+
+proc Schedspec_3_12 = 
+a3.Schedspec_1_123 + b1.Schedspec_3_2 + b2.Schedspec_3_1
+
+proc Schedspec_2_2 = 
+b2.Schedspec_2_empty
+
+proc Schedspec_2_3 = 
+a2.Schedspec_3_23 + b3.Schedspec_2_empty
+
+proc Schedspec_3_23 = 
+b2.Schedspec_3_3 + b3.Schedspec_3_2
+
+proc Schedspec_3_123 = 
+b1.Schedspec_3_23 + b2.Schedspec_3_13 + b3.Schedspec_3_12
+
+proc Schedspec_2_23 = 
+b2.Schedspec_2_3 + b3.Schedspec_2_2
+
+proc Schedspec_3_empty = 
+a3.Schedspec_1_3
+
+proc Schedspec_3_1 = 
+a3.Schedspec_1_13 + b1.Schedspec_3_empty
+
+proc Schedspec_3_3 = 
+b3.Schedspec_3_empty
+
+proc Schedspec_3_13 = 
+b1.Schedspec_3_3 + b3.Schedspec_3_1
+
+proc A = 
+a.c.(b.'d.A + 'd.b.A)
+
+proc D = 
+'d.A
+
+proc A1 = 
+A[a1/a,c1/c,b1/b,c3/d]
+
+proc D2 = 
+D[a2/a,c2/c,b2/b,c1/d]
+
+proc D3 = 
+D[a3/a,c3/c,b3/b,c2/d]
+
+proc Sched = 
+(A1 | D2 | D3)\Internals
+
+proc SERVICE = 
+send.'receive.SERVICE
+
+proc SENDER = 
+send.'from.ack_to.SENDER
+
+proc MEDIUM = 
+from.'to.MEDIUM + ack_from.'ack_to.MEDIUM
+
+proc RECEIVER = 
+to.'receive.'ack_from.RECEIVER
+
+proc PROTOCOL = 
+(SENDER | MEDIUM | RECEIVER)\ {from,ack_to,to,ack_from} 
+
+proc PARTIAL_MEDIUM = 
+from.('to.PARTIAL_MEDIUM + ack_from.@) +
+ ack_from.('ack_to.PARTIAL_MEDIUM + from.@)
+
+proc PARTIAL_PROTOCOL = 
+(SENDER | PARTIAL_MEDIUM | RECEIVER)\ {from,ack_to,to,ack_from} 
+
+proc NEW_MEDIUM = 
+MESSAGE_BUFFER | ACK_BUFFER
+
+proc MESSAGE_BUFFER = 
+from.'to.MESSAGE_BUFFER
+
+proc ACK_BUFFER = 
+ack_from.'ack_to.ACK_BUFFER
+
+proc NEW_PROTOCOL = 
+(SENDER | NEW_MEDIUM | RECEIVER)\ {from,ack_to,to,ack_from} 
+
+proc Spec' = 
+'disable_coin_basket.'gate_up.'gate_down.'enable_coin_basket.Spec
+
+proc Toll_booth = 
+(Operator_booth | Coin_basket | Gate)\Internals
+
+proc Operator_booth = 
+up_button.'req_disable_coin_basket.coin_disable_granted.Op_booth' +
+ disable_op_booth.op_booth_restart.Operator_booth
+
+proc Coin_basket = 
+quarter
+ .('disable_op_booth.Coin_basket' +
+    req_disable_coin_basket
+     .'
+       disable_coin_basket
+        .'
+          coin_disable_granted
+           .coin_basket_restart
+             .'enable_coin_basket.'coin_basket_ready.Coin_basket) +
+ req_disable_coin_basket
+  .'
+    disable_coin_basket
+     .'
+       coin_disable_granted
+        .coin_basket_restart
+          .'enable_coin_basket.'coin_basket_ready.Coin_basket
+
+proc Gate = 
+Arm | Sensor | Timer
+
+proc Op_booth' = 
+'
+ raise_gate
+  .gate_lowered.'coin_basket_restart.coin_basket_ready.Operator_booth
+
+proc Coin_basket' = 
+'
+ disable_coin_basket
+  .'
+    raise_gate
+     .gate_lowered.'enable_coin_basket.'op_booth_restart.Coin_basket
+
+proc Arm = 
+raise_gate.'gate_up.'start_timer_long.timer_expire.Lower_arm
+
+proc Sensor = 
+query_sensor.('path_clear.Sensor + 'path_blocked.Sensor)
+
+proc Timer = 
+start_timer_long.'timer_expire.Timer +
+ start_timer_short.'timer_expire.Timer
+
+proc Lower_arm = 
+'
+ query_sensor
+  .(path_clear.'gate_down.'gate_lowered.Arm +
+     path_blocked.'start_timer_short.timer_expire.Lower_arm)
+
+set Internals = 
+ {
+ req_disable_coin_basket,coin_disable_granted,disable_op_booth,
+  op_booth_restart,raise_gate,gate_lowered,coin_basket_restart,
+  coin_basket_ready,start_timer_long,timer_expire,query_sensor,
+  path_clear,path_blocked,start_timer_short} 

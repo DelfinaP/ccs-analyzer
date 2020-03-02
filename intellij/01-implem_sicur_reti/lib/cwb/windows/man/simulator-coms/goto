@@ -1,0 +1,58 @@
+
+\manpage{goto}{goto num}
+{
+    Simulator command which sets the current state to state 
+    "num" of the current session, where "num" is a positive integer
+    less than or equal to the current state number.  Note that state 
+    numbers are displayed by the history command for each state on 
+    the path from the start state to the current state.
+}
+{    cwb-nc> sim a.b.c.d.nil
+    a.b.c.d.nil
+    1: -- a --> b.c.d.nil
+    cwb-nc-sim> 1
+    b.c.d.nil
+    1: -- b --> c.d.nil
+    cwb-nc-sim> 1
+    c.d.nil
+    1: -- c --> d.nil
+    cwb-nc-sim> 1
+    d.nil
+    1: -- d --> nil
+    cwb-nc-sim> history
+    1: a.b.c.d.nil -- a -->
+    2: b.c.d.nil -- b -->
+    3: c.d.nil -- c -->
+    4: d.nil
+    cwb-nc-sim> goto 2
+    Current state moved 2 steps back.
+    cwb-nc-sim> current
+    b.c.d.nil
+    1: -- b --> c.d.nil
+}
+{
+    cwb-nc> sim a;b;c;d;stop
+    a;b;c;d;stop
+    1: -- a --> b;c;d;stop
+    cwb-nc-sim> 1
+    b;c;d;stop
+    1: -- b --> c;d;stop
+    cwb-nc-sim> 1
+    c;d;stop
+    1: -- c --> d;stop
+    cwb-nc-sim> 1
+    d;stop
+    1: -- d --> stop
+    cwb-nc-sim> history
+    1: a;b;c;d;stop -- a -->
+    2: b;c;d;stop -- b -->
+    3: c;d;stop -- c -->
+    4: d;stop
+    cwb-nc-sim> goto 2
+    Current state moved 2 steps back.
+    cwb-nc-sim> current
+    b;c;d;stop
+    1: -- b --> c;d;stop
+}
+{history}
+

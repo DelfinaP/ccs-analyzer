@@ -1,0 +1,37 @@
+
+\manpage{search}{search agent formula}
+{
+    search invokes the CWB-NC reachability analysis routine.
+    Given an agent and a formula the routine searches the set
+    of reachable states in the agent for a state satisfying the 
+    given formula.  If such a state is found, the simulator is 
+    invoked with a path to the state pre-loaded.  The formula 
+    may be any mu-calculus (or CTL) formula supported by the 
+    CWB-NC model checkers; however, in most cases it will be 
+    a Hennessy-Milner Logic (HML) formula that may be checked very 
+    quickly at each state.  Note that a HML formula is simply 
+    a mu-calculus formula that contains no fix point operators
+    or weak modalities.
+}
+{    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.140,0.020,0.020,0.212)
+    cwb-nc> load abp.mu
+    Execution time (user,system,gc,real):(0.030,0.000,0.000,0.035)
+    cwb-nc> search ABP-safe is_deadlocked
+
+    States explored: 8
+    State found satisfying is_deadlocked.
+    Path to state contains 8 states, invoking simulator.
+    1: ABP-safe -- send -->
+    2: (R0 | Msafe | S0')\Internals -- t -->
+    3: (R0 | 'r0.Msafe | (rack0.S1 + rack1.S0' + t.S0'))\Internals -- t -->
+    4: ('receive.'sack0.R1 | Msafe | (rack0.S1 + rack1.S0' + t.S0'))\
+     Internals -- t -->
+    5: ('receive.'sack0.R1 | Msafe | S0')\Internals -- t -->
+    6: ('receive.'sack0.R1 | 'r0.Msafe | (rack0.S1 + rack1.S0' + t.S0'))\
+     Internals -- t -->
+    7: ('receive.'sack0.R1 | 'r0.Msafe | S0')\Internals -- 'receive -->
+    8: ('sack0.R1 | 'r0.Msafe | S0')\Internals
+    cwb-nc-sim>
+}{}{fd, chk, load}
+ 

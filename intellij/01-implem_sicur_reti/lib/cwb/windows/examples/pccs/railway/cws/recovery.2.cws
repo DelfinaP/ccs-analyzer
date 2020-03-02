@@ -1,0 +1,19 @@
+load recovery.pccs
+load railway.mu
+
+min -S bisim SS SS-min
+
+chk SS-min failures_responded
+chk SS-min failures_responded_again
+chk SS-min can_tick
+chk SS-min failures_possible
+chk SS-min failures_possible_again
+chk SS-min no_false_alarms
+chk SS-min no_false_alarms_again
+chk SS-min eventually_silent
+chk SS-min react_on_repair
+
+
+
+
+

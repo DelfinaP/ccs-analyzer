@@ -1,0 +1,101 @@
+*******************************************************************************
+*  bruns.pccs 
+*  
+*  This file contains a specification of a railway system called 
+*  Solid State Interlocking which was described in:
+*    "A Case Study in Safety-Critical Design" 
+*    Glenn Bruns 
+*    CAV 92
+*
+*  with 'fail_overfull and 'fail_wire instead of 'fail,
+*  without sending actions before 'det, and
+*  prioritization of actions.
+*
+*******************************************************************************
+*
+* highest priority is 0
+*
+* level 0: fail_overfull, det, mcs, mct
+* level 1: -
+* level 2: out (c2, s2), fail_wire, 
+*          comm_in, comm_out, stat_in, stat_out
+* level 3: in (c1, s1)
+* level 4: outu (c2u, s2u), tick
+*
+*******************************************************************************
+
+**********************
+*  Slow-scan system
+**********************
+
+proc SS = (SPC | LGL | TPC | Clock)\{c1,c2,c2u,s1,s2,s2u,mcs,mct}
+
+**************************************
+*  SSI-side protocol converter (SPC)
+**************************************
+
+proc SPC = SPC0
+
+proc SPC0 =
+   comm_in:2.'stat_out:2.SPC0 + 'c1:3.SPC0 + s2:2.SPC0 + s2u:4.SPC0 +
+   mcs:0.'c1:3.SPC1
+
+proc SPC1 =
+   comm_in:2.'stat_out:2.SPC1 + 'c1:3.SPC1 + s2:2.SPC0 + s2u:4.SPC1 +
+   mcs:0.'c1:3.SPC2
+
+proc SPC2 =
+   comm_in:2.'stat_out:2.SPC2 + 'c1:3.SPC2 + s2:2.SPC0 + s2u:4.SPC2 +
+   mcs:0.SPCt
+
+proc SPCt = 'det:0.SPCF + t:0.SPCt
+
+proc SPCF = comm_in:2.SPCF + s2:2.SPCF + s2u:4.SPCF + mcs:0.SPCF
+
+****************************************
+*  Track-side protocol converter (TPC)
+****************************************
+
+proc TPC = TPC0
+
+proc TPC0 =
+   'comm_out:2.stat_in:2.TPC0 + 's1:3.TPC0 + c2:2.TPC0 + c2u:4.TPC0 +
+   mct:0.'s1:3.TPC1
+
+proc TPC1 =
+   'comm_out:2.stat_in:2.TPC1 + 's1:3.TPC1 + c2:2.TPC0 + c2u:4.TPC1 +
+   mct:0.'s1:3.TPC2
+
+proc TPC2 =
+   'comm_out:2.stat_in:2.TPC2 + 's1:3.TPC2 + c2:2.TPC0 + c2u:4.TPC2 +
+   mct:0.TPCt
+
+proc TPCt = 'det:0.TPCF + t:0.TPCt
+
+proc TPCF = stat_in:2.TPCF + c2:2.TPCF + c2u:4.TPCF + mct:0.TPCF
+
+*************************
+*  Low grade link (LGL)
+*************************
+
+proc LGL = Comm[c1/in,c2/out,c2u/outu] | Comm[s1/in,s2/out,s2u/outu]
+
+proc Comm = Comm0
+
+proc Comm0 = in:3.Comm1 + 'outu:4.Comm0 + 'fail_wire:2.CommF
+
+proc Comm1 = in:3.CommFt + 'out:2.Comm0 + 'fail_wire:2.CommF
+
+proc CommFt = 'fail_overfull:0.CommF + t:0.CommFt
+
+proc CommF = in:3.CommF + 'outu:4.CommF
+
+**********
+*  Clock
+**********
+
+proc Clock = 'tick:4.'mcs:0.'mct:0.Clock
+
+
+
+

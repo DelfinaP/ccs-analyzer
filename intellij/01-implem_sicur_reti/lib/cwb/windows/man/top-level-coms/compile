@@ -1,0 +1,53 @@
+
+\manpage{compile}{compile agent1 [ agent2 ... ]}
+{
+    compile builds an automaton for the agents given as arguments
+    and displays a textual representation of the constructed 
+    automaton.  In the example below, the start state is 0 and
+    this state has an "a" transition to state 1 and a "c" transition
+    to state 2.
+}
+{    cwb-nc> compile "a.b.nil | c.nil"       
+    Building automaton...
+    States: 6
+    Transitions: 7
+    Done building automaton.
+    0:      a       \{1\}
+            c       \{2\}
+
+    1:      b       \{3\}
+            c       \{4\}
+
+    2:      a       \{4\}
+
+    3:      c       \{5\}
+
+    4:      b       \{5\}
+
+    5:
+
+    Start States:  [0]
+    Execution time (user,system,gc,real):(0.010,0.020,0.000,0.082)
+}
+{
+    cwb-nc> compile "a;b;stop ||| c;stop"
+    Building automaton...
+    Done.
+    0:      a       \{1\}
+            c       \{2\}
+    
+    1:      b       \{3\}
+            c       \{4\}
+    
+    2:      a       \{4\}
+    
+    3:      c       \{5\}
+    
+    4:      b       \{5\}
+    
+    5:
+    
+    Start States:  [0]
+    Execution took 0.010 seconds.
+}
+{}

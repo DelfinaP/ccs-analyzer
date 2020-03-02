@@ -1,0 +1,5 @@
+load peterson-2.lotos
+load peterson-2.mu
+eq Spec[enter_cs,exit_cs] Peterson_2[enter_cs,exit_cs,enter_cs,exit_cs]
+chk process(Peterson_2) can_deadlock
+chk process(Peterson_2) mutual_exclusion_violation

@@ -1,0 +1,8 @@
+
+The current sccs examples are listed below.  See the comments in the 
+.sccs files for more information.
+
+  SR-latch      The model of  any object, animate or inanimate, human or 
+		divine that can satisfy the following equation (for m, n 
+		in {0, 1}).
+  Palindromes   An Palindromes recognizer

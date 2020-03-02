@@ -1,0 +1,48 @@
+
+\manpage{trace}{trace}
+{
+    Simulator command that prints the trace of the current 
+    simulator session.  Note that backtracking with the back
+    command removes transitions from the trace;  thus, the 
+    sequence displayed by the trace command represents a path
+    from the initial agent to the current agent.
+}
+{    cwb-nc> sim "a.b.c.nil | d.e.nil"
+    a.b.c.nil | d.e.nil
+    1: -- d --> a.b.c.nil | e.nil
+    2: -- a --> b.c.nil | d.e.nil
+    cwb-nc-sim> 2
+    b.c.nil | d.e.nil
+    1: -- d --> b.c.nil | e.nil
+    2: -- b --> c.nil | d.e.nil
+    cwb-nc-sim> 1
+    b.c.nil | e.nil
+    1: -- e --> b.c.nil | nil
+    2: -- b --> c.nil | e.nil
+    cwb-nc-sim> 1
+    b.c.nil | nil
+    1: -- b --> c.nil | nil
+    cwb-nc-sim> trace  
+     a d e
+}
+{
+    cwb-nc> sim "a;b;c;stop ||| d;e;stop"
+    a;b;c;stop ||| d;e;stop
+    1: -- d --> a;b;c;stop ||| e;stop
+    2: -- a --> b;c;stop ||| d;e;stop
+    cwb-nc-sim> 2 
+    b;c;stop ||| d;e;stop
+    1: -- d --> b;c;stop ||| e;stop
+    2: -- b --> c;stop ||| d;e;stop
+    cwb-nc-sim> 1
+    b;c;stop ||| e;stop
+    1: -- e --> b;c;stop ||| stop
+    2: -- b --> c;stop ||| e;stop
+    cwb-nc-sim> 1
+    b;c;stop ||| stop
+    1: -- b --> c;stop ||| stop
+    cwb-nc-sim> trace
+     a d e
+}
+{history}
+

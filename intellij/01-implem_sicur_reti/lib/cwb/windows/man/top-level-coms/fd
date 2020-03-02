@@ -1,0 +1,22 @@
+
+\manpage{chk}{chk agent formula}
+{
+    chk invokes the model checker to determine whether or not 
+    agent satisfies formula.  If the formula is alternation-
+    free then a global model checker is invoked; otherwise,
+    if the formula is in the L2 fragment of the mu-calculus,
+    then an on-the-fly model checker is invoked.  Formulas in 
+    neither of these fragments are not yet handled.
+}
+{    cwb-nc> load abp.ccs
+    Execution time (user,system,gc,real):(0.120,0.010,0.000,0.161)
+    cwb-nc> load abp.mu 
+    Execution time (user,system,gc,real):(0.010,0.000,0.000,0.014)
+    cwb-nc> chk ABP-safe can_deadlock
+    Building automaton...
+    States: 49
+    Transitions: 74
+    Done building automaton.
+    True, the agent satisfies the formula.
+    Execution time (user,system,gc,real):(0.130,0.010,0.000,0.216)
+}{}{load}

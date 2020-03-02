@@ -1,0 +1,11 @@
+load basic.pccs
+load railway.mu
+
+min -S bisim SS SS-min
+
+chk SS-min failures_responded
+chk SS-min can_tick
+chk SS-min failures_possible
+chk SS-min no_false_alarms
+chk SS-min eventually_silent
+

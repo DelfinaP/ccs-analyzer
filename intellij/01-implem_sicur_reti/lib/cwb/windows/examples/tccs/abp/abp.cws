@@ -1,0 +1,17 @@
+load abp.tccs
+load abp.mu
+
+eq Spec ABP-safe
+eq Spec ABP-lossy
+eq Spec2 Two-link-netw
+
+chk ABP-lossy can_send
+chk ABP-lossy always_can_send_or_receive
+chk ABP-lossy no_repeat
+chk ABP-lossy can_deadlock
+
+chk ABP-safe can_deadlock
+
+chk Two-link-netw can_send
+chk Two-link-netw always_can_send_or_receive
+chk Two-link-netw can_deadlock

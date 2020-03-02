@@ -1,0 +1,15 @@
+Executing CWB script file jobshop.cws, directing output to jobshop.cws.out.
+August 14, 1996   15:28
+Execution time (user,system,gc,real):(0.010,0.020,0.000,0.116)
+cwb-nc> load jobshop.ccs
+Execution time (user,system,gc,real):(0.050,0.040,0.000,0.127)
+cwb-nc> eq Spec Jobshop
+Building automaton...
+States: 94
+Transitions: 256
+Done building automaton.
+Transforming automaton...
+Done transforming automaton.
+TRUE
+Execution time (user,system,gc,real):(0.840,0.050,0.010,0.895)
+cwb-nc> 

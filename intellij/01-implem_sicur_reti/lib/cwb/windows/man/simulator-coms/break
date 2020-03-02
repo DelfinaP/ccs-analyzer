@@ -1,0 +1,39 @@
+
+\manpage{break}{break [ flag ] act-list}
+{
+    Simulator command used to add (-a), delete (-d), and list (-l) 
+    break points.  An agent is interpreted as a break point if one 
+    or more of its enabled transitions is labeled by an action in 
+    the break point set.  A message is displayed when a break point 
+    is reached and random execution is halted.  If no flag is given 
+    then each item in the list of actions is added to the set of 
+    break points.  The act list argument is a list of actions 
+    separated by spaces.
+}
+{    cwb-nc> sim "a.b.nil + a.c.nil"
+    a.b.nil + a.c.nil
+    1: -- a --> c.nil
+    2: -- a --> b.nil
+    cwb-nc-sim> break -a a b c  
+    cwb-nc-sim> break -d a
+    cwb-nc-sim> break -l
+     b c
+    cwb-nc-sim> random 3
+    Break point
+    b.nil
+    1: -- b --> nil
+}
+{    cwb-nc> sim "a;b;stop [] a;c;stop"
+    a;b;stop [] a;c;stop
+    1: -- a --> c;stop
+    2: -- a --> b;stop
+    cwb-nc-sim> break -a a b c
+    cwb-nc-sim> break -d a
+    cwb-nc-sim> break -l
+     b c
+    cwb-nc-sim> random 2
+    Break point
+    b;stop
+    1: -- b --> stop
+}
+{}

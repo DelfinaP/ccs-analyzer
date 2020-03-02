@@ -1,0 +1,24 @@
+
+Available CWB-NC commands are:
+  caching {on | off}
+  cat identifier
+  cd directory
+  chk agent formula
+  compile agent [ agent ... ]
+  eq [-S {obseq | bisim | may | must}] agent1 agent2
+  es filename1 [filename2]
+  fd agent
+  help [command-name]
+  le [-S {may | must}] agent1 agent2
+  load filename
+  ls
+  min [-S {obseq | bisim}] agent identifier
+  quit
+  save filename [ identifier ... ]
+  search agent formula
+  sim agent
+  size agent
+  sort agent
+  trans [-S {obseq | bisim}] agent
+
+

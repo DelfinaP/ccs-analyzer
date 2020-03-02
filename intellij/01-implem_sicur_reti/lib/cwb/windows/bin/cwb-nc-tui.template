@@ -1,0 +1,48 @@
+echo off
+REM :
+REM #!/bin/sh
+REM # @(#) cwb-nc-tui - The Concurrency Workbench of New Century
+REM # @(#) This script launches the Concurrency Workbench of New
+REM # @(#) Century.  The command line argument indicates which
+REM # @(#) language interface to invoke.  For more info, see the
+REM # @(#) CWB-NC home page:
+REM # @(#)   URL http://www.cs.sunysb.edu/eos/~cwb
+REM #
+REM # The ":" above indicates that this is a Bourne shell script.
+
+REM if [ $# -ne 1 ]; then
+REM   echo "Usage: cwb-nc-tui language-name"
+REM   echo "  Languages: $CWB_NC_LANGUAGES"
+REM  exit 127
+REM fi
+
+REM # Site specific
+REM # The following variable must be set to the appropriate
+REM # directory at your site.
+REM #
+REM # CWB_NC_DIR  should be set to the top-level directory that contains
+REM #             the CWB-NC distribution.  For example if you have placed
+REM #             the distribution in /usr/local/src/cwb-nc then the following
+REM #             assignment should be:
+REM #               CWB_NC_DIR=/usr/local/src/cwb-nc
+REM #
+
+set SML_DIR=PATTERN_SML_PATH
+set CWB_NC_DIR=PATTERN_CWB_NC_PATH
+echo %CWB_NC_DIR%
+
+REM # End site specific
+
+REM ARCH_N_OPSYS=`$CWB_NC_DIR/bin/arch-n-opsys`
+REM if [ "$?" != "0" ]; then
+REM   echo "Unable to determine architecture-operating system"
+REM   exit 1
+REM fi
+REM eval $ARCH_N_OPSYS
+
+
+set RUN_SML=%CWB_NC_DIR%\bin\run-sml-110-%ARCH%-%OPSYS%.exe
+set HEAP_DIR=%CWB_NC_DIR%\bin\heaps-%ARCH%-%OPSYS%
+
+%RUN_SML% "@SMLload=%HEAP_DIR%\cwb-nc-%1.%ARCH%-%OPSYS%"
+REM "@SMLdebug=/dev/null"

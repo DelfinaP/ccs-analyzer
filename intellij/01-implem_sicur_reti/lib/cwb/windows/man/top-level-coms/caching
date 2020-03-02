@@ -1,0 +1,13 @@
+
+\manpage{caching}{caching arg}
+{
+    The "caching" command toggles whether or not transitions
+    are cached during analysis.  "arg" is either "on" or "off"
+    When caching is on, the transitions of subterms of the parallel 
+    composition operator are cached as they are computed, which usually 
+    leads to impressive speedups since these are recomputed numerous 
+    times for a typical design.  However, if the subterms of a parallel 
+    composition operator are automata (as is the case when doing component 
+    wise minimization) caching is unnecessary and wastes space, therefore 
+    should not be used.
+}{}{}{}

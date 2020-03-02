@@ -1,0 +1,9 @@
+
+\manpage{le}{le [-S semantic-type] agent1 agent2}
+{
+    le computes whether agent1 and agent2 are related by the 
+    behavioral preorder indicated by semantic-type.  The currently 
+    available semantic-type arguments are may (may preorder) and must 
+    (must preorder).
+}
+{}{}{}

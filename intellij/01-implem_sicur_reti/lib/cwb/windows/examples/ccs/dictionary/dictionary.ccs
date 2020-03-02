@@ -1,0 +1,68 @@
+*****************************************************************
+*
+*  dictionary.ccs 
+* 
+*  For a more complete description of this example see
+*
+*  "An Algebraic Theory of Process Efficiency", LICS 96.
+*  V. Natarajan   Rance Cleaveland
+*
+*  and
+*
+*  "Degrees of Delay: Semantic Theories for Priority, Efficiency
+*   Fairness and Predictability in Process Algebras"
+*  N.C. State University PhD Thesis, 1996
+*  V. Natarajan  
+*
+*  The system is a dictionary; given a key it might either give 
+*  its meaning or reply that such a word is not in its database.
+*
+*  Three versions of the system are defined (Impl1,Impl2,Impl3).
+*  Spec is may and must equivalent to Impl1 and Impl2; however,
+*  it is only may equivalent to Impl3.  Impl3 is not must 
+*  equivalent to Spec because the medium is capable of loosing
+*  all messages given to it for delivery (and diverging).  The 
+*  theory of fair testing developed in the thesis referenced 
+*  above rules out "unfair" behaviors such as loosing all 
+*  messages and Spec and Impl3 are fair-testing equivalent;
+*  however the fair-testing relation has not yet been implemented
+*  in the cwb-nc.  
+*
+*  Spec, Impl1, and Impl2 are testing (may intersect must) 
+*  equivalent but not observationaly equivalent.  This shows the
+*  advantage of testing equivalence which allows abstract,
+*  functional specefications as is the case here.
+*
+*****************************************************************
+
+proc Spec = key.'meaning.Spec + key.'no.Spec
+
+proc Impl1 = (DM1 | DB1) \ {ik,im,in}
+
+proc DM1 = key.'ik.(im.'meaning.DM1 + in.'no.DM1)
+
+proc DB1 = ik.(t.'im.DB1 + t.'in.DB1)
+
+proc Impl2 = (DM2 | DB2) \ {ik,reset}
+
+proc DM2 = key.'ik.reset.DM2
+
+proc DB2 = ik.(t.'meaning.'reset.DB2 + t.'no.'reset.DB2)
+
+set Internals = { kDM, mMD, nMD, kMR, mRM, nRM }
+
+proc Impl3 = (DM | MED | REP) \ Internals
+
+proc DM = key.DM'
+
+proc DM' = 'kDM.(mMD.'meaning.DM + nMD.'no.DM + t.DM')
+
+proc MED = 
+  kDM.('kMR.MED + t.MED) +
+  mRM.('mMD.MED + t.MED) +
+  nRM.('nMD.MED + t.MED) 
+
+proc REP = kMR.(t.'mRM.REP + t.'nRM.REP)
+  
+
+

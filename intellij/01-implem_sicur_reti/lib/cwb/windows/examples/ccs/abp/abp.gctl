@@ -1,0 +1,40 @@
+*****************************************************************************
+*
+* GCTL encodings of mu-calculus formulas  for CCS version of abp.
+*
+* Author:  Rance Cleaveland
+* Date:    14 June 2000
+
+
+prop can_deadlock =
+   E F ~{- }
+
+prop can_send = 
+  E ({t} U {send})
+
+prop can_receive = 
+  E ({t} U {'receive})
+
+prop always_can_send_or_receive =
+  A G (can_send \/ can_receive)
+
+prop no_repeat = 
+  A G (([send](not can_send)) /\ (['receive](not can_receive)))
+
+prop no_repeat' =
+  A G (  ({send}     -> X (~{send}     W {'receive}))
+      /\ ({'receive} -> X (~{'receive} W {send}    ))
+      )
+
+* The next two properties show how fairness constraints can be encoded in
+* GCTL*.  The first liveness property fails of ABP-lossy because of the
+* possibility of divergence resulting from infinite message dropping.
+
+prop liveness =
+  A (G (({send} -> F {'receive}) /\ ({'receive} -> F {send})))
+
+* The second property now constrains the livenes property to hold only along
+* nondivergent paths.  This holds of ABP-lossy.
+
+prop fair_liveness =
+  A ((G F {- t}) -> (G (({send} -> F {'receive}) /\ ({'receive} -> F {send}))))

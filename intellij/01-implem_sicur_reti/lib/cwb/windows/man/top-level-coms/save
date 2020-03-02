@@ -1,0 +1,12 @@
+
+\manpage{save}{save filename [ identifier ... ]}
+{
+    The save command saves the bindings in the current environment,
+    or selected bindings, to a file.  If one or more identifier
+    arguments are given, then the bindings for these identifiers 
+    are saved to filename.  If no identifier arguments are given,
+    then all bindings in the environment are saved to a file. The
+    save command is useful for saving minimized automata for future
+    use.  
+}
+{}{}{load}

@@ -1,0 +1,12 @@
+
+\manpage{help}{help [command-name]}
+{
+    help displays information about CWB-NC commands.  If 
+    executed with no arguments, then a list of available 
+    commands is displayed.  If given a command name as an 
+    argument, then information about the specific command
+    is displayed.
+}
+{}
+{}
+{}

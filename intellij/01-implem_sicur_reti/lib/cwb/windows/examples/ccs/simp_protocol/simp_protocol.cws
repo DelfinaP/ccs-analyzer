@@ -1,0 +1,11 @@
+load simp_protocol.ccs
+load simp_protocol.mu
+eq PROTOCOL SERVICE
+eq -S may PROTOCOL SERVICE
+eq -S must PROTOCOL SERVICE
+le -S may PARTIAL_MEDIUM NEW_MEDIUM
+le -S must PARTIAL_MEDIUM NEW_MEDIUM
+chk PROTOCOL can_send
+chk PROTOCOL always_can_send_or_receive
+chk PROTOCOL no_repeat
+chk PROTOCOL can_deadlock

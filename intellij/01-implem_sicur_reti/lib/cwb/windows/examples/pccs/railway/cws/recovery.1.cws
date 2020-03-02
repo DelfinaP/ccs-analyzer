@@ -1,0 +1,17 @@
+load recovery.pccs
+load railway.mu
+
+chk SS failures_responded
+chk SS failures_responded_again
+chk SS can_tick
+chk SS failures_possible
+chk SS failures_possible_again
+chk SS no_false_alarms
+chk SS no_false_alarms_again
+chk SS eventually_silent
+chk SS react_on_repair
+
+
+
+
+
