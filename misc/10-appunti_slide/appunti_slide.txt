@@ -1,0 +1,7 @@
+- 03 2_CCS.pdf
+
+- Azione (pag 14)
+Il sort ci restituisce l'insieme delle azioni: 
+	sort (α.P) = {α} ∪ sort (P)
+- LTS (pag 15)
+L'LTS è il grafo degli stati connessi dagli archi delle azioni.

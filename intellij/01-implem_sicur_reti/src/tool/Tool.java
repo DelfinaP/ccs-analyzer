@@ -17,13 +17,13 @@ public abstract class Tool {
     Terminal terminale1;
     static String analysisDirPath;
     static String nameDirOriginalFiles; // Nome directory contenente i file originali
-    static String nameDirFileInvokeMethodSubstituted; // Nome directory contenent i file con invokemethod sostituito
+    static String nameDirModifiedFiles; // Nome directory contenent i file con invokemethod sostituito
     static String cwbPath;
     static String nameDirFileBatch;
 
     public Tool() {
         // Initialize "nameDirFileBatch"
-        nameDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_batch");
+        nameDirFileBatch = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path"));
         FileManager.deleteDirectoryWithRelativePath(nameDirFileBatch);
         FileManager.createDirectoryWithRelativePath(nameDirFileBatch);
 
@@ -33,10 +33,10 @@ public abstract class Tool {
 
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
-                relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb_linux");
+                relativeCwbPath = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", "cwb_linux_path"));
             }
             else if (OsUtils.getOsType() == OsType.WINDOWS){
-                relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb_windows");
+                relativeCwbPath = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", "cwb_windows_path"));
             }
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
@@ -100,8 +100,8 @@ public abstract class Tool {
         }
     }
 
-    private void getDirPath() throws ParseException, IOException {
-        String relativeAnalysisDirPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_ccs_da_analizzare");
+    private void getDirPath() {
+        String relativeAnalysisDirPath = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", "ccs_analysis_path"));
         analysisDirPath = FileManager.trasformRelativeToAbsolutePath(relativeAnalysisDirPath);
     }
 
@@ -216,8 +216,8 @@ public abstract class Tool {
     }
 
     private void copyFilesToDirectory() {
-        nameDirOriginalFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_originali");
-        nameDirFileInvokeMethodSubstituted = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_invokemethod_sostituito");
+        nameDirOriginalFiles = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", "original_files_path"));
+        nameDirModifiedFiles = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", "modified_files_path"));
 
         // Crea cartella per i file originali
         String nomeCartella = buildPath(analysisDirPath, nameDirOriginalFiles);
@@ -225,12 +225,12 @@ public abstract class Tool {
         dir.mkdir();
 
         // Crea cartella per i file invokeMethodSostituito
-        nomeCartella = buildPath(analysisDirPath, nameDirFileInvokeMethodSubstituted);
+        nomeCartella = buildPath(analysisDirPath, nameDirModifiedFiles);
         dir = new File(nomeCartella);
         dir.mkdir();
 
         copiaFileInDirectory(nameDirOriginalFiles);
-        copiaFileInDirectory(nameDirFileInvokeMethodSubstituted);
+        copiaFileInDirectory(nameDirModifiedFiles);
         rimuoviFileInDirectory(analysisDirPath);
     }
 
@@ -266,7 +266,7 @@ public abstract class Tool {
         }
     }
 
-    private String getJsonParameter(String jsonObject, String chiave) throws IOException, ParseException {
+    private String getJsonParameter(String jsonObject, String chiave) {
         String valore = "";
 
         valore = JsonUtils.readValue("src/json/parametri.json", jsonObject, chiave);
@@ -277,13 +277,13 @@ public abstract class Tool {
     /**
      * Per ciascun .ccs calcola la size dei metodi
      */
-    private void processOriginalFiles() throws IOException, ParseException, osNotRecognizedException {
-        processCwbFiles("nome_dir_file_originali", CcsFileType.ORIGINAL);
+    private void processOriginalFiles() {
+        processCwbFiles("original_files_path", CcsFileType.ORIGINAL);
     }
 
     private void processCwbFiles(String fileDir, CcsFileType ccsFileType) {
         LinkedList<String> fileList = new LinkedList<String>();
-        String nameSubdirectory = JsonUtils.readValue("src/json/parametri.json", "parametri", fileDir);
+        String nameSubdirectory = JsonUtils.localizeDirectorySeparator(JsonUtils.readValue("src/json/parametri.json", "parametri", fileDir));
 
         fileList = getFileList(buildPath(analysisDirPath, nameSubdirectory));
         String filePath;
