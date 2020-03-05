@@ -1,0 +1,29 @@
+sort nome_processo
+// Sort restituisce il numero di azioni del processo
+compile nome_processo
+
+// Ci basiamo sul numero degli stati
+// Metto a tau anche il return
+
+Originali: 299, 189 -> 36,7%
+
+------------
+
+-- Passaggi da fare:
+
+- Consideriamo il gruppo dei "file originali" e dei "file modificati", che vengono inizializzati come copia dei file originali.
+- Nei file modificati prendiamo tutti i metodi in "proc ALL" e facciamone la size. Prendiamo i metodi che sono al di sotto di una certa soglia (ad esempio, 5): ci aspettiamo che questi metodi siano stati creati dall'offuscamento, perché sono piccoli e quindi ci aspettiamo che non fanno niente.
+- Per ciascuno di questi metodi navighiamo la lista delle chiamate. Ad esempio, il metodo COREEFILE123 avrà le seguenti chiamate:
+
+proc COREEFILE123 = load.m1
+proc m1 = load.m2
+proc m2 = return.nil
+
+- (possibile requisito funzionale) Valutiamo se la lista delle chiamate ha questa forma (ossia una chiamata diretta ad un altro metodo). Se non ha questa forma, possiamo considerare questo come un metodo reale.
+Sostituiamo i due "load" e il "return" con "t" (tau).
+- Ora effettuiamo la minimizzazione del "proc ALL":
+min -S obseq ALL all_min
+e cerchiamo la size di ALL e all_min:
+size ALL
+size all_min
+- Valutiamo la percentuale della riduzione del numero di stati da ALL a all_min, individuando nella fase di training la percentuale media nel caso dell'app offuscata e dell'app non offuscata.
