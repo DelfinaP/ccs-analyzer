@@ -216,8 +216,8 @@ public abstract class Tool {
     }
 
     private void copyFilesToDirectory() {
-        nameDirOriginalFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "original-files");
-        nameDirModifiedFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "modified-files");
+        nameDirOriginalFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "original_files_path");
+        nameDirModifiedFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "modified_files_path");
 
         // Crea cartella per i file originali
         String nomeCartella = buildPath(analysisDirPath, nameDirOriginalFiles);
@@ -278,7 +278,7 @@ public abstract class Tool {
      * Per ciascun .ccs calcola la size dei metodi
      */
     private void processOriginalFiles() throws IOException, ParseException, osNotRecognizedException {
-        processCwbFiles("nome_dir_file_originali", CcsFileType.ORIGINAL);
+        processCwbFiles("original_files_path", CcsFileType.ORIGINAL);
     }
 
     private void processCwbFiles(String fileDir, CcsFileType ccsFileType) {

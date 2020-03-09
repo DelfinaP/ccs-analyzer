@@ -25,7 +25,7 @@ public abstract class Terminal {
         commandsList = new LinkedList<String>();
         isExecuted = false;
 
-        nomeDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_batch");
+        nomeDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
     }
 
     /**
