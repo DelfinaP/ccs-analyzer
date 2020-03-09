@@ -1,9 +1,10 @@
 {
   "parametri" : {
-    "percorso_ccs_da_analizzare" : "",
-    "nome_dir_file_originali" : "file_originali",
-    "nome_dir_file_invokemethod_sostituito" : "file_invokemethod_sostituito",
-    "nome_dir_file_batch" : "",
-    "percorso_cwb" : ""
+    "ccs_analysis_path" : "res/ccs-analysis",
+    "original_files_path" : "original-files",
+    "modified_files_path" : "modified-files",
+    "batch_files_path" : "res/batch-files",
+    "cwb_linux_path" : "lib/cwb/linux",
+    "cwb_windows_path" : "lib\\cwb\\windows"
   }
-} 
+}

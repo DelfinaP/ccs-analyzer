@@ -17,15 +17,15 @@ public abstract class Tool {
     Terminal terminale1;
     static String analysisDirPath;
     static String nameDirOriginalFiles; // Nome directory contenente i file originali
-    static String nameDirFileInvokeMethodSubstituted; // Nome directory contenent i file con invokemethod sostituito
+    static String nameDirModifiedFiles; // Nome directory contenent i file con invokemethod sostituito
     static String cwbPath;
-    static String nameDirFileBatch;
+    static String nameDirBatchFile;
 
     public Tool() {
         // Initialize "nameDirFileBatch"
-        nameDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_batch");
-        FileManager.deleteDirectoryWithRelativePath(nameDirFileBatch);
-        FileManager.createDirectoryWithRelativePath(nameDirFileBatch);
+        nameDirBatchFile = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
+        FileManager.deleteDirectoryWithRelativePath(nameDirBatchFile);
+        FileManager.createDirectoryWithRelativePath(nameDirBatchFile);
 
         // Initialize "cwbPath"
         cwbPath = "";
@@ -33,10 +33,10 @@ public abstract class Tool {
 
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
-                relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb_linux");
+                relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "cwb_linux_path");
             }
             else if (OsUtils.getOsType() == OsType.WINDOWS){
-                relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb_windows");
+                relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "cwb_windows_path");
             }
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
@@ -63,13 +63,13 @@ public abstract class Tool {
     }
 
     protected void deleteBatchFile() {
-        File folder = new File(nameDirFileBatch);
+        File folder = new File(nameDirBatchFile);
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
             // Se è un file
             if (listOfFiles[i].isFile()) {
-                File f = new File(buildPath(nameDirFileBatch, listOfFiles[i].getName()));
+                File f = new File(buildPath(nameDirBatchFile, listOfFiles[i].getName()));
                 f.delete();
             }
             // Altrimenti, se è una directory
@@ -101,7 +101,7 @@ public abstract class Tool {
     }
 
     private void getDirPath() throws ParseException, IOException {
-        String relativeAnalysisDirPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_ccs_da_analizzare");
+        String relativeAnalysisDirPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "ccs_analysis_path");
         analysisDirPath = FileManager.trasformRelativeToAbsolutePath(relativeAnalysisDirPath);
     }
 
@@ -216,8 +216,8 @@ public abstract class Tool {
     }
 
     private void copyFilesToDirectory() {
-        nameDirOriginalFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_originali");
-        nameDirFileInvokeMethodSubstituted = JsonUtils.readValue("src/json/parametri.json", "parametri", "nome_dir_file_invokemethod_sostituito");
+        nameDirOriginalFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "original-files");
+        nameDirModifiedFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "modified-files");
 
         // Crea cartella per i file originali
         String nomeCartella = buildPath(analysisDirPath, nameDirOriginalFiles);
@@ -225,12 +225,12 @@ public abstract class Tool {
         dir.mkdir();
 
         // Crea cartella per i file invokeMethodSostituito
-        nomeCartella = buildPath(analysisDirPath, nameDirFileInvokeMethodSubstituted);
+        nomeCartella = buildPath(analysisDirPath, nameDirModifiedFiles);
         dir = new File(nomeCartella);
         dir.mkdir();
 
         copiaFileInDirectory(nameDirOriginalFiles);
-        copiaFileInDirectory(nameDirFileInvokeMethodSubstituted);
+        copiaFileInDirectory(nameDirModifiedFiles);
         rimuoviFileInDirectory(analysisDirPath);
     }
 
