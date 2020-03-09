@@ -14,7 +14,7 @@ public class ToolInitializer {
             tool = new ToolLinux();
             tool.run();
         }
-        else if (OsUtils.getOsType() == OsType.WINDOWS) {
+        else if (OsUtils.getOsType() == OsType.WINDOWS){
             tool = new ToolWindows();
             tool.run();
         }

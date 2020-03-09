@@ -3,9 +3,6 @@ package utils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import tool.OsType;
-import tool.OsUtils;
-import tool.exceptions.osNotRecognizedException;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -49,35 +46,5 @@ public class JsonUtils {
         }
 
         return value;
-    }
-
-    /**
-     * Modify directory path using the directory separator "/" when executing on Linux,
-     * and using the directory separator "\" when executing on Windows.
-     * @param path The path to be localized. This path is expected to have "/" as directory separator.
-     * @return The localized path.
-     */
-    public static String localizeDirectorySeparator(String path) {
-        String localizedPath = "";
-
-        try {
-            if (OsUtils.getOsType() == OsType.LINUX) {
-                localizedPath = path;
-            }
-            else if (OsUtils.getOsType() == OsType.WINDOWS) {
-                for (int i = 0; i < localizedPath.length(); i++) {
-                    if (path.charAt(i) != '/') {
-                        localizedPath.concat(String.valueOf(path.charAt(i)));
-                    }
-                    else {
-                        localizedPath.concat("\\");
-                    }
-                }
-            }
-        } catch (osNotRecognizedException e) {
-            e.printStackTrace();
-        }
-
-        return localizedPath;
     }
 }
