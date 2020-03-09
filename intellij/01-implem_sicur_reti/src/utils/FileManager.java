@@ -74,6 +74,10 @@ public class FileManager {
         file.delete();
     }
 
+    public static String getProjectDirectory() {
+        return System.getProperty("user.dir");
+    }
+
     /**
      * Converts a relative path of a directory to the corresponding absolute path. The relative path is
      * assumed to be based on the Java project main directory.

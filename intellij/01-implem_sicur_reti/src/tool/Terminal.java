@@ -119,16 +119,32 @@ public abstract class Terminal {
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()));
 
-        String line;
+        String line = "";
         try {
-            while ((line = reader.readLine()) != null) {
-                commandList.add(line);
+            while (true) {
+                line = reader.readLine();
+                if (line == null || line == "terminal execution terminated") {
+                    break;
+                }
+                else {
+                    System.out.println(line);
+                    commandList.add(line);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+//        try {
+//            while ((line = reader.readLine()) != null) {
+//                commandList.add(line);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
         int exitVal = 0;
+
         try {
             exitVal = process.waitFor();
         } catch (InterruptedException e) {
@@ -138,6 +154,14 @@ public abstract class Terminal {
             return commandList;
         } else {
             return null;
+        }
+    }
+
+    private void printCharsConvertedToInt(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            char character = string.charAt(i);
+            int charCode = (int) string.charAt(i);
+            System.out.println("" + character + charCode + " ");
         }
     }
 
