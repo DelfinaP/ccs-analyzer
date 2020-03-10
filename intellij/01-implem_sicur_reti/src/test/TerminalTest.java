@@ -3,8 +3,6 @@ package test;
 import tool.*;
 import tool.exceptions.osNotRecognizedException;
 
-import java.io.IOException;
-
 public class TerminalTest {
 
     public static void main(String[] args) {
@@ -47,7 +45,7 @@ public class TerminalTest {
 
         terminal.executeCommands();
 
-        tool.stampaStringList(terminal.getTerminalOutput());
+        tool.printStringList(terminal.getTerminalOutput());
     }
 
     private static void testCreateFile() {

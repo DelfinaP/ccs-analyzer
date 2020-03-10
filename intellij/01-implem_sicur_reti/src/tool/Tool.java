@@ -157,7 +157,7 @@ public abstract class Tool {
         return new TerminalLinux();
     }
 
-    public static void stampaStringList(LinkedList<String> stringList) {
+    public static void printStringList(LinkedList<String> stringList) {
         while (stringList.size() > 0) {
             System.out.println(stringList.remove());
         }
@@ -389,7 +389,7 @@ public abstract class Tool {
 
             terminal.executeCommands();
 
-            stampaStringList(terminal.getTerminalOutput());
+            printStringList(terminal.getTerminalOutput());
 
             int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }
