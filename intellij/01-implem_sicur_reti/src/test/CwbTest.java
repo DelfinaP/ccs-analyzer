@@ -46,7 +46,7 @@ public class CwbTest {
         }
     }
 
-    private static void cwbTestV2() {
+    public static void cwbTestV2() {
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
                 Process process = null;
@@ -96,7 +96,53 @@ public class CwbTest {
                 }
             }
             else if (OsUtils.getOsType() == OsType.WINDOWS){
+                Process process = null;
 
+                try {
+                    process = Runtime.getRuntime().exec(new String[] {"cmd.exe", "/c", "lib\\cwb\\windows\\bin\\cwb-nc.bat ccs"});
+                    System.out.println(process);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String projectDirectory = FileManager.getProjectDirectory();
+
+                PrintStream writer = new PrintStream(process.getOutputStream());
+                
+                writer.println("load " + projectDirectory + "\\src\\test\\files\\cwbTest\\a.a.ccs");
+                writer.println("size COREEFILETESTCLASSCOMROCKSTARGAMESAApublicstaticinta");
+                writer.println("quit");
+                writer.close();
+
+                LinkedList<String> stringList = new LinkedList<String>();
+
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream()));
+
+                String line = "";
+
+                try {
+                    while ((line = reader.readLine()) != null) {
+                        stringList.add(line);
+                    }
+
+                    int exitVal = 0;
+
+                    exitVal = process.waitFor();
+
+                    if (exitVal == 0) {
+                        // Success
+                        System.out.println("Success");
+                        Tool.printStringList(stringList);
+                    } else {
+                        // Failure
+                        System.out.println("Failure");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
