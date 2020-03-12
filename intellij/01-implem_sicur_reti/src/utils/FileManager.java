@@ -79,12 +79,34 @@ public class FileManager {
     }
 
     /**
-     * Converts a relative path of a directory to the corresponding absolute path. The relative path is
-     * assumed to be based on the Java project main directory.
-     * @param   relativePath   The relative path of the directory.
-     * @return   The absolute path of the directory.
+     * Transform a Linux path (a path having "/" as directory separator) in a path suited for the architecture
+     * (the path is unchanged if executing on Linux, while is transformed changing "/" to "\" if executing on Windows)
+     * @param linuxPath The path to be localized
+     * @return The localized path
      */
-//    private String getAbsoluteDirPath(String relativePath) {
-//
-//    }
+    public static String localizeLinuxPath(String linuxPath) {
+        try {
+            if (OsUtils.getOsType() == OsType.LINUX) {
+                return linuxPath;
+            }
+            else if (OsUtils.getOsType() == OsType.WINDOWS){
+                String localizedPath = "";
+
+                for (int i = 0; i < linuxPath.length(); i++) {
+                    if (linuxPath.charAt(i) != '/') {
+                        localizedPath = localizedPath.concat(String.valueOf(linuxPath.charAt(i)));
+                    }
+                    else {
+                        localizedPath = localizedPath.concat("\\");
+                    }
+                }
+
+                return localizedPath;
+            }
+        } catch (osNotRecognizedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

@@ -4,6 +4,7 @@ import utils.CommandRunner;
 import utils.FileManager;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 
 public class TerminalLinux extends Terminal {
@@ -59,6 +60,15 @@ public class TerminalLinux extends Terminal {
     @Override
     protected String costruisciPath(String pathParte1, String parthParte2) {
         return pathParte1 + "/" + parthParte2;
+    }
+
+    @Override
+    protected void executeCwb() {
+        try {
+            process = Runtime.getRuntime().exec(new String[] {"./lib/cwb/linux/cwb-nc-ccs-x86-linux.bin"});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void executeBatchFile(String nameBatchFile) {

@@ -391,7 +391,6 @@ public abstract class Tool {
 
             printStringList(terminal.getTerminalOutput());
 
-            int sizeMetodo = terminal.getSizeSingoloMetodo(nomeMetodo);
         }
     }
 

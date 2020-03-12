@@ -1,7 +1,10 @@
 package tool;
 
+import utils.FileManager;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 
 public class TerminalWindows extends Terminal{
@@ -59,6 +62,15 @@ public class TerminalWindows extends Terminal{
     @Override
     protected String costruisciPath(String pathParte1, String parthParte2) {
         return pathParte1 + "\\" + parthParte2;
+    }
+
+    @Override
+    protected void executeCwb() {
+        try {
+            process = Runtime.getRuntime().exec(new String[] {"cmd.exe", "/c", "lib\\cwb\\windows\\bin\\cwb-nc.bat ccs"});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void executeBatchFile(String nameBatchFile) {

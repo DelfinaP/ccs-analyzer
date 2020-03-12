@@ -3,6 +3,8 @@ package tool;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import tool.exceptions.osNotRecognizedException;
+import utils.FileManager;
 import utils.JsonUtils;
 
 import java.io.*;
@@ -26,6 +28,21 @@ public abstract class Terminal {
         isExecuted = false;
 
         nomeDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
+    }
+
+    public static Terminal createTerminal() {
+        try {
+            if (OsUtils.getOsType() == OsType.LINUX) {
+                return new TerminalLinux();
+            }
+            else if (OsUtils.getOsType() == OsType.WINDOWS){
+                return new TerminalWindows();
+            }
+        } catch (osNotRecognizedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**
@@ -217,8 +234,56 @@ public abstract class Terminal {
 
     protected abstract String costruisciPath(String pathParte1, String parthParte2);
 
-    public int getSizeSingoloMetodo(String nomeMetodo) {
-        addCommand("size " + nomeMetodo);
+    protected abstract void executeCwb();
+
+    private void loadCwbMethod(PrintStream writer, String fileName){
+        String projectDirectory = FileManager.getProjectDirectory();
+
+        writer.println("load " + costruisciPath(projectDirectory, fileName));
+    }
+
+    public int getMethodSize(String fileName, String methodName) {
+        Process process = null;
+        executeCwb();
+
+        PrintStream writer = new PrintStream(process.getOutputStream());
+
+        loadCwbMethod(writer, fileName);
+
+        writer.println("size " + methodName);
+        writer.println("quit");
+        writer.close();
+
+        LinkedList<String> stringList = new LinkedList<String>();
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
+
+        String line = "";
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringList.add(line);
+            }
+
+            int exitVal = 0;
+
+            exitVal = process.waitFor();
+
+            if (exitVal == 0) {
+                // Success
+                System.out.println("Success");
+                Tool.printStringList(stringList);
+            } else {
+                // Failure
+                System.out.println("Failure");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return 0;
     }
 }
