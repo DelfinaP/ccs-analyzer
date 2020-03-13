@@ -16,10 +16,10 @@ public class CwbTest {
     }
 
     private static void cwbTest() {
-        Terminal terminal = Terminal.createTerminal();
+        Shell shell = Shell.createTerminal();
 
         String localizedFilePath = FileManager.localizeLinuxPath("src/test/files/cwbTest/a.a.ccs");
-        terminal.getMethodSize(localizedFilePath, "COREEFILETESTCLASSCOMROCKSTARGAMESAApublicstaticinta");
+        shell.getMethodSize(localizedFilePath, "COREEFILETESTCLASSCOMROCKSTARGAMESAApublicstaticinta");
     }
 
     public static void cwbTestV2() {

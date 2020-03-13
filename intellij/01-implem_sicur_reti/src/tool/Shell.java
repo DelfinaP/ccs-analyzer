@@ -1,8 +1,5 @@
 package tool;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import tool.exceptions.osNotRecognizedException;
 import utils.FileManager;
 import utils.JsonUtils;
@@ -14,29 +11,36 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public abstract class Terminal {
+/**
+ * Create shell, allowing to execute CWB commands. There are three method to be executed, in this
+ * order: 1. executeCwb(); 2. addCommand(); 3. getTerminalOutput().
+ */
+public abstract class Shell {
     protected Process process;
+    protected PrintStream writer;
     protected LinkedList<String> commandsList;
+    protected LinkedList<String> outputList;
     protected String batchExtension;
     protected String nomeDirFileBatch;
     protected boolean isExecuted;
 
     protected Thread readBufferThread;
 
-    public Terminal() {
+    public Shell() {
         commandsList = new LinkedList<String>();
+        outputList = new LinkedList<String>();
         isExecuted = false;
 
         nomeDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
     }
 
-    public static Terminal createTerminal() {
+    public static Shell createTerminal() {
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
-                return new TerminalLinux();
+                return new ShellLinux();
             }
             else if (OsUtils.getOsType() == OsType.WINDOWS){
-                return new TerminalWindows();
+                return new ShellWindows();
             }
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
@@ -51,20 +55,7 @@ public abstract class Terminal {
      * are executed one after the other.
      */
     public void addCommand(String command) {
-        commandsList.add(command);
-    }
-
-    /**
-     * Execute commands contained in the queue.
-     */
-    public void executeCommands() {
-        if (!isExecuted) {
-            String nameBatchFile = createFile();
-
-            makeBatchFileExecutable(nomeDirFileBatch, nameBatchFile);
-
-            executeBatchFile(nameBatchFile);
-        }
+        writer.println(command);
     }
 
     protected abstract void makeBatchFileExecutable(String dirPath, String fileName);
@@ -130,50 +121,6 @@ public abstract class Terminal {
         return completeName;
     }
 
-    public LinkedList<String> getTerminalOutput() {
-        LinkedList<String> commandList = new LinkedList<String>();
-
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream()));
-
-        String line = "";
-        try {
-            while (true) {
-                line = reader.readLine();
-                if (line == null || line == "terminal execution terminated") {
-                    break;
-                }
-                else {
-                    System.out.println(line);
-                    commandList.add(line);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        try {
-//            while ((line = reader.readLine()) != null) {
-//                commandList.add(line);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-        int exitVal = 0;
-
-        try {
-            exitVal = process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (exitVal == 0) {
-            return commandList;
-        } else {
-            return null;
-        }
-    }
-
     private void printCharsConvertedToInt(String string) {
         for (int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
@@ -234,27 +181,45 @@ public abstract class Terminal {
 
     protected abstract String costruisciPath(String pathParte1, String parthParte2);
 
-    protected abstract void executeCwb();
+    public abstract void executeCwb();
 
-    private void loadCwbMethod(PrintStream writer, String fileName){
-        String projectDirectory = FileManager.getProjectDirectory();
-
-        writer.println("load " + costruisciPath(projectDirectory, fileName));
-    }
-
+    /**
+     *
+     * @param fileName Absolute path to the file.
+     * @param methodName Name of the CWB method.
+     * @return Number of states of the method.
+     */
     public int getMethodSize(String fileName, String methodName) {
-        Process process = null;
         executeCwb();
 
-        PrintStream writer = new PrintStream(process.getOutputStream());
+        addCommand("load " + fileName);
+        addCommand("size " + methodName);
+        addCommand("quit");
 
-        loadCwbMethod(writer, fileName);
+        getTerminalOutput();
 
-        writer.println("size " + methodName);
-        writer.println("quit");
+        return getNumberOfStates();
+    }
+
+    private int getNumberOfStates() {
+        String numberOfStatesAsString = "";
+        int numberOfStates = 0;
+        String line = "";
+
+        for (int i = 0; i < outputList.size(); i++) {
+            line = outputList.get(i);
+
+            if (line.startsWith("States: ")) {
+                numberOfStatesAsString = line.substring(8);
+                numberOfStates = Integer.valueOf(numberOfStatesAsString);
+            }
+        }
+
+        return numberOfStates;
+    }
+
+    public void getTerminalOutput() {
         writer.close();
-
-        LinkedList<String> stringList = new LinkedList<String>();
 
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()));
@@ -263,7 +228,7 @@ public abstract class Terminal {
 
         try {
             while ((line = reader.readLine()) != null) {
-                stringList.add(line);
+                outputList.add(line);
             }
 
             int exitVal = 0;
@@ -272,18 +237,13 @@ public abstract class Terminal {
 
             if (exitVal == 0) {
                 // Success
-                System.out.println("Success");
-                Tool.printStringList(stringList);
             } else {
                 // Failure
-                System.out.println("Failure");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return 0;
     }
 }

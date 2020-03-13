@@ -15,7 +15,7 @@ public class ToolLinux extends Tool {
     }
 
     @Override
-    protected void startCwb(Terminal terminal) {
+    protected void startCwb(Shell shell) {
 
 
     }

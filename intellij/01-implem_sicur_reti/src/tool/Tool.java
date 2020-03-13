@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class Tool {
     LinkedList<String> fileList;
-    Terminal terminale1;
+    Shell terminale1;
     static String analysisDirPath;
     static String nameDirOriginalFiles; // Nome directory contenente i file originali
     static String nameDirModifiedFiles; // Nome directory contenent i file con invokemethod sostituito
@@ -136,13 +136,13 @@ public abstract class Tool {
         }
     }
     
-    private Terminal createTerminal() {
+    private Shell createTerminal() {
         try {
             if (OsUtils.getOsType() == OsType.LINUX){
-                return new TerminalLinux();
+                return new ShellLinux();
             }
             else if(OsUtils.getOsType() == OsType.WINDOWS){
-                return new TerminalWindows();
+                return new ShellWindows();
             }
             else {
                 try {
@@ -154,7 +154,7 @@ public abstract class Tool {
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
         }
-        return new TerminalLinux();
+        return new ShellLinux();
     }
 
     public static void printStringList(LinkedList<String> stringList) {
@@ -231,7 +231,7 @@ public abstract class Tool {
 
         copiaFileInDirectory(nameDirOriginalFiles);
         copiaFileInDirectory(nameDirModifiedFiles);
-        rimuoviFileInDirectory(analysisDirPath);
+        removeFilesInDirectory(analysisDirPath);
     }
 
     private void copiaFileInDirectory(String nomeDirectory) {
@@ -277,11 +277,11 @@ public abstract class Tool {
     /**
      * Per ciascun .ccs calcola la size dei metodi
      */
-    private void processOriginalFiles() throws IOException, ParseException, osNotRecognizedException {
-        processCwbFiles("original_files_path", CcsFileType.ORIGINAL);
+    private void processOriginalFiles() {
+        processCwbFiles("original_files_path");
     }
 
-    private void processCwbFiles(String fileDir, CcsFileType ccsFileType) {
+    private void processCwbFiles(String fileDir) {
         LinkedList<String> fileList = new LinkedList<String>();
         String nameSubdirectory = JsonUtils.readValue("src/json/parametri.json", "parametri", fileDir);
 
@@ -290,11 +290,11 @@ public abstract class Tool {
 
         while (fileList.size() > 0) {
             filePath = buildPath(analysisDirPath, nameSubdirectory, fileList.remove());
-            processFile(filePath, ccsFileType);
+            processFile(filePath);
         }
     }
 
-    LinkedList<String> getMetodiList(String filePath) {
+    LinkedList<String> getMethodList(String filePath) {
         LinkedList<String> metodiList = new LinkedList<String>();
         String stringaEstratta;
         String methodString;
@@ -356,45 +356,23 @@ public abstract class Tool {
      * Process .ccs file. The "invoke*" calls are substituted with "t" (tau) and for each method we take the
      * original size and the reduced size, and we add these two number to a list.
      * @param filePath The path of the file being analyzed.
-     * @param ccsFileType The type of the file ("ORIGINAL" or "OBFUSCATED" if we are in the training phase,
-     *                    "TEST" if we are in the testing phase.
      */
-    private void processFile(String filePath, CcsFileType ccsFileType) {
-        LinkedList<String> metodiList = getMetodiList(filePath);
-        String nomeMetodo;
-        String dir;
-        Terminal terminal = createTerminal();
+    private void processFile(String filePath) {
+        LinkedList<String> methodList = getMethodList(filePath);
+        String methodName = "";
+        String dir = "";
+        Shell shell = null;
 
-        while (metodiList.size() > 0) {
-            try {
-                if (OsUtils.getOsType() == OsType.LINUX) {
-                    terminal = new TerminalLinux();
-                }
-                else if (OsUtils.getOsType() == OsType.WINDOWS){
-                    terminal = new TerminalWindows();
-                }
-            } catch (osNotRecognizedException e) {
-                e.printStackTrace();
-            }
+        while (methodList.size() > 0) {
+            shell = createTerminal();
 
-            nomeMetodo = metodiList.remove();
+            methodName = methodList.remove();
 
-            dir = buildPath(analysisDirPath, nameDirOriginalFiles);
-
-            terminal.addCommand("cd " + dir);
-
-            startCwb(terminal);
-
-            terminal.addCommand("load " + filePath);
-
-            terminal.executeCommands();
-
-            printStringList(terminal.getTerminalOutput());
-
+            System.out.println(shell.getMethodSize(filePath, methodName));
         }
     }
 
-    protected abstract void startCwb(Terminal terminal);
+    protected abstract void startCwb(Shell shell);
 
     protected abstract String buildPath(String pathParte1, String parthParte2);
 
@@ -402,7 +380,7 @@ public abstract class Tool {
         return buildPath(buildPath(pathParte1, pathParte2), pathParte3);
     }
 
-    private void stampaFileList(LinkedList<String> fileList) {
+    private void printFileList(LinkedList<String> fileList) {
         System.out.println("Num file: " + fileList.size());
 
         while (fileList.size() > 0) {
@@ -425,7 +403,7 @@ public abstract class Tool {
         return fileNonCcsList;
     }
 
-    private void rimuoviFileInDirectory(String directoryPath) {
+    private void removeFilesInDirectory(String directoryPath) {
         LinkedList<String> fileList = new LinkedList<String>();
         File fileDaCancellare;
         String fileName;

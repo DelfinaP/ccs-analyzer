@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
 
-public class TerminalLinux extends Terminal {
-    public TerminalLinux() {
+public class ShellLinux extends Shell {
+    public ShellLinux() {
         batchExtension = "sh";
     }
 
@@ -63,9 +63,11 @@ public class TerminalLinux extends Terminal {
     }
 
     @Override
-    protected void executeCwb() {
+    public void executeCwb() {
         try {
             process = Runtime.getRuntime().exec(new String[] {"./lib/cwb/linux/cwb-nc-ccs-x86-linux.bin"});
+
+            writer = new PrintStream(process.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }

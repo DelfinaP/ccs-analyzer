@@ -16,9 +16,9 @@ public class ToolWindows extends Tool {
     }
 
     @Override
-    protected void startCwb(Terminal terminal) {
+    protected void startCwb(Shell shell) {
         cwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "percorso_cwb");
 
-        terminal.addCommand(cwbPath + " ccs");
+        shell.addCommand(cwbPath + " ccs");
     }
 }

@@ -1,15 +1,12 @@
 package tool;
 
-import utils.FileManager;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
 
-public class TerminalWindows extends Terminal{
+public class ShellWindows extends Shell {
 
-    public TerminalWindows() {
+    public ShellWindows() {
         batchExtension = "bat";
     }
 
@@ -65,9 +62,11 @@ public class TerminalWindows extends Terminal{
     }
 
     @Override
-    protected void executeCwb() {
+    public void executeCwb() {
         try {
             process = Runtime.getRuntime().exec(new String[] {"cmd.exe", "/c", "lib\\cwb\\windows\\bin\\cwb-nc.bat ccs"});
+
+            writer = new PrintStream(process.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }

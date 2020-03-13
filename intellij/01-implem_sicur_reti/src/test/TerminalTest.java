@@ -11,17 +11,17 @@ public class TerminalTest {
     }
 
     private static void testTerminalExecution() {
-        Terminal terminal = null;
+        Shell shell = null;
         Tool tool = null;
 
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
-                terminal = new TerminalLinux();
+                shell = new ShellLinux();
                 tool = new ToolLinux();
             }
             else {
                 if (OsUtils.getOsType() == OsType.WINDOWS){
-                    terminal = new TerminalWindows();
+                    shell = new ShellWindows();
                     tool = new ToolWindows();
                 }
             }
@@ -31,35 +31,35 @@ public class TerminalTest {
 
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
-                terminal.addCommand("cd ../");
-                terminal.addCommand("ls -l");
+                shell.addCommand("cd ../");
+                shell.addCommand("ls -l");
             }
             else if (OsUtils.getOsType() == OsType.WINDOWS){
-                //terminal.addCommand("@ECHO OFF");
-                terminal.addCommand("cd ../");
-                terminal.addCommand("dir");
+                //shell.addCommand("@ECHO OFF");
+                shell.addCommand("cd ../");
+                shell.addCommand("dir");
             }
         } catch (osNotRecognizedException e) {
             e.printStackTrace();
         }
 
-        terminal.executeCommands();
+//        shell.executeCommands();
 
-        tool.printStringList(terminal.getTerminalOutput());
+//        tool.printStringList(shell.getTerminalOutput());
     }
 
     private static void testCreateFile() {
-        Terminal terminal = null;
+        Shell shell = null;
         Tool tool = null;
 
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
-                terminal = new TerminalLinux();
+                shell = new ShellLinux();
                 tool = new ToolLinux();
             }
             else {
                 if (OsUtils.getOsType() == OsType.WINDOWS){
-                    terminal = new TerminalWindows();
+                    shell = new ShellWindows();
                     tool = new ToolWindows();
                 }
             }
@@ -67,8 +67,8 @@ public class TerminalTest {
             e.printStackTrace();
         }
 
-        terminal.createFile();
-        terminal.createFile();
-        terminal.createFile();
+        shell.createFile();
+        shell.createFile();
+        shell.createFile();
     }
 }
