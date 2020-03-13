@@ -6,8 +6,12 @@ import tool.ToolLinux;
 import tool.ToolWindows;
 import tool.exceptions.osNotRecognizedException;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.LinkedList;
 
 public class FileManager {
     public static String substituteSpacesWithEscapeChars(String originalString) {
@@ -108,5 +112,25 @@ public class FileManager {
         }
 
         return null;
+    }
+
+    /**
+     * Return lines of text in a file.
+     * @param filePath Path of the file
+     * @return The list of the lines.
+     */
+    public static LinkedList<String> getTextLinesInFile(String filePath) {
+        LinkedList<String> textLinesList = new LinkedList<String>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                textLinesList.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return textLinesList;
     }
 }

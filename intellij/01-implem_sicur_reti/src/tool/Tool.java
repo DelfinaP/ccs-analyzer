@@ -360,16 +360,24 @@ public abstract class Tool {
     private void processFile(String filePath) {
         LinkedList<String> methodList = getMethodList(filePath);
         String methodName = "";
+        int methodSize = 0;
         String dir = "";
         Shell shell = null;
 
-        while (methodList.size() > 0) {
-            shell = createTerminal();
+        System.out.println(filePath);
 
-            methodName = methodList.remove();
+        CcsManager.getMethodsListInProcAll(filePath);
 
-            System.out.println(shell.getMethodSize(filePath, methodName));
-        }
+//        while (methodList.size() > 0) {
+//            shell = createTerminal();
+//
+//            methodName = methodList.remove();
+//            methodSize = shell.getMethodSize(filePath, methodName);
+//
+//            System.out.println("File path: " + filePath);
+//            System.out.println("Method name: " + methodName);
+//            System.out.println("Method size: " + methodSize);
+//        }
     }
 
     protected abstract void startCwb(Shell shell);
