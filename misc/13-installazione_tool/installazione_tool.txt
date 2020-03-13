@@ -5,7 +5,8 @@ Il tool si trova nella directory "intellij/01-implem_sicur_reti", ma non è nece
 1. Creare e modificare il json;
 2. Creare le directory "res/batch-files" e "res/ccs-analysis";
 3. Mettere i .ccs nella directory "ccs-analysis";
-4. Installare ed eseguire Ant.
+4. Installare Ant;
+5. Eseguire Ant.
 
 -- 1. Creare e modificare il json
 
@@ -19,12 +20,15 @@ Nella home del progetto (vale a dire la directory "intellij/01-implem_sicur_reti
 
 Spostare i .ccs che si vogliono analizzare nella directory "res/ccs-analysis".
 
--- 4. Installare ed eseguire Ant
+-- 4. Installare Ant
 
-Installiamo Ant, il build tool che ci permetterà di eseguire il nostro tool.
+Installiamo Apache Ant, il build tool che ci permetterà di eseguire il nostro tool.
 Nel caso di Linux è sufficiente installare Ant dal package manager. Nel caso di Windows è necessario seguire i seguenti passi:
-- Aggiungere alla variabile d'ambiente "Path" il percorso in cui abbiamo messo Ant (ad esempio "C:\<path>\apache-ant-1.10.7\bin");
+- Aggiungere alla variabile d'ambiente "Path" il percorso in cui abbiamo posizionato Ant (ad esempio "C:\<path>\apache-ant-1.10.7\bin");
 - Creare, se non esiste già, la variabile d'ambiente "JAVA_HOME" e settarla al path della JDK (ad esempio "C:\Program Files\Java\jdk1.8.0_201");
 - Chiudere e riavviare il prompt.
-Adesso possiamo eseguire Ant. Apriamo il terminale in Linux o il prompt in Windows e facciamo "cd" verso la home del progetto ed eseguiamo il comando:
+
+-- 5. Eseguire Ant
+
+Adesso possiamo eseguire Ant. Apriamo il terminale in Linux o il prompt in Windows e facciamo "cd" verso la home del progetto, ed eseguiamo il comando:
 ant -f build.xml
