@@ -1,0 +1,34 @@
+void processFiles() {
+	for (File file : fileList) {
+		processFile(file);
+	}
+}
+
+void processFile(File file) {
+	// Ci prendiamo lista metodi in proc ALL
+	LinkedList<String> methodsList = CcsManager.getMethodsListInProcAll(filePath);
+
+	for (String method : methodsList) {
+		processMethod(method);
+	}
+}
+
+void processMethod(String method) {
+	// Filtrare i metodi con la size <= 5
+	
+	// Chiamiamo un metodo che ci naviga la sequenza delle chiamate, e ci restituisce un boolean che ci dice se è lineare oppure no
+	
+	// Se la sequenza è lineare, effettuiamo le sostituzioni
+	
+	// Calcoliamo size ALL 
+	int sizeAll = computeSizeAll(file, method);
+	
+	// Calcoliamo size all_min
+	int sizeAllMin = computeSizeAllMin(file, method);
+
+	// Calcoliamo percentuale riduzione
+	int reductionPercentage = (size ALL - size all_min) / size ALL * 100;
+
+	// Aggiungi percentuale di riduzione alla lista
+	percentagesList.add(reductionPercentage);
+}

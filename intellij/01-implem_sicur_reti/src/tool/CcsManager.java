@@ -38,8 +38,6 @@ public class CcsManager {
 
         methodsList.add(procAllLine);
 
-        Tool.printStringList(methodsList);
-
         return methodsList;
     }
 

@@ -21,9 +21,13 @@ proc m2 = return.nil
 
 - (possibile requisito funzionale) Valutiamo se la lista delle chiamate ha questa forma (ossia una chiamata diretta ad un altro metodo). Se non ha questa forma, possiamo considerare questo come un metodo reale.
 - Sostituiamo i due "load" e il "return" con "t" (tau).
-- Ora effettuiamo la minimizzazione del "proc ALL":
+- Ora calcoliamo "size ALL" e "size all_min" per ciascun metodo: 
+Calcoliamo "size ALL" sui file originali;
+Sui file modificati eseguiamo i comandi:
 min -S obseq ALL all_min
-e cerchiamo la size di ALL (relativo ai file originali) e all_min (relativo ai file modificati):
-size ALL
 size all_min
-- Valutiamo la percentuale della riduzione del numero di stati da ALL a all_min, individuando nella fase di training la percentuale media nel caso dell'app offuscata e dell'app non offuscata.
+- Per ciascun metodo calcoliamo: 
+(size ALL - size all_min) / size ALL * 100
+e aggiungiamo questo valore ad una lista. 
+Calcoliamo la media dei valori nella lista e stampiamola a schermo. 
+- Individuiamo nella fase di training la percentuale media nel caso dell'app offuscata e dell'app non offuscata.

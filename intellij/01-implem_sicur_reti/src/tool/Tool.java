@@ -351,14 +351,9 @@ public abstract class Tool {
 
         return i;
     }
-
-    /**
-     * Process .ccs file. The "invoke*" calls are substituted with "t" (tau) and for each method we take the
-     * original size and the reduced size, and we add these two number to a list.
-     * @param filePath The path of the file being analyzed.
-     */
+    
     private void processFile(String filePath) {
-        LinkedList<String> methodList = getMethodList(filePath);
+        LinkedList<String> methodsList = null;
         String methodName = "";
         int methodSize = 0;
         String dir = "";
@@ -366,7 +361,7 @@ public abstract class Tool {
 
         System.out.println(filePath);
 
-        CcsManager.getMethodsListInProcAll(filePath);
+        methodsList = CcsManager.getMethodsListInProcAll(filePath);
 
 //        while (methodList.size() > 0) {
 //            shell = createTerminal();
