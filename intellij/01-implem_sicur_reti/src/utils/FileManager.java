@@ -2,9 +2,7 @@ package utils;
 
 import tool.OsType;
 import tool.OsUtils;
-import tool.ToolLinux;
-import tool.ToolWindows;
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.OsNotRecognizedException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,7 +46,7 @@ public class FileManager {
             else if (OsUtils.getOsType() == OsType.WINDOWS){
                 dirSeparator = "\\";
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
 
@@ -107,7 +105,7 @@ public class FileManager {
 
                 return localizedPath;
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
 
@@ -122,6 +120,8 @@ public class FileManager {
     public static LinkedList<String> getTextLinesInFile(String filePath) {
         LinkedList<String> textLinesList = new LinkedList<String>();
 
+        System.out.println(filePath);
+
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line = "";
             while ((line = bufferedReader.readLine()) != null) {
@@ -132,5 +132,36 @@ public class FileManager {
         }
 
         return textLinesList;
+    }
+
+    public static String buildPath(String pathPart1, String pathPart2) {
+        try {
+            if (OsUtils.getOsType() == OsType.LINUX) {
+                return pathPart1 + "/" + pathPart2;
+            }
+            else if (OsUtils.getOsType() == OsType.WINDOWS){
+                return pathPart1 + "\\" + pathPart2;
+            }
+        } catch (OsNotRecognizedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static String buildPath(String pathPart1, String pathPart2, String pathPart3) {
+        return buildPath(buildPath(pathPart1, pathPart2), pathPart3);
+    }
+
+    public static String getOriginalFilesJsonValue() {
+        return JsonUtils.readValue("src/json/parametri.json", "parametri", "original_files_path");
+    }
+
+    public static String getCcsAnalysisJsonValue() {
+        return JsonUtils.readValue("src/json/parametri.json", "parametri", "ccs_analysis_path");
+    }
+
+    public static String getOriginalFilesPath() {
+        return buildPath(getProjectDirectory(), getCcsAnalysisJsonValue(), getOriginalFilesJsonValue());
     }
 }

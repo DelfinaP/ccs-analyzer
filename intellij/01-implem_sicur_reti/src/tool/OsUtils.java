@@ -1,6 +1,6 @@
 package tool;
 
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.OsNotRecognizedException;
 
 public class OsUtils
 {
@@ -15,10 +15,10 @@ public class OsUtils
         return OS;
     }
 
-    public static OsType getOsType() throws osNotRecognizedException {
+    public static OsType getOsType() throws OsNotRecognizedException {
         if (OS == null) {
             if (!osRecognized()) {
-                throw new osNotRecognizedException();
+                throw new OsNotRecognizedException();
             }
         }
         if (isWindows()) {
@@ -31,16 +31,16 @@ public class OsUtils
         return osType;
     }
 
-    public static boolean isWindows() throws osNotRecognizedException {
+    public static boolean isWindows() throws OsNotRecognizedException {
         if (!osRecognized()) {
-            throw new osNotRecognizedException();
+            throw new OsNotRecognizedException();
         }
         return getOsName().startsWith("Windows");
     }
 
-    public static boolean isLinux() throws osNotRecognizedException {
+    public static boolean isLinux() throws OsNotRecognizedException {
         if (!osRecognized()) {
-            throw new osNotRecognizedException();
+            throw new OsNotRecognizedException();
         }
         return getOsName().startsWith("Linux");
     }

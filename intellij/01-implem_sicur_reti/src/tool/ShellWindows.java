@@ -1,5 +1,7 @@
 package tool;
 
+import utils.FileManager;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
@@ -57,11 +59,6 @@ public class ShellWindows extends Shell {
     }
 
     @Override
-    protected String costruisciPath(String pathParte1, String parthParte2) {
-        return pathParte1 + "\\" + parthParte2;
-    }
-
-    @Override
     public void executeCwb() {
         try {
             process = Runtime.getRuntime().exec(new String[] {"cmd.exe", "/c", "lib\\cwb\\windows\\bin\\cwb-nc.bat ccs"});
@@ -74,7 +71,7 @@ public class ShellWindows extends Shell {
 
     protected void executeBatchFile(String nameBatchFile) {
         try {
-            process = Runtime.getRuntime().exec("cmd /c \"\" " + costruisciPath(nomeDirFileBatch, nameBatchFile));
+            process = Runtime.getRuntime().exec("cmd /c \"\" " + FileManager.buildPath(nomeDirFileBatch, nameBatchFile));
         } catch (IOException e) {
             e.printStackTrace();
         }

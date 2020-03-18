@@ -58,11 +58,6 @@ public class ShellLinux extends Shell {
     }
 
     @Override
-    protected String costruisciPath(String pathParte1, String parthParte2) {
-        return pathParte1 + "/" + parthParte2;
-    }
-
-    @Override
     public void executeCwb() {
         try {
             process = Runtime.getRuntime().exec(new String[] {"./lib/cwb/linux/cwb-nc-ccs-x86-linux.bin"});
@@ -75,7 +70,7 @@ public class ShellLinux extends Shell {
 
     protected void executeBatchFile(String nameBatchFile) {
         try {
-            process = Runtime.getRuntime().exec(costruisciPath(nomeDirFileBatch, nameBatchFile));
+            process = Runtime.getRuntime().exec(FileManager.buildPath(nomeDirFileBatch, nameBatchFile));
         } catch (IOException e) {
             e.printStackTrace();
         }

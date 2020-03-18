@@ -1,7 +1,7 @@
 package test;
 
 import tool.*;
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.OsNotRecognizedException;
 
 public class TerminalTest {
 
@@ -25,7 +25,7 @@ public class TerminalTest {
                     tool = new ToolWindows();
                 }
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
 
@@ -39,13 +39,9 @@ public class TerminalTest {
                 shell.addCommand("cd ../");
                 shell.addCommand("dir");
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
-
-//        shell.executeCommands();
-
-//        tool.printStringList(shell.getTerminalOutput());
     }
 
     private static void testCreateFile() {
@@ -63,7 +59,7 @@ public class TerminalTest {
                     tool = new ToolWindows();
                 }
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
 

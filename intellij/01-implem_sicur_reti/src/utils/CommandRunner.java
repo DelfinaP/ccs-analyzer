@@ -2,7 +2,7 @@ package utils;
 
 import tool.OsType;
 import tool.OsUtils;
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.OsNotRecognizedException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class CommandRunner {
                 else if (OsUtils.getOsType() == OsType.WINDOWS){
                     process = buildCommandWindows(command);
                 }
-            } catch (osNotRecognizedException e) {
+            } catch (OsNotRecognizedException e) {
                 e.printStackTrace();
             }
 

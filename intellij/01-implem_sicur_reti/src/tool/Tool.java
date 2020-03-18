@@ -1,8 +1,8 @@
 package tool;
 
 import org.apache.commons.io.FileUtils;
-import tool.exceptions.erroreCancellazioneFileException;
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.FileDeletionErrorException;
+import tool.exceptions.OsNotRecognizedException;
 import org.json.simple.parser.ParseException;
 import utils.FileManager;
 import utils.JsonUtils;
@@ -13,8 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Tool {
-    LinkedList<String> fileList;
-    Shell terminale1;
+    LinkedList<String> fileNamesList;
     static String analysisDirPath;
     static String nameDirOriginalFiles; // Nome directory contenente i file originali
     static String nameDirModifiedFiles; // Nome directory contenent i file con invokemethod sostituito
@@ -38,26 +37,50 @@ public abstract class Tool {
             else if (OsUtils.getOsType() == OsType.WINDOWS){
                 relativeCwbPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "cwb_windows_path");
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
 
         cwbPath = FileManager.trasformRelativeToAbsolutePath(relativeCwbPath);
     }
 
+    private Shell createTerminal() {
+        try {
+            if (OsUtils.getOsType() == OsType.LINUX){
+                return new ShellLinux();
+            }
+            else if(OsUtils.getOsType() == OsType.WINDOWS){
+                return new ShellWindows();
+            }
+            else {
+                try {
+                    throw new OsNotRecognizedException();
+                } catch (OsNotRecognizedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (OsNotRecognizedException e) {
+            e.printStackTrace();
+        }
+        return new ShellLinux();
+    }
+
     /**
      * Questo metodo implementa il design pattern 'Template method'
      */
-    public void run() throws IOException, osNotRecognizedException, ParseException {
-        controllaEsistenzaJson();
-        
-        terminale1 = createTerminal();
+    public void run() {
+        checkJsonExistence();
 
         getDirPath();
 
-        rimuoviFileNonCcs(analysisDirPath);
+        removeNonCcsFiles(analysisDirPath);
 
-        processFiles(fileList);
+        distributeFilesToDirectories();
+
+        System.out.println(FileManager.getOriginalFilesPath());
+        fileNamesList = getFileNamesList(FileManager.getOriginalFilesPath());
+
+        processFiles(fileNamesList);
 
         System.exit(0);
     }
@@ -69,7 +92,7 @@ public abstract class Tool {
         for (int i = 0; i < listOfFiles.length; i++) {
             // Se è un file
             if (listOfFiles[i].isFile()) {
-                File f = new File(buildPath(nameDirBatchFile, listOfFiles[i].getName()));
+                File f = new File(FileManager.buildPath(nameDirBatchFile, listOfFiles[i].getName()));
                 f.delete();
             }
             // Altrimenti, se è una directory
@@ -79,9 +102,9 @@ public abstract class Tool {
         }
     }
 
-    private void controllaEsistenzaJson() {
-        String jsonPath = buildPath(System.getProperty("user.dir"), "src", "json");
-        LinkedList<String> fileList = getFileList(jsonPath);
+    private void checkJsonExistence() {
+        String jsonPath = FileManager.buildPath(System.getProperty("user.dir"), "src", "json");
+        LinkedList<String> fileList = getFileNamesList(jsonPath);
         boolean fileEsiste = false;
         String nomeFile;
 
@@ -100,61 +123,40 @@ public abstract class Tool {
         }
     }
 
-    private void getDirPath() throws ParseException, IOException {
+    private void getDirPath() {
         String relativeAnalysisDirPath = JsonUtils.readValue("src/json/parametri.json", "parametri", "ccs_analysis_path");
         analysisDirPath = FileManager.trasformRelativeToAbsolutePath(relativeAnalysisDirPath);
     }
 
-    protected void rimuoviFileNonCcs(String dirPath) {
-        LinkedList<String> fileNonCcs = new LinkedList<String>();
+    protected void removeNonCcsFiles(String dirPath) {
+        LinkedList<String> nonCcsFiles = new LinkedList<String>();
         String fileString;
 
-        LinkedList<String> fileList = Tool.getFileList(dirPath);
+        LinkedList<String> fileList = Tool.getFileNamesList(dirPath);
 
         while (fileList.size() > 0){
             fileString = fileList.remove();
 
             if (!fileString.endsWith(".ccs")){
-                fileNonCcs.add(fileString);
+                nonCcsFiles.add(fileString);
             }
         }
 
-        while (fileNonCcs.size() > 0) {
-            fileString = fileNonCcs.remove();
+        while (nonCcsFiles.size() > 0) {
+            fileString = nonCcsFiles.remove();
 
-            File fileDaCancellare = createFile(dirPath, fileString);
+            File filesToBeDeleted = createFile(dirPath, fileString);
 
-            if (fileDaCancellare.delete()) {
-                // La cancellazione ha avuto successo. Non fare niente
+            if (filesToBeDeleted.delete()) {
+                // Deletion successful. Do nothing
             } else {
                 try {
-                    throw new erroreCancellazioneFileException(fileString);
-                } catch (erroreCancellazioneFileException e) {
+                    throw new FileDeletionErrorException(fileString);
+                } catch (FileDeletionErrorException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
-    
-    private Shell createTerminal() {
-        try {
-            if (OsUtils.getOsType() == OsType.LINUX){
-                return new ShellLinux();
-            }
-            else if(OsUtils.getOsType() == OsType.WINDOWS){
-                return new ShellWindows();
-            }
-            else {
-                try {
-                    throw new osNotRecognizedException();
-                } catch (osNotRecognizedException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (osNotRecognizedException e) {
-            e.printStackTrace();
-        }
-        return new ShellLinux();
     }
 
     public static void printStringList(LinkedList<String> stringList) {
@@ -178,7 +180,7 @@ public abstract class Tool {
         }
     }
 
-    static public LinkedList<String> getFileList(String dirPath) {
+    static public LinkedList<String> getFileNamesList(String dirPath) {
         LinkedList<String> fileList = new LinkedList<String>();
 
         File folder = new File(dirPath);
@@ -198,54 +200,50 @@ public abstract class Tool {
         return fileList;
     }
 
-    private void debugTerminal() throws osNotRecognizedException, IOException {
-        if (OsUtils.getOsType() == OsType.LINUX) {
-            terminale1.addCommand("cd ~");
-            terminale1.addCommand("ls -l");
-        }
-        else if (OsUtils.getOsType() == OsType.WINDOWS){
-            terminale1.addCommand("cd %HOMEPATH%");
-            terminale1.addCommand("dir");
+    private void processFiles(LinkedList<String> fileNameList) {
+        for (String fileName : fileNameList) {
+            processFile(fileName);
         }
     }
 
-    private void processFiles(LinkedList<String> fileList) throws IOException, ParseException, osNotRecognizedException {
-        copyFilesToDirectory();
-        processOriginalFiles();
-//        processModifiedFiles();
-    }
-
-    private void copyFilesToDirectory() {
+    /**
+     * Copy .ccs files into two folders, the first for the original files, the second for the modified files.
+     */
+    private void distributeFilesToDirectories() {
         nameDirOriginalFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "original_files_path");
         nameDirModifiedFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "modified_files_path");
 
-        // Crea cartella per i file originali
-        String nomeCartella = buildPath(analysisDirPath, nameDirOriginalFiles);
-        File dir = new File(nomeCartella);
+        // Create directory for original files
+        String directoryName = FileManager.buildPath(analysisDirPath, nameDirOriginalFiles);
+        File dir = new File(directoryName);
         dir.mkdir();
 
-        // Crea cartella per i file invokeMethodSostituito
-        nomeCartella = buildPath(analysisDirPath, nameDirModifiedFiles);
-        dir = new File(nomeCartella);
+        // Create directory for modified files
+        directoryName = FileManager.buildPath(analysisDirPath, nameDirModifiedFiles);
+        dir = new File(directoryName);
         dir.mkdir();
 
-        copiaFileInDirectory(nameDirOriginalFiles);
-        copiaFileInDirectory(nameDirModifiedFiles);
+        copyFilesToDirectory(nameDirOriginalFiles);
+        copyFilesToDirectory(nameDirModifiedFiles);
         removeFilesInDirectory(analysisDirPath);
     }
 
-    private void copiaFileInDirectory(String nomeDirectory) {
-        LinkedList<String> fileList = Tool.getFileList(analysisDirPath);
-        String nomeFile;
+    /**
+     * Copy .ccs files from the "analysisDirPath" into a subdirectory.
+     * @param directoryName The subdirectory into which to copy files.
+     */
+    private void copyFilesToDirectory(String directoryName) {
+        LinkedList<String> fileList = Tool.getFileNamesList(analysisDirPath);
+        String fileName;
 
         while (fileList.size() > 0) {
-            nomeFile = fileList.remove();
+            fileName = fileList.remove();
 
             InputStream is = null;
             OutputStream os = null;
             try {
-                is = new FileInputStream(buildPath(analysisDirPath, nomeFile));
-                os = new FileOutputStream(buildPath(analysisDirPath, nomeDirectory, nomeFile));
+                is = new FileInputStream(FileManager.buildPath(analysisDirPath, fileName));
+                os = new FileOutputStream(FileManager.buildPath(analysisDirPath, directoryName, fileName));
                 byte[] buffer = new byte[1024];
                 int length;
                 while ((length = is.read(buffer)) > 0) {
@@ -266,32 +264,48 @@ public abstract class Tool {
         }
     }
 
+    private void processFile(String fileName) {
+        // Take the list of the methods in "proc ALL"
+        LinkedList<String> methodsList = CcsManager.getMethodsListInProcAll(fileName);
+
+        for (String method : methodsList) {
+            processMethod(fileName, method);
+        }
+    }
+
+    private void processMethod(String fileName, String method) {
+        //int methodSize = CcsManager.getMethodSize();
+        // Filter methods with size <= 5
+        //if (methodSize <= 5) {
+            // Chiamiamo un metodo che ci naviga la sequenza delle chiamate, e ci restituisce un boolean che ci dice se è lineare oppure no
+
+            // Se la sequenza è lineare, effettuiamo le sostituzioni
+
+            // Calcoliamo size ALL
+            //originalFilePath = buildAbsolutePathOriginalFile(fileName);
+            //int sizeAll = computeSizeAll(originalFilePath, method);
+
+            // Calcoliamo size all_min
+            //modifiedFilePath = buildAbsolutePathModifiedFile(fileName);
+            //int sizeAllMin = computeSizeAllMin(modifiedFilePath, method);
+
+            // Calcoliamo percentuale riduzione
+            //int reductionPercentage = (size ALL - size all_min) / size ALL * 100;
+
+            // Aggiungi percentuale di riduzione alla lista
+            //percentagesList.add(reductionPercentage);
+        //}
+        //else {
+            // Do nothing
+        //}
+    }
+
     private String getJsonParameter(String jsonObject, String chiave) throws IOException, ParseException {
         String valore = "";
 
         valore = JsonUtils.readValue("src/json/parametri.json", jsonObject, chiave);
 
         return valore;
-    }
-
-    /**
-     * Per ciascun .ccs calcola la size dei metodi
-     */
-    private void processOriginalFiles() {
-        processCwbFiles("original_files_path");
-    }
-
-    private void processCwbFiles(String fileDir) {
-        LinkedList<String> fileList = new LinkedList<String>();
-        String nameSubdirectory = JsonUtils.readValue("src/json/parametri.json", "parametri", fileDir);
-
-        fileList = getFileList(buildPath(analysisDirPath, nameSubdirectory));
-        String filePath;
-
-        while (fileList.size() > 0) {
-            filePath = buildPath(analysisDirPath, nameSubdirectory, fileList.remove());
-            processFile(filePath);
-        }
     }
 
     LinkedList<String> getMethodList(String filePath) {
@@ -351,37 +365,8 @@ public abstract class Tool {
 
         return i;
     }
-    
-    private void processFile(String filePath) {
-        LinkedList<String> methodsList = null;
-        String methodName = "";
-        int methodSize = 0;
-        String dir = "";
-        Shell shell = null;
-
-        System.out.println(filePath);
-
-        methodsList = CcsManager.getMethodsListInProcAll(filePath);
-
-//        while (methodList.size() > 0) {
-//            shell = createTerminal();
-//
-//            methodName = methodList.remove();
-//            methodSize = shell.getMethodSize(filePath, methodName);
-//
-//            System.out.println("File path: " + filePath);
-//            System.out.println("Method name: " + methodName);
-//            System.out.println("Method size: " + methodSize);
-//        }
-    }
 
     protected abstract void startCwb(Shell shell);
-
-    protected abstract String buildPath(String pathParte1, String parthParte2);
-
-    private String buildPath(String pathParte1, String pathParte2, String pathParte3) {
-        return buildPath(buildPath(pathParte1, pathParte2), pathParte3);
-    }
 
     private void printFileList(LinkedList<String> fileList) {
         System.out.println("Num file: " + fileList.size());
@@ -435,8 +420,8 @@ public abstract class Tool {
                 // La cancellazione ha avuto successo. Non fare niente
             } else {
                 try {
-                    throw new erroreCancellazioneFileException(fileName);
-                } catch (erroreCancellazioneFileException e) {
+                    throw new FileDeletionErrorException(fileName);
+                } catch (FileDeletionErrorException e) {
                     e.printStackTrace();
                 }
             }

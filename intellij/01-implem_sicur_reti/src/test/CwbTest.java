@@ -1,7 +1,7 @@
 package test;
 
 import tool.*;
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.OsNotRecognizedException;
 import utils.FileManager;
 
 import java.io.BufferedReader;
@@ -16,10 +16,8 @@ public class CwbTest {
     }
 
     private static void cwbTest() {
-        Shell shell = Shell.createTerminal();
-
         String localizedFilePath = FileManager.localizeLinuxPath("src/test/files/cwbTest/a.a.ccs");
-        shell.getMethodSize(localizedFilePath, "COREEFILETESTCLASSCOMROCKSTARGAMESAApublicstaticinta");
+        CcsManager.getMethodSize(localizedFilePath, "COREEFILETESTCLASSCOMROCKSTARGAMESAApublicstaticinta");
     }
 
     public static void cwbTestV2() {
@@ -120,7 +118,7 @@ public class CwbTest {
                     e.printStackTrace();
                 }
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
     }

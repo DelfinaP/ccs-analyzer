@@ -63,4 +63,39 @@ public class CcsManager {
 
         return plusExists;
     }
+
+    /**
+     *
+     * @param fileName Absolute path to the file.
+     * @param methodName Name of the CWB method.
+     * @return Number of states of the method.
+     */
+    public static int getMethodSize(String fileName, String methodName) {
+        Shell shell = Shell.createShell();
+
+        shell.executeCwb();
+
+        shell.addCommand("load " + fileName);
+        shell.addCommand("size " + methodName);
+        shell.addCommand("quit");
+
+        return getNumberOfStates(shell.getOutputList());
+    }
+
+    private static int getNumberOfStates(LinkedList<String> outputList) {
+        String numberOfStatesAsString = "";
+        int numberOfStates = 0;
+        String line = "";
+
+        for (int i = 0; i < outputList.size(); i++) {
+            line = outputList.get(i);
+
+            if (line.startsWith("States: ")) {
+                numberOfStatesAsString = line.substring(8);
+                numberOfStates = Integer.valueOf(numberOfStatesAsString);
+            }
+        }
+
+        return numberOfStates;
+    }
 }

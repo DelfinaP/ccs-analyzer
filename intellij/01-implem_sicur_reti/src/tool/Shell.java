@@ -1,6 +1,6 @@
 package tool;
 
-import tool.exceptions.osNotRecognizedException;
+import tool.exceptions.OsNotRecognizedException;
 import utils.FileManager;
 import utils.JsonUtils;
 
@@ -13,7 +13,7 @@ import java.util.*;
 
 /**
  * Create shell, allowing to execute CWB commands. There are three method to be executed, in this
- * order: 1. executeCwb(); 2. addCommand(); 3. getTerminalOutput().
+ * order: 1. executeCwb(); 2. addCommand(); 3. getShellOutput().
  */
 public abstract class Shell {
     protected Process process;
@@ -34,7 +34,7 @@ public abstract class Shell {
         nomeDirFileBatch = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
     }
 
-    public static Shell createTerminal() {
+    public static Shell createShell() {
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
                 return new ShellLinux();
@@ -42,7 +42,7 @@ public abstract class Shell {
             else if (OsUtils.getOsType() == OsType.WINDOWS){
                 return new ShellWindows();
             }
-        } catch (osNotRecognizedException e) {
+        } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
 
@@ -72,7 +72,7 @@ public abstract class Shell {
 
     protected String tryToCreateBatchFile(String nameBatchFile) {
         List<String> commands = commandsList;
-        Path file = Paths.get(costruisciPath(nomeDirFileBatch, nameBatchFile));
+        Path file = Paths.get(FileManager.buildPath(nomeDirFileBatch, nameBatchFile));
         try {
             Files.write(file, commands, StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -179,46 +179,9 @@ public abstract class Shell {
         return i;
     }
 
-    protected abstract String costruisciPath(String pathParte1, String parthParte2);
-
     public abstract void executeCwb();
 
-    /**
-     *
-     * @param fileName Absolute path to the file.
-     * @param methodName Name of the CWB method.
-     * @return Number of states of the method.
-     */
-    public int getMethodSize(String fileName, String methodName) {
-        executeCwb();
-
-        addCommand("load " + fileName);
-        addCommand("size " + methodName);
-        addCommand("quit");
-
-        getTerminalOutput();
-
-        return getNumberOfStates();
-    }
-
-    private int getNumberOfStates() {
-        String numberOfStatesAsString = "";
-        int numberOfStates = 0;
-        String line = "";
-
-        for (int i = 0; i < outputList.size(); i++) {
-            line = outputList.get(i);
-
-            if (line.startsWith("States: ")) {
-                numberOfStatesAsString = line.substring(8);
-                numberOfStates = Integer.valueOf(numberOfStatesAsString);
-            }
-        }
-
-        return numberOfStates;
-    }
-
-    public void getTerminalOutput() {
+    public void getShellOutput() {
         writer.close();
 
         BufferedReader reader = new BufferedReader(
@@ -245,5 +208,9 @@ public abstract class Shell {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public LinkedList<String> getOutputList() {
+        return outputList;
     }
 }
