@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 public class CwbTest {
     public static void main(String[] args) {
-        cwbTest();
+        cwbTestV3();
     }
 
     private static void cwbTest() {
@@ -121,5 +121,19 @@ public class CwbTest {
         } catch (OsNotRecognizedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void cwbTestV3() {
+        Shell shell = Shell.createShell();
+
+        shell.startCwb();
+
+        shell.addCommand("load " + "/home/alessandro/Documenti/GitHub/ccs-analyser/intellij/01-implem_sicur_reti/res/ccs-analysis/original-files/coree.fileTestclass.com.Rockstargames.DeviceAdminChecker.ccs");
+        shell.addCommand("size " + "COREEFILETESTCLASSCOMROCKSTARGAMESDEVICEADMINCHECKERpublicstaticvoidmethodSseiCcinquecomRockstargamesDeviceAdminCheckerargZzeroandroidcontentIntentargUuno0");
+        shell.addCommand("quit");
+
+        shell.executeCommands();
+
+        System.out.println("Number of states: " + CcsManager.getNumberOfStates(shell.getOutputList()));
     }
 }

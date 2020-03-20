@@ -13,7 +13,7 @@ import java.util.*;
 
 /**
  * Create shell, allowing to execute CWB commands. There are three method to be executed, in this
- * order: 1. executeCwb(); 2. addCommand(); 3. getShellOutput().
+ * order: 1. startCwb(); 2. addCommand(); 3. executeCommands().
  */
 public abstract class Shell {
     protected Process process;
@@ -179,9 +179,9 @@ public abstract class Shell {
         return i;
     }
 
-    public abstract void executeCwb();
+    public abstract void startCwb();
 
-    public void getShellOutput() {
+    public void executeCommands() {
         writer.close();
 
         BufferedReader reader = new BufferedReader(

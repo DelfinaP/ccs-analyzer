@@ -120,8 +120,6 @@ public class FileManager {
     public static LinkedList<String> getTextLinesInFile(String filePath) {
         LinkedList<String> textLinesList = new LinkedList<String>();
 
-        System.out.println(filePath);
-
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line = "";
             while ((line = bufferedReader.readLine()) != null) {
@@ -153,15 +151,16 @@ public class FileManager {
         return buildPath(buildPath(pathPart1, pathPart2), pathPart3);
     }
 
-    public static String getOriginalFilesJsonValue() {
-        return JsonUtils.readValue("src/json/parametri.json", "parametri", "original_files_path");
-    }
-
-    public static String getCcsAnalysisJsonValue() {
-        return JsonUtils.readValue("src/json/parametri.json", "parametri", "ccs_analysis_path");
-    }
-
     public static String getOriginalFilesPath() {
-        return buildPath(getProjectDirectory(), getCcsAnalysisJsonValue(), getOriginalFilesJsonValue());
+        return buildPath(getProjectDirectory(), JsonUtils.getCcsAnalysisJsonValue(), JsonUtils.getOriginalFilesJsonValue());
+    }
+
+    /**
+     * Get the file name and returns the absolute path of the file contained in the original files' directory.
+     * @param fileName The file we want the path of.
+     * @return The absolute path of the file.
+     */
+    public static String getOriginalFilePathFromName(String fileName) {
+        return buildPath(getOriginalFilesPath(), fileName);
     }
 }

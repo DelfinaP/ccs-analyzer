@@ -59,7 +59,7 @@ public class ShellWindows extends Shell {
     }
 
     @Override
-    public void executeCwb() {
+    public void startCwb() {
         try {
             process = Runtime.getRuntime().exec(new String[] {"cmd.exe", "/c", "lib\\cwb\\windows\\bin\\cwb-nc.bat ccs"});
 

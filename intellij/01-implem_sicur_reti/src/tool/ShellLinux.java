@@ -58,7 +58,7 @@ public class ShellLinux extends Shell {
     }
 
     @Override
-    public void executeCwb() {
+    public void startCwb() {
         try {
             process = Runtime.getRuntime().exec(new String[] {"./lib/cwb/linux/cwb-nc-ccs-x86-linux.bin"});
 

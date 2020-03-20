@@ -77,7 +77,6 @@ public abstract class Tool {
 
         distributeFilesToDirectories();
 
-        System.out.println(FileManager.getOriginalFilesPath());
         fileNamesList = getFileNamesList(FileManager.getOriginalFilesPath());
 
         processFiles(fileNamesList);
@@ -160,8 +159,8 @@ public abstract class Tool {
     }
 
     public static void printStringList(LinkedList<String> stringList) {
-        while (stringList.size() > 0) {
-            System.out.println(stringList.remove());
+        for (int i = 0; i < stringList.size(); i++) {
+            System.out.println(stringList.get(i));
         }
     }
 
@@ -266,7 +265,11 @@ public abstract class Tool {
 
     private void processFile(String fileName) {
         // Take the list of the methods in "proc ALL"
-        LinkedList<String> methodsList = CcsManager.getMethodsListInProcAll(fileName);
+        String filePath = FileManager.getOriginalFilePathFromName(fileName);
+
+        LinkedList<String> methodsList = CcsManager.getMethodsListInProcAll(filePath);
+
+        System.out.println("Processing file: " + fileName);
 
         for (String method : methodsList) {
             processMethod(fileName, method);
@@ -274,12 +277,20 @@ public abstract class Tool {
     }
 
     private void processMethod(String fileName, String method) {
-        //int methodSize = CcsManager.getMethodSize();
-        // Filter methods with size <= 5
-        //if (methodSize <= 5) {
-            // Chiamiamo un metodo che ci naviga la sequenza delle chiamate, e ci restituisce un boolean che ci dice se è lineare oppure no
+        String filePath = FileManager.getOriginalFilePathFromName(fileName);
 
-            // Se la sequenza è lineare, effettuiamo le sostituzioni
+        int methodSize = CcsManager.getMethodSize(filePath, method);
+        // Filter methods with size <= 5
+
+        if (methodSize <= 5) {
+            // Call a method which navigates the sequence of method calls, and returns a boolean that indicates
+            // if the sequence is linear or not
+            boolean isLinear = CcsManager.isMethodCallSequenceLinear(filePath, method);
+
+            // If the method call sequence is linear, make the substitutions
+            if (isLinear) {
+                CcsManager.substituteInvocationWithTau(filePath, method);
+            }
 
             // Calcoliamo size ALL
             //originalFilePath = buildAbsolutePathOriginalFile(fileName);
@@ -294,10 +305,10 @@ public abstract class Tool {
 
             // Aggiungi percentuale di riduzione alla lista
             //percentagesList.add(reductionPercentage);
-        //}
-        //else {
+        }
+        else {
             // Do nothing
-        //}
+        }
     }
 
     private String getJsonParameter(String jsonObject, String chiave) throws IOException, ParseException {
