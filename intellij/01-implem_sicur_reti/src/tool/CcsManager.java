@@ -2,6 +2,9 @@ package tool;
 
 import utils.FileManager;
 
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.util.LinkedList;
 
 public class CcsManager {
@@ -107,7 +110,7 @@ public class CcsManager {
         // If the method call is linear
         else if (isMethodCallLinear(filePath, method)) {
             // Recursively call the method
-            return isMethodCallSequenceLinear(filePath, getInvokedMethod(filePath, method));
+            return isMethodCallSequenceLinear(filePath, getMethodPassedAsArgument(filePath, method));
         }
         // Otherwise, if the method call is not linear
         else {
@@ -133,7 +136,7 @@ public class CcsManager {
      * @param method The method in <code>proc method</code>.
      * @return The method invoked at the right of the '=' sign.
      */
-    private static String getInvokedMethod(String filePath, String method) {
+    private static String getMethodPassedAsArgument(String filePath, String method) {
         String instruction = getMethodInvocation(filePath, method);
 
         int charIndex = 0;
@@ -237,23 +240,101 @@ public class CcsManager {
         return null;
     }
 
-    public static void substituteInvocationWithTau(String filePath, String method) {
+    public static void replaceInstructionsWithTau(String filePath, String method) {
         // If the call has the form "return.nil" or "allreturn.nil"
         if (isMethodCallEqualToReturn(filePath, method)) {
-            substituteReturnWithTau();
+            replaceReturnWithTau(filePath, method);
         }
-        // If the method call is linear
-        else if (isMethodCallLinear(filePath, method)) {
-            // Recursively call the method
-            //return isMethodCallSequenceLinear(filePath, getInvokedMethod(filePath, method));
-        }
-        // Otherwise, if the method call is not linear
+        // If the invocation instruction is different from "return"
         else {
+            // Substitute invocation with "tau"
+            String originalLine = getTextLineBeginningWith(filePath, "proc " + method);
+            String modifiedLine = replaceInstruction(originalLine, "t");
+            replaceLineInFile(filePath, originalLine, modifiedLine);
 
+            // Recursively call the method
+            replaceInstructionsWithTau(filePath, getMethodPassedAsArgument(filePath, method));
         }
     }
 
-    private static void substituteReturnWithTau() {
+    private static void replaceReturnWithTau(String filePath, String method) {
+        String originalLine = getTextLineBeginningWith(filePath, "proc " + method);
 
+        String modifiedLine = replaceInstruction(originalLine, "t");
+
+        replaceLineInFile(filePath, originalLine, modifiedLine);
+    }
+
+    private static String replaceInstruction(String line, String newInstruction) {
+        int equalSignPosition = 0; // The position of the "=" character
+
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == '=') {
+                equalSignPosition = i;
+                break;
+            }
+        }
+
+        int charIndex = equalSignPosition + 1;
+
+        // Search the first character different from the white space character
+        while (line.charAt(charIndex) == ' ') {
+            charIndex++;
+        }
+
+        int instructionStart = charIndex;
+
+        // Search the position of the character '.'
+        while (line.charAt(charIndex) != '.') {
+            charIndex++;
+        }
+
+        int instructionEnd = charIndex;
+
+        String newLine = "";
+        newLine = newLine.concat(line.substring(0, instructionStart));
+        newLine = newLine.concat(newInstruction);
+        newLine = newLine.concat(line.substring(instructionEnd));
+
+        return newLine;
+    }
+
+    private static void replaceLineInFile(String filePath, String originalString, String modifiedString) {
+        try {
+            // Input the (modified) file content to the StringBuffer "input"
+            BufferedReader file = new BufferedReader(new FileReader(filePath));
+            StringBuffer inputBuffer = new StringBuffer();
+            String line;
+            LinkedList<String> linesList = new LinkedList<String>();
+
+            while ((line = file.readLine()) != null) {
+                linesList.add(line);
+            }
+            file.close();
+
+            // Search 'originalString'
+            int i = 0;
+            while (i < linesList.size() && !linesList.get(i).equals(originalString)) {
+                i++;
+            }
+
+            if (i < linesList.size()) {
+                // Substitute 'originalString' with 'modifiedString'
+                linesList.set(i, modifiedString);
+
+                // Add text lines to inputBuffer
+                for (int j = 0; j < linesList.size(); j++) {
+                    inputBuffer.append(linesList.get(j));
+                    inputBuffer.append('\n');
+                }
+
+                // Overwrite the file substituting 'originalString' with 'modifiedString'
+                FileOutputStream fileOut = new FileOutputStream(filePath);
+                fileOut.write(inputBuffer.toString().getBytes());
+                fileOut.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
