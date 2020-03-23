@@ -245,11 +245,11 @@ public class CcsManager {
         // If the method call is linear
         else if (isMethodCallLinear(filePath, method)) {
             // Recursively call the method
-            return isMethodCallSequenceLinear(filePath, getInvokedMethod(filePath, method));
+            //return isMethodCallSequenceLinear(filePath, getInvokedMethod(filePath, method));
         }
         // Otherwise, if the method call is not linear
         else {
-            return false;
+
         }
     }
 

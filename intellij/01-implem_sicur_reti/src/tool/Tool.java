@@ -274,6 +274,20 @@ public abstract class Tool {
         for (String method : methodsList) {
             processMethod(fileName, method);
         }
+
+        // Compute 'sizeAll'
+        //originalFilePath = buildAbsolutePathOriginalFile(fileName);
+        //int sizeAll = computeSizeAll(originalFilePath, method);
+
+        // Compute 'sizeAllMin'
+        //modifiedFilePath = buildAbsolutePathModifiedFile(fileName);
+        //int sizeAllMin = computeSizeAllMin(modifiedFilePath, method);
+
+        // Compute reduction percentage
+        //int reductionPercentage = (sizeAll - sizeAllMin) / sizeAll * 100;
+
+        // Add reduction percentage to list
+        //percentagesList.add(reductionPercentage);
     }
 
     private void processMethod(String fileName, String method) {
@@ -289,22 +303,18 @@ public abstract class Tool {
 
             // If the method call sequence is linear, make the substitutions
             if (isLinear) {
+                System.out.println("Linear: ");
+                System.out.println("Size: " + methodSize);
+                System.out.println(fileName);
+                System.out.println(method);
                 CcsManager.substituteInvocationWithTau(filePath, method);
             }
-
-            // Calcoliamo size ALL
-            //originalFilePath = buildAbsolutePathOriginalFile(fileName);
-            //int sizeAll = computeSizeAll(originalFilePath, method);
-
-            // Calcoliamo size all_min
-            //modifiedFilePath = buildAbsolutePathModifiedFile(fileName);
-            //int sizeAllMin = computeSizeAllMin(modifiedFilePath, method);
-
-            // Calcoliamo percentuale riduzione
-            //int reductionPercentage = (size ALL - size all_min) / size ALL * 100;
-
-            // Aggiungi percentuale di riduzione alla lista
-            //percentagesList.add(reductionPercentage);
+            else {
+                System.out.println("Not linear: ");
+                System.out.println("Size: " + methodSize);
+                System.out.println(fileName);
+                System.out.println(method);
+            }
         }
         else {
             // Do nothing

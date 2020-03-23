@@ -11,6 +11,20 @@ void processFile(File fileName) {
 	for (String method : methodsList) {
 		processMethod(fileName, method);
 	}
+
+	// Compute 'sizeAll'
+    originalFilePath = buildAbsolutePathOriginalFile(fileName);
+    int sizeAll = computeSizeAll(originalFilePath, method);
+
+    // Compute 'sizeAllMin'
+    modifiedFilePath = buildAbsolutePathModifiedFile(fileName);
+    int sizeAllMin = computeSizeAllMin(modifiedFilePath, method);
+
+    // Compute reduction percentage
+    int reductionPercentage = (sizeAll - sizeAllMin) / sizeAll * 100;
+
+    // Add reduction percentage to list
+    percentagesList.add(reductionPercentage);
 }
 
 void processMethod(String fileName, String method) {
@@ -19,18 +33,4 @@ void processMethod(String fileName, String method) {
 	// Chiamiamo un metodo che ci naviga la sequenza delle chiamate, e ci restituisce un boolean che ci dice se è lineare oppure no
 	
 	// Se la sequenza è lineare, effettuiamo le sostituzioni
-	
-	// Calcoliamo size ALL 
-	originalFilePath = buildAbsolutePathOriginalFile(fileName); 
-	int sizeAll = computeSizeAll(originalFilePath, method);
-	
-	// Calcoliamo size all_min
-	modifiedFilePath = buildAbsolutePathModifiedFile(fileName);
-	int sizeAllMin = computeSizeAllMin(modifiedFilePath, method);
-
-	// Calcoliamo percentuale riduzione
-	int reductionPercentage = (size ALL - size all_min) / size ALL * 100;
-
-	// Aggiungi percentuale di riduzione alla lista
-	percentagesList.add(reductionPercentage);
 }
