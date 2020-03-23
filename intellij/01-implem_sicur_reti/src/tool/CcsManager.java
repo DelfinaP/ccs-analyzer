@@ -185,7 +185,7 @@ public class CcsManager {
         int charCode = Integer.valueOf(character);
 
         if ((charCode >= 48 && charCode < 58) || (charCode >= 65 && charCode < 91) ||
-                (charCode >= 97 && charCode < 123)) {
+                (charCode >= 97 && charCode < 123) || charCode == 95) {
             return true;
         }
         else {
