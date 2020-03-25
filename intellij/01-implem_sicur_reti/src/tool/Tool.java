@@ -8,12 +8,14 @@ import utils.FileManager;
 import utils.JsonUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Tool {
     LinkedList<String> fileNamesList;
+    LinkedList<Double> reductionPercentagesList;
     static String analysisDirPath;
     static String nameDirOriginalFiles; // Nome directory contenente i file originali
     static String nameDirModifiedFiles; // Nome directory contenent i file con invokemethod sostituito
@@ -21,6 +23,8 @@ public abstract class Tool {
     static String nameDirBatchFile;
 
     public Tool() {
+        reductionPercentagesList = new LinkedList<Double>();
+
         // Initialize "nameDirFileBatch"
         nameDirBatchFile = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
         FileManager.deleteDirectoryWithRelativePath(nameDirBatchFile);
@@ -73,15 +77,41 @@ public abstract class Tool {
 
         getDirPath();
 
-        removeNonCcsFiles(analysisDirPath);
+        if (!FileManager.filesAlreadyProcessed()) {
+            removeNonCcsFiles(analysisDirPath);
 
-        distributeFilesToDirectories();
+            distributeFilesToDirectories();
 
-        fileNamesList = getFileNamesList(FileManager.getOriginalFilesPath());
+            fileNamesList = getFileNamesList(FileManager.getOriginalFilesPath());
 
-        processFiles(fileNamesList);
+            processFiles(fileNamesList);
+
+            computeReductionMean();
+        }
+        else {
+            System.out.println("Files already processed.");
+        }
 
         System.exit(0);
+    }
+
+    private void computeReductionMean() {
+        double sum = 0.0;
+        double mean = 0.0;
+
+        for (int i = 0; i < reductionPercentagesList.size(); i++) {
+            double reduction = reductionPercentagesList.get(i);
+
+            sum += reduction;
+
+//            System.out.println("Reduction " + (i + 1) + ": " + reduction);
+            System.out.printf("Reduction %2d: %5.2f%n", i + 1, reduction);
+        }
+
+        mean = sum / reductionPercentagesList.size();
+
+//        System.out.println("Mean: " + mean);
+        System.out.printf("Mean: %.2f%n", mean);
     }
 
     protected void deleteBatchFile() {
@@ -213,14 +243,14 @@ public abstract class Tool {
         nameDirModifiedFiles = JsonUtils.readValue("src/json/parametri.json", "parametri", "modified_files_path");
 
         // Create directory for original files
-        String directoryName = FileManager.buildPath(analysisDirPath, nameDirOriginalFiles);
-        File dir = new File(directoryName);
-        dir.mkdir();
+        String originalDirectoryName = FileManager.buildPath(analysisDirPath, nameDirOriginalFiles);
+        File originalDir = new File(originalDirectoryName);
+        originalDir.mkdir();
 
         // Create directory for modified files
-        directoryName = FileManager.buildPath(analysisDirPath, nameDirModifiedFiles);
-        dir = new File(directoryName);
-        dir.mkdir();
+        String modifiedDirectoryName = FileManager.buildPath(analysisDirPath, nameDirModifiedFiles);
+        File modifiedDir = new File(modifiedDirectoryName);
+        modifiedDir.mkdir();
 
         copyFilesToDirectory(nameDirOriginalFiles);
         copyFilesToDirectory(nameDirModifiedFiles);
@@ -235,30 +265,16 @@ public abstract class Tool {
         LinkedList<String> fileList = Tool.getFileNamesList(analysisDirPath);
         String fileName;
 
-        while (fileList.size() > 0) {
-            fileName = fileList.remove();
+        for (int i = 0; i < fileList.size(); i++) {
+            fileName = fileList.get(i);
 
-            InputStream is = null;
-            OutputStream os = null;
+            File sourceFile = new File(FileManager.buildPath(analysisDirPath, fileName));
+            File destinationFile = new File(FileManager.buildPath(analysisDirPath, directoryName, fileName));
+
             try {
-                is = new FileInputStream(FileManager.buildPath(analysisDirPath, fileName));
-                os = new FileOutputStream(FileManager.buildPath(analysisDirPath, directoryName, fileName));
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = is.read(buffer)) > 0) {
-                    os.write(buffer, 0, length);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                Files.copy(sourceFile.toPath(), destinationFile.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    is.close();
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
@@ -276,34 +292,44 @@ public abstract class Tool {
         }
 
         // Compute 'sizeAll'
-        //originalFilePath = buildAbsolutePathOriginalFile(fileName);
-        //int sizeAll = computeSizeAll(originalFilePath, method);
+        String originalFilePath = FileManager.getOriginalFilePathFromName(fileName);
+        int sizeAll = CcsManager.computeSizeAll(originalFilePath);
 
         // Compute 'sizeAllMin'
-        //modifiedFilePath = buildAbsolutePathModifiedFile(fileName);
-        //int sizeAllMin = computeSizeAllMin(modifiedFilePath, method);
+        String modifiedFilePath = FileManager.getModifiedFilePathFromName(fileName);
+        int sizeAllMin = CcsManager.computeSizeAllMin(modifiedFilePath);
 
         // Compute reduction percentage
-        //int reductionPercentage = (sizeAll - sizeAllMin) / sizeAll * 100;
+        double reductionPercentage = (sizeAll - sizeAllMin) / ((double) sizeAll) * (double) 100;
 
         // Add reduction percentage to list
-        //percentagesList.add(reductionPercentage);
+        reductionPercentagesList.add(new Double(reductionPercentage));
     }
 
     private void processMethod(String fileName, String method) {
-        String filePath = FileManager.getOriginalFilePathFromName(fileName);
+        String originalFilePath = FileManager.getOriginalFilePathFromName(fileName);
+        String modifiedFilePath = FileManager.getModifiedFilePathFromName(fileName);
 
-        int methodSize = CcsManager.getMethodSize(filePath, method);
+        int methodSize = CcsManager.getMethodSize(originalFilePath, method);
+
         // Filter methods with size <= 5
-
         if (methodSize <= 5) {
             // Call a method which navigates the sequence of method calls, and returns a boolean that indicates
             // if the sequence is linear or not
-            boolean isLinear = CcsManager.isMethodCallSequenceLinear(filePath, method);
+            boolean isLinear = CcsManager.isMethodCallSequenceLinear(originalFilePath, method);
 
             // If the method call sequence is linear, make the substitutions
             if (isLinear) {
-                CcsManager.replaceInstructionsWithTau(filePath, method);
+                CcsManager.replaceInstructionsWithTau(modifiedFilePath, method);
+
+                System.out.println("Linear:");
+                System.out.println(fileName);
+                System.out.println(method);
+            }
+            else {
+                System.out.println("Not linear:");
+                System.out.println(fileName);
+                System.out.println(method);
             }
         }
         else {

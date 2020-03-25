@@ -21,7 +21,7 @@ proc m2 = return.nil
 
 - (possibile requisito funzionale) Valutiamo se la lista delle chiamate ha questa forma (ossia una chiamata diretta ad un altro metodo). Se non ha questa forma, possiamo considerare questo come un metodo reale.
 - Sostituiamo i due "load" e il "return" con "t" (tau).
-- Ora calcoliamo "size ALL" e "size all_min" per ciascun metodo: 
+- Ora calcoliamo "size ALL" e "size all_min" per ciascun file: 
 Calcoliamo "size ALL" sui file originali;
 Sui file modificati eseguiamo i comandi:
 min -S obseq ALL all_min

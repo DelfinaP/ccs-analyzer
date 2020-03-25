@@ -88,13 +88,13 @@ public abstract class Shell {
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
-            // Se è un file
+            // If it's a file
             if (listOfFiles[i].isFile()) {
                 fileList.add(listOfFiles[i].getName());
             }
-            // Altrimenti, se è una directory
+            // Otherwise, it's a directory
             else if (listOfFiles[i].isDirectory()) {
-                // Non fare nulla
+                // Do nothing
             }
         }
 

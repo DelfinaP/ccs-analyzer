@@ -155,6 +155,14 @@ public class FileManager {
         return buildPath(getProjectDirectory(), JsonUtils.getCcsAnalysisJsonValue(), JsonUtils.getOriginalFilesJsonValue());
     }
 
+    public static String getModifiedFilesPath() {
+        return buildPath(getProjectDirectory(), JsonUtils.getCcsAnalysisJsonValue(), JsonUtils.getModifiedFilesJsonValue());
+    }
+
+    public static String getCcsAnalysisDirectoryPath() {
+        return buildPath(getProjectDirectory(), JsonUtils.getCcsAnalysisJsonValue());
+    }
+
     /**
      * Get the file name and returns the absolute path of the file contained in the original files' directory.
      * @param fileName The file we want the path of.
@@ -162,5 +170,61 @@ public class FileManager {
      */
     public static String getOriginalFilePathFromName(String fileName) {
         return buildPath(getOriginalFilesPath(), fileName);
+    }
+
+    /**
+     * Get the file name and returns the absolute path of the file contained in the modified files' directory.
+     * @param fileName The file we want the path of.
+     * @return The absolute path of the file.
+     */
+    public static String getModifiedFilePathFromName(String fileName) {
+        return buildPath(getModifiedFilesPath(), fileName);
+    }
+
+    /**
+     * Check whether the files were already processed by the tool.
+     * @return Whether the files were already processed by the tool.
+     */
+    public static boolean filesAlreadyProcessed() {
+        String originalFileDirName = JsonUtils.getOriginalFilesJsonValue();
+        String modifiedFileDirName = JsonUtils.getModifiedFilesJsonValue();
+
+        // Get list of subdirectory in the directory "res/ccs-analysis"
+        String directory = getCcsAnalysisDirectoryPath();
+
+        LinkedList<String> fileList = new LinkedList<String>();
+
+        File folder = new File(directory);
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            // If it's a file
+            if (listOfFiles[i].isFile()) {
+                // Do nothing
+            }
+            // Otherwise, if it's a directory
+            else if (listOfFiles[i].isDirectory()) {
+                fileList.add(listOfFiles[i].getName());
+            }
+        }
+
+        boolean originalFileDirExists = false;
+        boolean modifiedFileDirExists = false;
+
+        for (String file : fileList) {
+            if (file.equals(originalFileDirName)) {
+                originalFileDirExists = true;
+            }
+            else if (file.equals(modifiedFileDirName)) {
+                modifiedFileDirExists = true;
+            }
+        }
+
+        if (originalFileDirExists && modifiedFileDirExists) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

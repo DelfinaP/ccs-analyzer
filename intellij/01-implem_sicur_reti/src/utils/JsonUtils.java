@@ -52,6 +52,10 @@ public class JsonUtils {
         return readValue("src/json/parametri.json", "parametri", "original_files_path");
     }
 
+    public static String getModifiedFilesJsonValue() {
+        return readValue("src/json/parametri.json", "parametri", "modified_files_path");
+    }
+
     public static String getCcsAnalysisJsonValue() {
         return readValue("src/json/parametri.json", "parametri", "ccs_analysis_path");
     }

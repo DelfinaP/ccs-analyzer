@@ -337,4 +337,28 @@ public class CcsManager {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Compute the size of "ALL" method in an original file.
+     * @param originalFilePath The path file in the folder of the original files.
+     * @return The size of "ALL"
+     */
+    public static int computeSizeAll(String originalFilePath) {
+        return getMethodSize(originalFilePath, "ALL");
+    }
+
+    public static int computeSizeAllMin(String modifiedFilePath) {
+        Shell shell = Shell.createShell();
+
+        shell.startCwb();
+
+        shell.addCommand("load " + modifiedFilePath);
+        shell.addCommand("min -S obseq ALL all_min");
+        shell.addCommand("size all_min");
+        shell.addCommand("quit");
+
+        shell.executeCommands();
+
+        return getNumberOfStates(shell.getOutputList());
+    }
 }
