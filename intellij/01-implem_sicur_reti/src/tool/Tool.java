@@ -14,11 +14,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Tool {
+    final static int sizeTreshold = 5; // The treshold of the methods' size to be considered in the analysis 
+
     LinkedList<String> fileNamesList;
     LinkedList<Double> reductionPercentagesList;
     static String analysisDirPath;
-    static String nameDirOriginalFiles; // Nome directory contenente i file originali
-    static String nameDirModifiedFiles; // Nome directory contenent i file con invokemethod sostituito
+    static String nameDirOriginalFiles; // Name of directory containing original files
+    static String nameDirModifiedFiles; // Name of directory containing modified files
     static String cwbPath;
     static String nameDirBatchFile;
 
@@ -312,8 +314,8 @@ public abstract class Tool {
 
         int methodSize = CcsManager.getMethodSize(originalFilePath, method);
 
-        // Filter methods with size <= 5
-        if (methodSize <= 5) {
+        // Filter methods with size <= sizeTreshold
+        if (methodSize <= sizeTreshold) {
             // Call a method which navigates the sequence of method calls, and returns a boolean that indicates
             // if the sequence is linear or not
             boolean isLinear = CcsManager.isMethodCallSequenceLinear(originalFilePath, method);
