@@ -322,11 +322,11 @@ public abstract class Tool {
 
             // If the method call sequence is linear, make the substitutions
             if (isLinear) {
-                CcsManager.replaceInstructionsWithTau(modifiedFilePath, method);
-
                 System.out.println("Linear:");
                 System.out.println(fileName);
                 System.out.println(method);
+
+                CcsManager.replaceInstructionsWithTau(modifiedFilePath, method);
             }
             else {
                 System.out.println("Not linear:");

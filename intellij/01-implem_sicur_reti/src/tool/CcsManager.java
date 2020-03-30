@@ -104,7 +104,9 @@ public class CcsManager {
 
     public static boolean isMethodCallSequenceLinear(String filePath, String method) {
         // If the call has the form "return.nil" or "allreturn.nil"
-        if (isMethodCallEqualToReturn(filePath, method)) {
+        if (isMethodPassedAsArgumentEqualToNil(filePath, method)) {
+            replaceInstructionWithTauInFile(filePath, method);
+
             return true;
         }
         // If the method call is linear
@@ -118,10 +120,10 @@ public class CcsManager {
         }
     }
 
-    private static boolean isMethodCallEqualToReturn(String filePath, String method) {
-        String instruction = getMethodInvocation(filePath, method);
+    private static boolean isMethodPassedAsArgumentEqualToNil(String filePath, String method) {
+        String methodPassedAsArgument = getMethodPassedAsArgument(filePath, method);
 
-        if (instruction.equals("return.nil") || instruction.equals("allreturn.nil")) {
+        if (methodPassedAsArgument.equals("nil")) {
             return true;
         }
         else {
@@ -241,28 +243,17 @@ public class CcsManager {
     }
 
     public static void replaceInstructionsWithTau(String filePath, String method) {
-        // If the call has the form "return.nil" or "allreturn.nil"
-        if (isMethodCallEqualToReturn(filePath, method)) {
-            replaceReturnWithTau(filePath, method);
+        // If the method passed as argument is equal to "nil"
+        if (isMethodPassedAsArgumentEqualToNil(filePath, method)) {
+            replaceInstructionWithTauInFile(filePath, method);
         }
-        // If the invocation instruction is different from "return"
+        // If the method passed as argument is different from "nil"
         else {
-            // Substitute invocation with "tau"
-            String originalLine = getTextLineBeginningWith(filePath, "proc " + method);
-            String modifiedLine = replaceInstruction(originalLine, "t");
-            replaceLineInFile(filePath, originalLine, modifiedLine);
+            replaceInstructionWithTauInFile(filePath, method);
 
             // Recursively call the method
             replaceInstructionsWithTau(filePath, getMethodPassedAsArgument(filePath, method));
         }
-    }
-
-    private static void replaceReturnWithTau(String filePath, String method) {
-        String originalLine = getTextLineBeginningWith(filePath, "proc " + method);
-
-        String modifiedLine = replaceInstruction(originalLine, "t");
-
-        replaceLineInFile(filePath, originalLine, modifiedLine);
     }
 
     private static String replaceInstruction(String line, String newInstruction) {
@@ -336,6 +327,17 @@ public class CcsManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void replaceInstructionInFile(String filePath, String method, String newInstruction) {
+        // Substitute invocation with "tau"
+        String originalLine = getTextLineBeginningWith(filePath, "proc " + method);
+        String modifiedLine = replaceInstruction(originalLine, newInstruction);
+        replaceLineInFile(filePath, originalLine, modifiedLine);
+    }
+
+    private static void replaceInstructionWithTauInFile(String filePath, String method) {
+        replaceInstructionInFile(filePath, method, "t");
     }
 
     /**
