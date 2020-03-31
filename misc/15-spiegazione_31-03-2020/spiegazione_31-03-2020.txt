@@ -1,0 +1,4 @@
+- Escludere i metodi per i quali la sequenza delle chiamate contiene 'invokeinit'.
+- Calcoliamo le riduzioni secondo questi due criteri:
+  1. facciamo la somma delle 'size All' e delle 'size All_min' per tutti i file e facciamo la divisione tra le due somme. 
+  2. facciamo la media delle percentuali delle riduzioni, pesandola rispetto al numero dei metodi in ciascun file (soltanto i metodi nel 'proc All').
