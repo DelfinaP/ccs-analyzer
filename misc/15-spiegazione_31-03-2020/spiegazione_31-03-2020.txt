@@ -1,4 +1,5 @@
 - Escludere i metodi per i quali la sequenza delle chiamate contiene 'invokeinit'.
 - Calcoliamo le riduzioni secondo questi due criteri:
   1. facciamo la somma delle 'size All' e delle 'size All_min' per tutti i file e facciamo la divisione tra le due somme. 
-  2. facciamo la media delle percentuali delle riduzioni, pesandola rispetto al numero dei metodi in ciascun file (soltanto i metodi nel 'proc All').
+  2. facciamo la media delle percentuali delle riduzioni, pesandola rispetto al numero dei metodi in ciascun file (soltanto i metodi nel 'proc All'). (Questo criterio porterebbe comunque a una pesatura sbilanciata, perché se c'è una classe che ha 3 metodi, dei quali uno è molto più grande degli altri due, facendo la media delle riduzioni dei 3 metodi si attribuirebbe lo stesso peso ai 3 metodi).
+- Contiamo il numero di metodi totali, lineari e non lineari.

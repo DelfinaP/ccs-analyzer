@@ -102,17 +102,19 @@ public class CcsManager {
         return numberOfStates;
     }
 
-    public static boolean isMethodCallSequenceLinear(String filePath, String method) {
+    public static boolean isMethodCallSequenceValid(String filePath, String method) {
         // If the call has the form "return.nil" or "allreturn.nil"
         if (isMethodPassedAsArgumentEqualToNil(filePath, method)) {
-            replaceInstructionWithTauInFile(filePath, method);
-
             return true;
+        }
+        // If the instruction is 'invokeinit'
+        else if (isInstructionEqualsToInvokeinit(filePath, method)) {
+            return false;
         }
         // If the method call is linear
         else if (isMethodCallLinear(filePath, method)) {
             // Recursively call the method
-            return isMethodCallSequenceLinear(filePath, getMethodPassedAsArgument(filePath, method));
+            return isMethodCallSequenceValid(filePath, getMethodPassedAsArgument(filePath, method));
         }
         // Otherwise, if the method call is not linear
         else {
@@ -226,6 +228,29 @@ public class CcsManager {
         return line.substring(startIndex);
     }
 
+    private static String getInstruction(String filePath, String method) {
+        String methodInvocation = getMethodInvocation(filePath, method);
+
+        int i = 0;
+
+        // Search the first point character
+        while (methodInvocation.charAt(i) != '.') {
+            i++;
+        }
+
+        return methodInvocation.substring(0, i);
+    }
+
+    private static boolean isInstructionEqualsToInvokeinit(String filePath, String method) {
+        String instruction = getInstruction(filePath, method);
+
+        if (instruction.equals("invokeinit")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     private static String getTextLineBeginningWith(String filePath, String string) {
         LinkedList<String> textLinesList = FileManager.getTextLinesInFile(filePath);
         String line = "";

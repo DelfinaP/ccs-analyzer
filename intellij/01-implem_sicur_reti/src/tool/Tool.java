@@ -14,18 +14,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Tool {
-    final static int sizeTreshold = 5; // The treshold of the methods' size to be considered in the analysis 
+    final static int sizeTreshold = 5; // The treshold of the methods' size to be considered in the analysis
 
     LinkedList<String> fileNamesList;
-    LinkedList<Double> reductionPercentagesList;
     static String analysisDirPath;
     static String nameDirOriginalFiles; // Name of directory containing original files
     static String nameDirModifiedFiles; // Name of directory containing modified files
     static String cwbPath;
     static String nameDirBatchFile;
 
+    static int sumSizeAll;
+    static int sumSizeAllMin;
+    static int validMethodsCount;
+    static int notValidMethodsCount;
+
     public Tool() {
-        reductionPercentagesList = new LinkedList<Double>();
+        sumSizeAll = 0;
+        sumSizeAllMin = 0;
+
+        validMethodsCount = 0;
+        notValidMethodsCount = 0;
 
         // Initialize "nameDirFileBatch"
         nameDirBatchFile = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
@@ -88,7 +96,7 @@ public abstract class Tool {
 
             processFiles(fileNamesList);
 
-            computeReductionMean();
+            outputResults();
         }
         else {
             System.out.println("Files already processed.");
@@ -97,23 +105,19 @@ public abstract class Tool {
         System.exit(0);
     }
 
-    private void computeReductionMean() {
-        double sum = 0.0;
-        double mean = 0.0;
+    private void outputResults() {
+        System.out.println("#Valid: " + validMethodsCount);
+        System.out.println("#Not Valid: " + notValidMethodsCount);
+        System.out.println("#Total: " + (validMethodsCount + notValidMethodsCount));
 
-        for (int i = 0; i < reductionPercentagesList.size(); i++) {
-            double reduction = reductionPercentagesList.get(i);
+        double reductionMean = (sumSizeAll - sumSizeAllMin) / (double) sumSizeAll * 100;
 
-            sum += reduction;
-
-//            System.out.println("Reduction " + (i + 1) + ": " + reduction);
-            System.out.printf("Reduction %2d: %5.2f%n", i + 1, reduction);
+        if (reductionMean >= 10) {
+            System.out.printf("Mean: %5.2f%n", reductionMean);
         }
-
-        mean = sum / reductionPercentagesList.size();
-
-//        System.out.println("Mean: " + mean);
-        System.out.printf("Mean: %.2f%n", mean);
+        else {
+            System.out.printf("Mean: %4.2f%n", reductionMean);
+        }
     }
 
     protected void deleteBatchFile() {
@@ -301,11 +305,9 @@ public abstract class Tool {
         String modifiedFilePath = FileManager.getModifiedFilePathFromName(fileName);
         int sizeAllMin = CcsManager.computeSizeAllMin(modifiedFilePath);
 
-        // Compute reduction percentage
-        double reductionPercentage = (sizeAll - sizeAllMin) / ((double) sizeAll) * (double) 100;
-
-        // Add reduction percentage to list
-        reductionPercentagesList.add(new Double(reductionPercentage));
+        // Add 'sizeAll' e 'sizeAllMin' to sum
+        sumSizeAll += sizeAll;
+        sumSizeAllMin += sizeAllMin;
     }
 
     private void processMethod(String fileName, String method) {
@@ -318,20 +320,24 @@ public abstract class Tool {
         if (methodSize <= sizeTreshold) {
             // Call a method which navigates the sequence of method calls, and returns a boolean that indicates
             // if the sequence is linear or not
-            boolean isLinear = CcsManager.isMethodCallSequenceLinear(originalFilePath, method);
+            boolean isValid = CcsManager.isMethodCallSequenceValid(originalFilePath, method);
 
             // If the method call sequence is linear, make the substitutions
-            if (isLinear) {
-                System.out.println("Linear:");
+            if (isValid) {
+                System.out.println("Valid:");
                 System.out.println(fileName);
                 System.out.println(method);
+
+                validMethodsCount++;
 
                 CcsManager.replaceInstructionsWithTau(modifiedFilePath, method);
             }
             else {
-                System.out.println("Not linear:");
+                System.out.println("Not Valid:");
                 System.out.println(fileName);
                 System.out.println(method);
+
+                notValidMethodsCount++;
             }
         }
         else {
