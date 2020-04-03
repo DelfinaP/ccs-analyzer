@@ -1,0 +1,5 @@
+Nome;01;15;11;10;03;12
+Valid-Original-1M;19;22;41;41;53;53
+Total-Original-1M;51;65;117;116;159;160
+Valid-Obfuscated-1M;45;67;123;123;136;136
+Total-Obfuscated-1M;79;112;201;200;244;245
