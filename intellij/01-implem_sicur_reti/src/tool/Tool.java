@@ -27,6 +27,7 @@ public abstract class Tool {
     static int sumSizeAllMin;
     static int validMethodsCount;
     static int notValidMethodsCount;
+    static int invokeinitMethodsCount;
 
     public Tool() {
         sumSizeAll = 0;
@@ -34,6 +35,7 @@ public abstract class Tool {
 
         validMethodsCount = 0;
         notValidMethodsCount = 0;
+        invokeinitMethodsCount = 0;
 
         // Initialize "nameDirFileBatch"
         nameDirBatchFile = JsonUtils.readValue("src/json/parametri.json", "parametri", "batch_files_path");
@@ -108,6 +110,7 @@ public abstract class Tool {
     private void outputResults() {
         System.out.println("#Valid: " + validMethodsCount);
         System.out.println("#Not Valid: " + notValidMethodsCount);
+        System.out.println("#Invokeinit: " + invokeinitMethodsCount);
         System.out.println("#Total: " + (validMethodsCount + notValidMethodsCount));
 
         double reductionMean = (sumSizeAll - sumSizeAllMin) / (double) sumSizeAll * 100;

@@ -1,0 +1,155 @@
+-- 01 
+- Originali, stati: 5
+#Valid: 12
+#Not Valid: 6
+#Invokeinit: 6
+#Total: 18
+Mean: 15,08
+- Originali, stati: 1000000
+#Valid: 19
+#Not Valid: 32
+#Invokeinit: 21
+#Total: 51
+Mean: 23,76
+- Offuscati, stati: 5
+#Valid: 33
+#Not Valid: 6
+#Invokeinit: 6
+#Total: 39
+Mean: 17,40
+- Offuscati, stati: 1000000
+#Valid: 45
+#Not Valid: 34
+#Invokeinit: 23
+#Total: 79
+Mean: 26,58
+
+-- 15
+- Originali, stati: 5
+#Valid: 15
+#Not Valid: 6
+#Invokeinit: 6
+#Total: 21
+Mean: 19,12
+- Originali, stati: 1000000
+#Valid: 22
+#Not Valid: 43
+#Invokeinit: 24
+#Total: 65
+Mean: 25,26
+- Offuscati, stati: 5
+#Valid: 51
+#Not Valid: 6
+#Invokeinit: 6
+#Total: 57
+Mean: 22,92
+- Offuscati, stati: 1000000
+#Valid: 67
+#Not Valid: 45
+#Invokeinit: 26
+#Total: 112
+Mean: 29,51
+
+-- 11
+- Originali, stati: 5
+#Valid: 22
+#Not Valid: 9
+#Invokeinit: 9
+#Total: 31
+Mean: 16,84
+- Originali, stati: 1000000
+#Valid: 41
+#Not Valid: 76
+#Invokeinit: 45
+#Total: 117
+Mean: 21,38
+- Offuscati, stati: 5
+#Valid: 95
+#Not Valid: 9
+#Invokeinit: 9
+#Total: 104
+Mean: 18,96
+- Offuscati, stati: 1000000
+#Valid: 123
+#Not Valid: 78
+#Invokeinit: 47
+#Total: 201
+Mean: 23,67
+
+-- 10
+- Originali, stati: 5
+#Valid: 23
+#Not Valid: 9
+#Invokeinit: 9
+#Total: 32
+Mean: 16,63
+- Originali, stati: 1000000
+#Valid: 41
+#Not Valid: 75
+#Invokeinit: 45
+#Total: 116
+Mean: 21,86
+- Offuscati, stati: 5
+#Valid: 96
+#Not Valid: 9
+#Invokeinit: 9
+#Total: 105
+Mean: 18,73
+- Offuscati, stati: 1000000
+#Valid: 123
+#Not Valid: 77
+#Invokeinit: 47
+#Total: 200
+Mean: 24,09
+
+-- 3
+- Originali, stati: 5
+#Valid: 27
+#Not Valid: 25
+#Invokeinit: 25
+#Total: 52
+Mean: 20,18
+- Originali, stati: 1000000
+#Valid: 53
+#Not Valid: 106
+#Invokeinit: 69
+#Total: 159
+Mean: 25,97
+- Offuscati, stati: 5
+#Valid: 101
+#Not Valid: 25
+#Invokeinit: 25
+#Total: 126
+Mean: 19,39
+- Offuscati, stati: 1000000
+#Valid: 136
+#Not Valid: 108
+#Invokeinit: 71
+#Total: 244
+Mean: 25,30
+
+-- 12
+- Originali, stati: 5
+#Valid: 27
+#Not Valid: 25
+#Invokeinit: 25
+#Total: 52
+Mean: 20,30
+- Originali, stati: 1000000
+#Valid: 53
+#Not Valid: 107
+#Invokeinit: 70
+#Total: 160
+Mean: 26,08
+- Offuscati, stati: 5
+#Valid: 101
+#Not Valid: 25
+#Invokeinit: 25
+#Total: 126
+Mean: 19,51
+- Offuscati, stati: 1000000
+#Valid: 136
+#Not Valid: 109
+#Invokeinit: 72
+#Total: 245
+Mean: 25,40

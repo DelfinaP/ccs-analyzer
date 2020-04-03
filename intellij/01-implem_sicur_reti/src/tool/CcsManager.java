@@ -245,6 +245,8 @@ public class CcsManager {
         String instruction = getInstruction(filePath, method);
 
         if (instruction.equals("invokeinit")) {
+            Tool.invokeinitMethodsCount++;
+
             return true;
         }
         else {
