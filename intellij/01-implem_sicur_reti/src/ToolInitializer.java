@@ -9,7 +9,7 @@ public class ToolInitializer {
 
     public void run() {
         Tool tool;
-
+        
         try {
             if (OsUtils.getOsType() == OsType.LINUX) {
                 tool = new ToolLinux();

@@ -7,8 +7,19 @@ public class OsUtils
     private static String OS = null;
     private static OsType osType = null;
 
-    public static String getOsName()
-    {
+    public static boolean is64Bit() {
+        boolean is64bit = false;
+
+        if (System.getProperty("os.name").contains("Windows")) {
+            is64bit = (System.getenv("ProgramFiles(x86)") != null);
+        } else {
+            is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
+        }
+
+        return is64bit;
+    }
+
+    public static String getOsName() {
         if (OS == null) {
             OS = System.getProperty("os.name");
         }
