@@ -1,0 +1,11 @@
+1. Introduzione
+
+- Cosa fa il nostro tool (spiegazione della necessità degli esperti di sicurezza di classificare le app come originali o offuscate; quale obiettivo si propone di raggiungere);
+
+2. Metodologia
+
+- Come lo fa (dettagli implementativi del modo in cui risolve il problema; quali tecniche usa);
+
+3. Risultati
+
+- Qual è l'output del tool (valori di percentuale e grafici).
